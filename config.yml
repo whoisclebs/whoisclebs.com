@@ -7,7 +7,7 @@ description: 'WTFClebs?!? An essay about things I like'
 homepage: 'https://whoisclebs.com'
 defaultContentLanguage: 'en'
 paginate: 10
-hasCJKLanguage: true
+hasCJKLanguage: false
 copyright: "2024 WHOISCLEBS - All rights reserved"
 Author:
   name: "Clebson Augusto Fonseca"

@@ -5,7 +5,6 @@ tags: ["Hello World"]
 series: ["Hello World"]
 featured: true
 ---
-
 Novidades estão chegando!
 Este blog está ganhando vida e será meu canal de comunicação com vocês. Aqui compartilharei histórias interessantes, artigos e dicas valiosas.
 <!--more-->
