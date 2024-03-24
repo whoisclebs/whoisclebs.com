@@ -1,0 +1,79 @@
+baseURL: 'https://whoisclebs.com'
+title: whoisclebs
+theme: wtf-theme
+license: MIT
+licenselink: 'https://github.com/whoisclebs/whoisclebs.com/blob/main/LICENSE'
+description: 'My blog'
+homepage: 'https://whoisclebs.com'
+defaultContentLanguage: 'en'
+paginate: 10
+hasCJKLanguage: true
+copyright: "2024 Clebson - All rights reserved"
+Author:
+  name: "Clebson Augusto Fonseca"
+  email: "contact@whoisclebs.com"
+menu:
+  main:
+    - name: Blog
+      url: /blog
+      weight: 1
+    - name: Tags
+      url: /tags
+      weight: 2
+    - name: Archive
+      url: /archives
+      weight: 3
+    - name: Guest
+      url: /guestbook
+      weight: 4
+    - name: About
+      url: /about
+      weight: 5
+params:
+  brand: HOME
+  avatarURL: /images/avatar.png
+  author: Clebson
+  authorDescription: WTF Clebs?!? An essay about things I like
+  info: A developer passionate about writing about satire, trash films, software engineering, investments, travel, worldviews and more recently creating art with ai models.
+  favicon: /images/avatar.png
+  options:
+    showDarkMode: true
+    enableImgZooming: true
+    enableMultiLang: true
+    showMetaTags: true
+  darkModeTheme: data-dark-mode
+  sponsors:
+    buyMeACoffee:
+      enable: true
+  comments:
+    giscus:
+      enable: true
+      repo: whoisclebs/whoisclebs.com
+      repo_id: R_kgDOLSq14g
+      category: General
+      category_id: DIC_kwDOLSq14s4CdPDt
+      mapping: pathname
+      position: top
+      lang: en
+  analytics:
+    umami:
+      enable: true
+      website_id: b3b3657d-df5a-4e57-b0cc-c2fa77a230e7
+      url: https://analytics.whoisclebs.com/script.js
+  social:
+    - name: GitHub
+      pre: >-
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+      url: 'https://github.com/whoisclebs/whoisclebs.com'
+    - name: Dashboard
+      pre: >-
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-box"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+      url: 'https://analytics.whoisclebs.com/share/YbcjTLTnvaKGc5no/whoisclebs'
+languages:
+  en:
+    languageName: EN
+  pt-br:
+    languageName: BR
+taxonomies:
+  series: series
+  tag: tags
