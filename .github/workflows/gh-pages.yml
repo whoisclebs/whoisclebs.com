@@ -6,29 +6,39 @@ on:
       - main  # Set a branch to deploy
 permissions:
   contents: write
+  pages: write
+  id-token: write
+defaults:
+  run:
+    shell: bash
 jobs:
   deploy:
     runs-on: ubuntu-20.04
+    env:
+      HUGO_VERSION: 0.99.0
     steps:
-      - uses: actions/checkout@v2
+      - name: Install Hugo CLI
+        run: |
+          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_Linux-64bit.deb \
+          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
-          submodules: true  # Fetch Hugo themes (true OR recursive)
-          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
-
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
-        with:
-          hugo-version: 'latest'
-          extended: true
-
-      - name: Build
-        run: hugo --minify --ignoreCache  --baseURL ${{ steps.pages.outputs.base_url }} --printI18nWarnings
-
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        if: github.ref == 'refs/heads/main'
+          submodules: true
+          fetch-depth: 0
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v1
+      - name: Build with Hugo
+        run: |
+          hugo \
+            --minify \
+            --baseURL ${{ steps.pages.outputs.base_url }}
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
           cname: whoisclebs.com
 
+  
