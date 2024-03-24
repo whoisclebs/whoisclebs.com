@@ -49,9 +49,9 @@ params:
     giscus:
       enable: true
       repo: whoisclebs/whoisclebs.com
-      repo_id: R_kgDOLSq14g
+      repo_id: R_kgDOLkjfCg
       category: General
-      category_id: DIC_kwDOLSq14s4CdPDt
+      category_id: DIC_kwDOLkjfCs4CeMfx
       mapping: pathname
       position: top
       lang: en
