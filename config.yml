@@ -33,8 +33,8 @@ params:
   brand: HOME
   avatarURL: /images/avatar.png
   author: Clebson
-  authorDescription: WTF Clebs?!? An essay about things I like
-  info: A developer passionate about writing about satire, trash films, software engineering, investments, travel, worldviews and more recently creating art with ai models.
+  authorDescription: Who is Clebs?!? An essay about things I like
+  info: I build things up and break them down in the open.
   favicon: /images/avatar.png
   options:
     showDarkMode: true
