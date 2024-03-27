@@ -68,4 +68,5 @@ Ao adotar uma abordagem proativa para gerenciar a dívida técnica, as equipes d
 ---
 
 Obrigado por ler!
-Se você se sentir generoso, você tem a opção de me pagar um café ou um ko-fi por apenas US$ 1 para mostrar seu apoio como autor. Qual é a diferença? Bem, não tenho certeza, pois sempre fui um procrastinador e nunca me preocupei em descobrir.
+
+

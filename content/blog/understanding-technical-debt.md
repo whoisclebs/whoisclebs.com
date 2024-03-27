@@ -62,4 +62,3 @@ By adopting a proactive approach to managing technical debt, software developmen
 ---
 
 Thanks for reading!
-If you're feeling generous, you have the option to buy me to a coffee or a ko-fi for just $1 to show your support as an author. What's the difference? Well, I'm not sure, as I've always been a procrastinator and have never bothered to find out.
