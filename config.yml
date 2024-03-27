@@ -41,7 +41,7 @@ params:
   darkModeTheme: data-dark-mode
   sponsors:
     buyMeACoffee:
-      enable: true
+      enable: false
   comments:
     giscus:
       enable: true
@@ -71,6 +71,23 @@ languages:
     languageName: EN
   pt-br:
     languageName: BR
+    brand: INICIO
+    authorDescription: Who is Clebs?!? Um ensaio sobre coisas que gosto
+    info: Eu construo coisas e as quebro abertamente.
+    menu:
+      main:
+        - name: Blog
+          url: /blog
+          weight: 1
+        - name: Tags
+          url: /tags
+          weight: 2
+        - name: Arquivos
+          url: /archives
+          weight: 3
+        - name: Sobre
+          url: /about
+          weight: 4
 taxonomies:
   series: series
   tag: tags
