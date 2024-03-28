@@ -6,7 +6,7 @@ series: ["Technical Debt"]
 featured: true
 ---
 
-![1_m3PAtbKQEkyhprYiiLvuMw](/assets/1_m3PAtbKQEkyhprYiiLvuMw.png)
+![1_m3PAtbKQEkyhprYiiLvuMw](/assets/2_m3PAtbKQEkyhprYiiLvuMw.png)
 ---
 A dívida técnica é um conceito amplamente discutido na engenharia de software, referindo-se ao custo futuro que uma equipe de desenvolvimento pode incorrer devido a escolhas inadequadas de design, implementação ou manutenção em um projeto de software. 
 <!--more-->

@@ -6,7 +6,7 @@ series: ["Technical Debt"]
 featured: true
 ---
 
-![1_m3PAtbKQEkyhprYiiLvuMw](/assets/1_m3PAtbKQEkyhprYiiLvuMw.png)
+![1_m3PAtbKQEkyhprYiiLvuMw](/assets/2_m3PAtbKQEkyhprYiiLvuMw.png)
 ---
 Technical debt is a widely discussed concept in software engineering, referring to the future cost that a development team may incur due to poor design choices, implementation, or maintenance in a software project. 
 <!--more-->
