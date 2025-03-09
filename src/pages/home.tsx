@@ -7,10 +7,9 @@ const Home: React.FC = () => {
             <div className="flex flex-col md:flex-row gap-8 mb-12 justify-between">
                 <div className="md:w-1/4">
                     <h1 className="text-2xl font-bold mb-2">Clebson A. Fonseca</h1>
-                    <p className="text-gray-500 mb-4">@whoisclebs</p>
-                    
-                    <p className="text-gray-700 mb-6">
-                        Mid-level Software Engineer, Tech Lead, and Open Source Enthusiast doing what I love.
+                    <p className="text-gray-500 mb-2">@whoisclebs</p>
+                    <p className="text-gray-700 mb-4">
+                        Engenheiro de software pleno, líder técnico e entusiasta de código aberto fazendo o que amo.
                     </p>
                     <div className="flex flex-col gap-2 text-sm">
                         <div className="flex items-center gap-2">
@@ -19,7 +18,7 @@ const Home: React.FC = () => {
                         </div>
                         <div className="flex items-center gap-2">
                             <Briefcase size={16} />
-                            <span>Software Engineer at <a href="https://phoebus.com.br">Phoebus</a></span>
+                            <span>Engenheiro de software na <a href="https://phoebus.com.br">Phoebus</a></span>
                         </div>
                         <div className="flex items-center gap-2">
                             <Mail size={16} />
