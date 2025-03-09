@@ -1,7 +1,0 @@
-{{ define "content" }}
-<div class="guestbook">
-  <h1>{{ .Site.Params.guestbook.title }}</h1>
-  <p>{{ .Site.Params.guestbook.description }}</p>
-  {{ partial "common/giscus.html" . }}
-</div>
-{{ end }}
