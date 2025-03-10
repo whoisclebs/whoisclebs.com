@@ -6,7 +6,7 @@ const booksData = [
       title: "Código Limpo: Habilidades Práticas do Agile Software",
       author: "Robert C. Martin",
       image: "https://m.media-amazon.com/images/I/71dH97FwGbL._SY385_.jpg",
-      amazonLink: "https://www.amazon.com.br/dp/8576082675"
+      amazonLink: "https://amzn.to/43x7SAj"
     },
     {
         title: "Roube como um artista: 10 dicas sobre criatividade",
