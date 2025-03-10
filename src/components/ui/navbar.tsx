@@ -13,7 +13,7 @@ const Navbar: React.FC = () => {
           <NavLink to="/about" className={({isActive}) => isActive ? 'font-medium' : ''}>
             Sobre
           </NavLink>
-          <NavLink to="/blog" className={({isActive}) => isActive ? 'font-medium' : ''}>
+          <NavLink to="/books" className={({isActive}) => isActive ? 'font-medium' : ''}>
             Livros
           </NavLink>
           <a href="links.whoisclebs.com">
