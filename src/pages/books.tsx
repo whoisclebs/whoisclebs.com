@@ -52,7 +52,7 @@ export default function Books() {
                         <img
                             src={book.image || "https://placehold.co/400x400"}
                             alt={book.title}
-                            className="w-full h-64 object-cover mb-4 rounded-md"
+                            className="w-full h-64 object-cover mb-4 rounded-md transition-all duration-300 filter grayscale hover:grayscale-0"
                         />
                         <h3 className="text-2xl font-semibold mb-2">{book.title}</h3>
                         <p className="text-gray-600 mb-4 text-lg">{book.author}</p>
