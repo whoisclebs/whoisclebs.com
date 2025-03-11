@@ -16,12 +16,12 @@ const Navbar: React.FC = () => {
           <NavLink to="/books" className={({isActive}) => isActive ? 'font-medium' : ''}>
             Livros
           </NavLink>
-          <a href="links.whoisclebs.com">
+          {/* <a href="links.whoisclebs.com">
             Links
           </a>
           <NavLink to="/projects" className={({isActive}) => isActive ? 'font-medium' : ''}>
             Projetos
-          </NavLink>
+          </NavLink> */}
         </nav>
       </div>
     </header>
