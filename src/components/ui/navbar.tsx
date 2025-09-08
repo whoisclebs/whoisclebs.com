@@ -5,7 +5,7 @@ const Navbar: React.FC = () => {
   return (
     <header className="border-b border-gray-100">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center max-w-4xl">
-        <Link to="/" className="text-xl font-medium">WC</Link>
+        <Link to="/" className="text-xl font-medium">whoisclebs.com</Link>
         <nav className="flex items-center gap-6">
           <NavLink to="/" className={({isActive}) => isActive ? 'font-medium' : ''}>
             Home
