@@ -4,6 +4,7 @@ title: Frontend com contratos pequenos
 kicker: FRONTEND
 date: 2026-03-28
 readingTime: 5 MIN DE LEITURA
+author: whoisclebs
 excerpt: Componentes duráveis dependem menos de frameworks e mais de contratos pequenos, previsíveis e fáceis de testar.
 cover: https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80
 coverAlt: Código em monitor com luz baixa

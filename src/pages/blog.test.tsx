@@ -66,6 +66,7 @@ describe('blog editorial pages', () => {
     expect(article).toHaveClass('article-container')
     expect(screen.getByRole('heading', { level: 1, name: /Arquitetura de software sem teatro/i })).toBeInTheDocument()
     expect(screen.getByText('ARQUITETURA')).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /clebson a. fonseca/i })).toHaveAttribute('src', '/profile/clebson.png')
     expect(screen.getByRole('heading', { name: /Receba notas de engenharia/i })).toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: /email/i })).toBeInTheDocument()
   })

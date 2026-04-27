@@ -13,6 +13,7 @@ export type BlogPost = {
   kicker: string
   date: string
   readingTime: string
+  author: string
   excerpt: string
   cover: string
   coverAlt: string
@@ -46,6 +47,7 @@ function parseFrontmatter(raw: string): { frontmatter: PostFrontmatter; body: st
       kicker: metadata.kicker,
       date: metadata.date,
       readingTime: metadata.readingTime,
+      author: metadata.author,
       excerpt: metadata.excerpt,
       cover: metadata.cover,
       coverAlt: metadata.coverAlt,

@@ -9,25 +9,32 @@ const Home: React.FC = () => {
 
     return (
         <div>
-            <section className="grid gap-8 border-b border-[#1a1a1a] pb-10 md:grid-cols-[0.9fr_1.6fr]">
+            <section className="grid gap-8 border-b border-[#1a1a1a] pb-10 md:grid-cols-[0.95fr_1.25fr] md:items-start">
                 <div className="border-b border-[#1a1a1a] pb-6 md:border-b-0 md:border-r md:pr-8">
                     <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">@WHOISCLEBS</p>
                     <h1 className="my-3 text-6xl font-extrabold leading-none tracking-[-0.055em] md:text-8xl">Clebson A. Fonseca</h1>
                     <p className="font-serif text-lg leading-8 text-[#1a1a1a]">
-                        Engenheiro de software pleno, líder técnico e entusiasta de código aberto fazendo o que amo.
+                        Engenheiro de software, líder técnico e entusiasta de código aberto fazendo o que amo.
                     </p>
-                    <div className="mt-6 grid gap-3 font-mono text-xs uppercase tracking-[0.04em]">
-                        <div className="flex items-center gap-2">
-                            <MapPin size={16} />
-                            <span>João Pessoa, PB</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Briefcase size={16} />
-                            <span>Tech Lead Software Engineer at <a href="https://phoebus.com.br">Phoebus</a></span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Mail size={16} />
-                            <span>hello [ at ] whoisclebs.com</span>
+                    <div className="mt-6 flex gap-4 border-t border-[#1a1a1a] pt-5">
+                        <img
+                            src="/profile/clebson.png"
+                            alt="Clebson A. Fonseca"
+                            className="size-16 shrink-0 rounded-full border border-[#1a1a1a] object-cover grayscale"
+                        />
+                        <div className="grid gap-3 font-mono text-xs uppercase tracking-[0.04em]">
+                            <div className="flex items-center gap-2">
+                                <MapPin size={16} />
+                                <span>João Pessoa, PB</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Briefcase size={16} />
+                                <span>Tech Lead Software Engineer at <a href="https://phoebus.com.br">Phoebus</a></span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Mail size={16} />
+                                <span>hello [ at ] whoisclebs.com</span>
+                            </div>
                         </div>
                     </div>
                     <div className="mt-5 flex gap-2">
@@ -43,16 +50,15 @@ const Home: React.FC = () => {
                         </Button>
                     </div>
                 </div>
-                <div className="max-w-[760px] self-end font-serif text-lg leading-8 md:text-xl">
+                <div className="max-w-[760px] font-serif text-lg leading-8 md:pt-12 md:text-xl">
                     <p className="mb-5">
-                        Com mais de 6 anos de experiência em desenvolvimento de software, trabalho guiando o time tecnico e criando aplicações web e APIs que resolvem problemas reais de negócio. 
-                        Com experiencia com React, Angular, Vue no frontend e Java/Spring Boot, Node.js, Golang/Fiber no backend. Tenho bastante experiência no segmento de e-commerce, desenvolvendo integrações com provedores de pagamento (Rede, Cielo, Entrepay, Getnet), integração 3DS(3D Secure) e soluções antifraude com Clearsale.
+                        Sou desenvolvedor de software há mais de 6 anos, com forte experiência em e-commerce, pagamentos, autenticação 3DS e antifraude. Atuo tanto no frontend, com React, Angular e Vue, quanto no backend, com Java/Spring Boot, Node.js e Golang/Fiber.
                     </p>
                     <p className="mb-5">
-                        Minha expertise inclui arquiteturas baseadas em microsserviços, 
-                        uso extensivo de containers e automação de processos críticos. 
-                        Apaixonado por inovação, estou sempre acompanhando as últimas tendências tecnológicas 
-                        e tento vez ou outra contribuir para a comunidade open source.
+                        No dia a dia, ajudo o time técnico a tomar decisões, destravar problemas e construir soluções que sejam sólidas, simples de manter e preparadas para evoluir. Tenho experiência com microsserviços, containers e automações que reduzem trabalho manual e aumentam a previsibilidade da operação.
+                    </p>
+                    <p className="mb-5">
+                        Gosto de tecnologia aplicada com critério: sem hype desnecessário, sem complexidade gratuita e com foco em entregar algo que faça sentido para o produto, para o time e para quem vai manter o sistema depois.
                     </p>
                     <Button variant="outline" className="mt-4" asChild>
                         <a href="https://linkedin.com/in/whoisclebs" target="_blank" rel="noopener noreferrer">

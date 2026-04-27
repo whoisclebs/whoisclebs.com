@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router";
 import { CodeBlock } from "@/components/blog/code-block";
 import { NewsletterCta } from "@/components/blog/newsletter-cta";
+import { getAuthorByUsername } from "@/content/authors";
 import { formatPostDate, getPostBySlug } from "@/lib/posts";
 
 export default function BlogPost() {
@@ -27,6 +28,8 @@ export default function BlogPost() {
     );
   }
 
+  const author = getAuthorByUsername(post.author);
+
   return (
     <article className="article-container mx-auto max-w-[720px]">
       <header className="border-b border-[#1a1a1a] py-8">
@@ -39,10 +42,26 @@ export default function BlogPost() {
         <p className="mb-5 font-serif text-xl leading-8 text-[#1a1a1a]">
           {post.excerpt}
         </p>
-        <p className="font-mono text-xs uppercase tracking-[0.095em] text-[#757575]">
-          POR CLEBSON A. FONSECA · {formatPostDate(post.date)} ·{" "}
-          {post.readingTime}
-        </p>
+        <div className="flex items-center gap-3">
+          {author && (
+            <img
+              src={author.avatar}
+              alt={author.name}
+              className="size-12 rounded-full border border-[#1a1a1a] object-cover grayscale"
+            />
+          )}
+          <div>
+            <p className="font-mono text-xs uppercase tracking-[0.095em] text-[#757575]">
+              POR {author?.name ?? post.author} · {formatPostDate(post.date)} ·{" "}
+              {post.readingTime}
+            </p>
+            {author && (
+              <p className="mt-1 font-serif text-sm leading-5 text-[#757575]">
+                {author.bio}
+              </p>
+            )}
+          </div>
+        </div>
       </header>
 
       <img

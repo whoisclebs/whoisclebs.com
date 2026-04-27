@@ -4,6 +4,7 @@ title: Arquitetura de software sem teatro
 kicker: ARQUITETURA
 date: 2026-04-20
 readingTime: 7 MIN DE LEITURA
+author: whoisclebs
 excerpt: Como separar decisões reais de cerimônias vazias ao desenhar sistemas que precisam sobreviver ao dia dois.
 cover: https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1200&q=80
 coverAlt: Estrutura arquitetural geométrica em preto e branco

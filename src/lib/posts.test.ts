@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { getAuthorByUsername } from '@/content/authors'
 import { BLOG_POSTS_PER_PAGE, getPostBySlug, getPublishedPosts, getResponsiveGridClass, paginatePosts } from './posts'
 
 describe('blog content repository', () => {
@@ -13,6 +14,7 @@ describe('blog content repository', () => {
         slug: expect.any(String),
         sourcePath: expect.stringMatching(/\.md$/),
         title: expect.any(String),
+        author: 'whoisclebs',
         kicker: expect.stringMatching(/^[A-Z0-9 ÁÀÂÃÉÊÍÓÔÕÚÇ/-]+$/),
         excerpt: expect.any(String),
         readingTime: expect.any(String),
@@ -23,6 +25,18 @@ describe('blog content repository', () => {
   it('resolves a post by slug and returns undefined for unknown slugs', () => {
     expect(getPostBySlug('arquitetura-de-software-sem-teatro')?.title).toMatch(/Arquitetura/)
     expect(getPostBySlug('slug-inexistente')).toBeUndefined()
+  })
+
+  it('maps post authors by username with profile photo', () => {
+    const author = getAuthorByUsername('whoisclebs')
+
+    expect(author).toEqual(
+      expect.objectContaining({
+        username: 'whoisclebs',
+        name: 'Clebson A. Fonseca',
+        avatar: '/profile/clebson.png',
+      }),
+    )
   })
 
   it('chooses grid columns based on the amount of posts to avoid empty gaps', () => {

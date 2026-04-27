@@ -4,6 +4,7 @@ title: Observabilidade para gente cansada
 kicker: OPERAÇÃO
 date: 2026-02-14
 readingTime: 6 MIN DE LEITURA
+author: whoisclebs
 excerpt: Logs, métricas e traces só ajudam quando respondem perguntas de plantão, não quando decoram dashboards.
 cover: https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80
 coverAlt: Mapa de rede iluminado em azul
