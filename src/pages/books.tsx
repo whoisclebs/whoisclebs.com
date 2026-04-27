@@ -1,66 +1,86 @@
-import { Badge } from "@/components/ui/badge"
-import { ExternalLink } from "lucide-react"
+import { Badge } from "@/components/ui/badge";
+import { getResponsiveGridClass } from "@/lib/posts";
+import { ExternalLink } from "lucide-react";
 
 const booksData = [
-    {
-      title: "Código Limpo: Habilidades Práticas do Agile Software",
-      author: "Robert C. Martin",
-      image: "https://m.media-amazon.com/images/I/71dH97FwGbL._SY385_.jpg",
-      amazonLink: "https://amzn.to/43x7SAj"
-    },
-    {
-        title: "Roube como um artista: 10 dicas sobre criatividade",
-        author: "Austin Kleon",
-        image: "https://m.media-amazon.com/images/I/51lI9is-gnL._SY342_.jpg",
-        amazonLink: "https://amzn.to/3R1eQ9f"
-    }
+  {
+    title: "Código Limpo: Habilidades Práticas do Agile Software",
+    author: "Robert C. Martin",
+    image: "https://m.media-amazon.com/images/I/71dH97FwGbL._SY385_.jpg",
+    amazonLink: "https://amzn.to/43x7SAj",
+  },
+  {
+    title: "Roube como um artista: 10 dicas sobre criatividade",
+    author: "Austin Kleon",
+    image: "https://m.media-amazon.com/images/I/51lI9is-gnL._SY342_.jpg",
+    amazonLink: "https://amzn.to/3R1eQ9f",
+  },
 ];
 
 export default function Books() {
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-center mb-4">LIVROS RECOMENDADOS</h1>
-        <p className="text-center text-muted-foreground mb-2 max-w-3xl mx-auto">
-          Aqui estão alguns livros que recomendo para desenvolvedores. Todos os links direcionam para a Amazon, onde você
-          pode comprar os livros.
+    <div>
+      <section className="border-b border-[#1a1a1a] py-8">
+        <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">
+          LEITURAS
         </p>
-        <div className="text-center text-sm text-gray-500 mb-8 max-w-3xl mx-auto">
-          <p className="text-xs">
-            <span className="font-semibold">
-                Nota: Links Afiliados Amazon.</span> Toda vez que você compra um livro através
-                de um desses links, eu ganho uma pequena comissão. Isso me ajuda a manter minhas contribuições(artigos, codigo aberto, etc) e a produzir mais conteúdo de
-                qualidade. 
-            <span className="text-orange-500">Obrigado!</span>
-          </p>
-        </div>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {booksData.map((book, index) => (
-            <a  
-                href={book.amazonLink}
-                target="_blank"
-                key={index}
-                className="block h-full transition-transform hover:scale-[1.05]"
-            >   
-                <div className="border border-gray-200 rounded-lg p-6 flex flex-col relative bg-zinc-100  h-full">
-                    <div className="absolute top-2 right-2 z-10">
-                        <Badge className="bg-zinc-900 text-white hover:bg-zinc-800 flex items-center gap-1">
-                        <ExternalLink size={14} />
-                        Amazon
-                        </Badge>
-                    </div>
-                    <div className="flex-1 flex flex-col">
-                        <img
-                            src={book.image || "https://placehold.co/400x400"}
-                            alt={book.title}
-                            className="w-full h-64 object-cover mb-4 rounded-md transition-all duration-300 filter grayscale hover:grayscale-0"
-                        />
-                        <h3 className="text-2xl font-semibold mb-2">{book.title}</h3>
-                        <p className="text-gray-600 mb-4 text-lg">{book.author}</p>
-                    </div>
-                </div>
+        <h1 className="my-3 max-w-5xl text-6xl font-extrabold leading-none tracking-[-0.055em] md:text-8xl">
+          Biblioteca de engenharia
+        </h1>
+        <p className="max-w-[720px] font-serif text-xl leading-8 text-[#1a1a1a]">
+          Livros que recomendo para desenvolvedores que querem melhorar código,
+          criatividade e repertório técnico.
+        </p>
+        <p className="mt-5 max-w-[720px] border-l-2 border-[#1a1a1a] pl-4 font-mono text-xs uppercase leading-5 tracking-[0.08em] text-[#757575]">
+          Nota: Links afiliados Amazon. Ao comprar por esses links, você ajuda a
+          manter artigos, código aberto e novos conteúdos.
+        </p>
+      </section>
+
+      <section
+        className="mt-8 bg-black px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.12em] text-white"
+        aria-label="Recomendações"
+      >
+        RECOMENDAÇÕES
+      </section>
+
+      <div
+        className={`grid border-b border-l border-[#1a1a1a] ${getResponsiveGridClass(booksData.length)}`}
+        data-testid="books-grid"
+      >
+        {booksData.map((book) => (
+          <article
+            key={book.title}
+            className="border-r border-t border-[#1a1a1a] bg-white p-5"
+          >
+            <a
+              href={book.amazonLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block h-full"
+            >
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">
+                  LIVRO
+                </p>
+                <Badge className="flex items-center gap-1 rounded-none border border-[#1a1a1a] bg-white font-mono text-[10px] uppercase tracking-[0.08em] text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-white">
+                  <ExternalLink size={12} />
+                  Amazon
+                </Badge>
+              </div>
+              <img
+                src={book.image || "https://placehold.co/400x400"}
+                alt={book.title}
+                className="mb-5 h-72 w-full object-contain grayscale transition-[filter] duration-150 group-hover:grayscale-0"
+              />
+              <h2 className="mb-2 text-3xl font-extrabold leading-tight tracking-[-0.04em] transition-colors group-hover:text-[#057dbc] group-hover:underline group-hover:underline-offset-4">
+                {book.title}
+              </h2>
+              <p className="font-serif text-lg text-[#1a1a1a]">{book.author}</p>
             </a>
-            ))}
-        </div>
+          </article>
+        ))}
+      </div>
     </div>
-  )
+  );
 }
