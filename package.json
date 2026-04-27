@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/generate-rss.mjs && tsc -b && vite build && node scripts/inline-critical-css.mjs && node scripts/optimize-images.mjs && node scripts/copy-spa-fallback.mjs",
+    "build": "node scripts/generate-rss.mjs && tsc -b && vite build && node scripts/inline-critical-css.mjs && node scripts/optimize-images.mjs",
+    "build:github-pages": "npm run build && node scripts/prepare-github-pages.mjs",
     "lint": "eslint .",
     "test": "vitest run",
     "screenshot": "playwright test -c screenshots/playwright.config.ts",

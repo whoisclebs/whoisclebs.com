@@ -140,7 +140,7 @@ Essa é uma decisão visual codificada como função testável. O layout deixa d
 
 ## RSS como parte do build
 
-Um site editorial precisa ser distribuível fora da interface. RSS continua sendo uma solução simples, aberta e adequada para conteúdo técnico. O build gera `blog.xml` e `til.xml` a partir dos arquivos Markdown.
+Um site editorial precisa ser distribuível fora da interface. RSS continua sendo uma solução simples, aberta e adequada para conteúdo técnico. O build gera `/rss/blog.xml` e `/rss/til.xml` a partir dos arquivos Markdown.
 
 ```js
 function readEntries(directory, pathPrefix) {
@@ -354,7 +354,8 @@ O build virou uma sequência explícita de produção estática:
 ```json
 {
   "scripts": {
-    "build": "node scripts/generate-rss.mjs && tsc -b && vite build && node scripts/inline-critical-css.mjs && node scripts/optimize-images.mjs && node scripts/copy-spa-fallback.mjs"
+    "build": "node scripts/generate-rss.mjs && tsc -b && vite build && node scripts/inline-critical-css.mjs && node scripts/optimize-images.mjs",
+    "build:github-pages": "npm run build && node scripts/prepare-github-pages.mjs"
   }
 }
 ```

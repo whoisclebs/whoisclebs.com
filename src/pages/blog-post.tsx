@@ -35,7 +35,7 @@ export default function BlogPost() {
   const author = getAuthorByUsername(post.author);
 
   return (
-    <article className="article-container mx-auto max-w-[720px]">
+    <article className="article-container mx-auto min-w-0 max-w-[720px] overflow-hidden">
       <SEO
         title={post.title}
         description={post.excerpt}
@@ -53,17 +53,17 @@ export default function BlogPost() {
           author: { '@type': 'Person', name: author?.name ?? post.author },
         }}
       />
-      <header className="border-b border-[#1a1a1a] py-8">
+      <header className="min-w-0 border-b border-[#1a1a1a] py-8">
         <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">
           {post.kicker}
         </p>
-        <h1 className="my-3 text-5xl font-extrabold leading-none tracking-[-0.055em] md:text-7xl">
+        <h1 className="my-3 break-words text-4xl font-extrabold leading-none tracking-[-0.055em] md:text-7xl">
           {post.title}
         </h1>
-        <p className="mb-5 font-serif text-xl leading-8 text-[#1a1a1a]">
+        <p className="mb-5 break-words font-serif text-xl leading-8 text-[#1a1a1a]">
           {post.excerpt}
         </p>
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 items-center gap-3">
           {author && (
             <img
               src={author.avatar}
@@ -71,13 +71,13 @@ export default function BlogPost() {
               className="size-12 rounded-full border border-[#1a1a1a] object-cover grayscale"
             />
           )}
-          <div>
-            <p className="font-mono text-xs uppercase tracking-[0.095em] text-[#757575]">
+          <div className="min-w-0 flex-1">
+            <p className="break-words font-mono text-xs uppercase tracking-[0.095em] text-[#757575]">
               {t('blog.by')} {author?.name ?? post.author} · {formatPostDate(post.date, locale)} ·{" "}
               {post.readingTime}
             </p>
             {author && (
-              <p className="mt-1 font-serif text-sm leading-5 text-[#757575]">
+              <p className="mt-1 break-words font-serif text-sm leading-5 text-[#757575]">
                 {author.bio}
               </p>
             )}
@@ -86,7 +86,7 @@ export default function BlogPost() {
       </header>
 
       <img
-        className="my-6 block aspect-video w-full object-cover"
+        className="my-6 block aspect-video w-full max-w-full object-cover"
         src={post.cover}
         alt={post.coverAlt}
       />

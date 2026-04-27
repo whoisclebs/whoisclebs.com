@@ -92,8 +92,7 @@ out
 dist
 test-results/
 screenshots/output/
-public/blog.xml
-public/til.xml
+public/rss/*.xml
 
 # Gatsby files
 .cache/

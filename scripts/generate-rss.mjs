@@ -31,15 +31,15 @@ function readEntries(directory, pathPrefix) {
     .map((entry) => ({ ...entry, url: `${siteUrl}/${pathPrefix}/${entry.slug}` }))
 }
 
-function generateFeed({ title, description, path, entries }) {
+function generateFeed({ title, description, sitePath, feedPath, entries }) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>${escapeXml(title)}</title>
-    <link>${siteUrl}${path}</link>
+    <link>${siteUrl}${sitePath}</link>
     <description>${escapeXml(description)}</description>
     <language>pt-BR</language>
-    <atom:link href="${siteUrl}${path}.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="${siteUrl}${feedPath}" rel="self" type="application/rss+xml" />
 ${entries.map((entry) => `    <item>
       <title>${escapeXml(entry.title)}</title>
       <link>${entry.url}</link>
@@ -53,24 +53,27 @@ ${entries.map((entry) => `    <item>
 }
 
 const publicDir = 'public'
-mkdirSync(publicDir, { recursive: true })
+const rssDir = join(publicDir, 'rss')
+mkdirSync(rssDir, { recursive: true })
 
 writeFileSync(
-  join(publicDir, 'blog.xml'),
+  join(rssDir, 'blog.xml'),
   generateFeed({
     title: 'whoisclebs.com Blog',
     description: 'Artigos sobre engenharia de software, arquitetura, frontend, operação e produto.',
-    path: '/blog',
+    sitePath: '/blog',
+    feedPath: '/rss/blog.xml',
     entries: readEntries('src/content/posts', 'blog'),
   }),
 )
 
 writeFileSync(
-  join(publicDir, 'til.xml'),
+  join(rssDir, 'til.xml'),
   generateFeed({
     title: 'whoisclebs.com Today I Learned',
     description: 'Notas curtas sobre aprendizados técnicos do dia a dia.',
-    path: '/til',
+    sitePath: '/til',
+    feedPath: '/rss/til.xml',
     entries: readEntries('src/content/til', 'til'),
   }),
 )
