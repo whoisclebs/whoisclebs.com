@@ -5,14 +5,14 @@ export type MarkdownBlock =
   | { type: "code"; language: string; code: string };
 
 export function parseFrontmatter(raw: string): { metadata: Record<string, string>; body: string } {
-  const match = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
 
   if (!match) {
     throw new Error("Markdown must start with frontmatter");
   }
 
   const [, frontmatterRaw, body] = match;
-  const entries = frontmatterRaw.split("\n").map((line) => {
+  const entries = frontmatterRaw.split(/\r?\n/).map((line) => {
     const separatorIndex = line.indexOf(":");
     const key = line.slice(0, separatorIndex).trim();
     const value = line.slice(separatorIndex + 1).trim();

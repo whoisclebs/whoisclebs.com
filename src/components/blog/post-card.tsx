@@ -5,14 +5,15 @@ import type { BlogPost } from '@/lib/posts'
 type PostCardProps = {
   post: BlogPost
   featured?: boolean
+  className?: string
 }
 
-export function PostCard({ post, featured = false }: PostCardProps) {
+export function PostCard({ post, featured = false, className = '' }: PostCardProps) {
   return (
     <article
       className={featured
-        ? 'grid border border-[#1a1a1a] bg-white md:grid-cols-[1.35fr_0.75fr]'
-        : 'border-r border-t border-[#1a1a1a] bg-white'}
+        ? `grid border border-[#1a1a1a] bg-white md:grid-cols-[1.35fr_0.75fr] ${className}`
+        : `border-r border-t border-[#1a1a1a] bg-white ${className}`}
       data-testid={`post-card-${post.slug}`}
     >
       <img src={post.cover} alt={post.coverAlt} loading={featured ? 'eager' : 'lazy'} className="block aspect-video w-full object-cover grayscale-[20%]" />

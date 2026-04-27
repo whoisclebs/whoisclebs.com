@@ -34,7 +34,7 @@ describe('blog editorial pages', () => {
     renderBlogRoute()
 
     expect(screen.getByRole('heading', { level: 1, name: /engenharia em campo/i })).toBeInTheDocument()
-    expect(screen.getByTestId('recent-post-grid')).toHaveClass('md:grid-cols-3')
+    expect(screen.getByTestId('recent-post-grid')).toHaveClass('md:grid-cols-6')
 
     const articles = screen.getAllByRole('article')
     expect(articles).toHaveLength(getPublishedPosts().length)
@@ -55,7 +55,7 @@ describe('blog editorial pages', () => {
     renderBlogRoute('/blog?page=2')
 
     expect(screen.getAllByRole('article')).toHaveLength(getPublishedPosts().length)
-    expect(screen.getByTestId('recent-post-grid')).toHaveClass('md:grid-cols-3')
+    expect(screen.getByTestId('recent-post-grid')).toHaveClass('md:grid-cols-6')
     expect(screen.getByText(/página 1 de 1/i)).toBeInTheDocument()
   })
 

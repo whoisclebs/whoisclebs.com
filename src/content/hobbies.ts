@@ -7,39 +7,27 @@ export type BoardGame = {
 
 export const boardGames: BoardGame[] = [
   {
-    title: 'Azul',
-    note: 'Abstrato elegante, rápido de explicar e cheio de pequenas decisões táticas.',
+    title: 'Azul: Master Chocolatier',
+    note: 'Uma variação temática de Azul com a mesma elegância abstrata, decisões táticas curtas e uma presença de mesa deliciosa.',
     players: '2–4 jogadores',
-    image: 'https://placehold.co/600x400/ffffff/1a1a1a?text=Board+Game',
+    image: '/boardgames/azul_chocolatier.png',
   },
   {
-    title: 'Ticket to Ride',
-    note: 'Construção de rotas, tensão leve e uma ótima porta de entrada para mesa cheia.',
-    players: '2–5 jogadores',
-    image: 'https://placehold.co/600x400/ffffff/1a1a1a?text=Board+Game',
-  },
-  {
-    title: 'Coup',
-    note: 'Blefe curto, direto e caótico o bastante para gerar boas histórias depois da partida.',
-    players: '2–6 jogadores',
-    image: 'https://placehold.co/600x400/ffffff/1a1a1a?text=Board+Game',
-  },
-  {
-    title: 'Dixit',
-    note: 'Criatividade, interpretação e imagens que viram conversa ao redor da mesa.',
-    players: '3–8 jogadores',
-    image: 'https://placehold.co/600x400/ffffff/1a1a1a?text=Board+Game',
-  },
-  {
-    title: '7 Wonders Duel',
-    note: 'Confronto estratégico para duas pessoas, com ritmo forte e múltiplos caminhos de vitória.',
-    players: '2 jogadores',
-    image: 'https://placehold.co/600x400/ffffff/1a1a1a?text=Board+Game',
-  },
-  {
-    title: 'Pandemic',
-    note: 'Cooperação, pressão crescente e decisões coletivas que lembram incidentes em produção.',
+    title: 'Clank!',
+    note: 'Deck-building com exploração de dungeon, risco crescente e aquela tensão boa de sair vivo antes do dragão acordar de vez.',
     players: '2–4 jogadores',
-    image: 'https://placehold.co/600x400/ffffff/1a1a1a?text=Board+Game',
+    image: '/boardgames/clank.png',
+  },
+  {
+    title: 'Scrabble',
+    note: 'Palavras, vocabulário e disputa por espaço no tabuleiro — simples, clássico e sempre dependente de criatividade.',
+    players: '2–4 jogadores',
+    image: '/boardgames/scrabble.png',
+  },
+  {
+    title: 'Stella',
+    note: 'Um jogo do universo Dixit sobre associação de imagens, leitura coletiva e apostas sutis sobre como os outros pensam.',
+    players: '3–6 jogadores',
+    image: '/boardgames/stella.png',
   },
 ]

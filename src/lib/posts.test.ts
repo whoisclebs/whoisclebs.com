@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { getAuthorByUsername } from '@/content/authors'
-import { BLOG_POSTS_PER_PAGE, getPostBySlug, getPublishedPosts, getResponsiveGridClass, paginatePosts } from './posts'
+import { BLOG_POSTS_PER_PAGE, getBalancedEditorialGridItemClass, getPostBySlug, getPublishedPosts, getResponsiveGridClass, paginatePosts } from './posts'
 
 describe('blog content repository', () => {
   it('returns published posts ordered by newest date first with editorial metadata', () => {
@@ -45,6 +45,15 @@ describe('blog content repository', () => {
     expect(getResponsiveGridClass(2)).toBe('md:grid-cols-2')
     expect(getResponsiveGridClass(3)).toBe('md:grid-cols-3')
     expect(getResponsiveGridClass(8)).toBe('md:grid-cols-3')
+  })
+
+  it('balances editorial grid items by row remainder', () => {
+    expect(getBalancedEditorialGridItemClass(0, 1)).toBe('md:col-span-6')
+    expect(getBalancedEditorialGridItemClass(0, 2)).toBe('md:col-span-3')
+    expect(getBalancedEditorialGridItemClass(1, 2)).toBe('md:col-span-3')
+    expect(getBalancedEditorialGridItemClass(0, 5)).toBe('md:col-span-2')
+    expect(getBalancedEditorialGridItemClass(3, 5)).toBe('md:col-span-3')
+    expect(getBalancedEditorialGridItemClass(4, 5)).toBe('md:col-span-3')
   })
 
   it('paginates posts and clamps invalid page numbers', () => {

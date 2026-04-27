@@ -1,5 +1,6 @@
 import { SEO } from '@/components/seo'
 import { boardGames } from '@/content/hobbies'
+import { getResponsiveGridClass } from '@/lib/posts'
 import { Gamepad2, Library, Users } from 'lucide-react'
 
 export default function Hobbies() {
@@ -47,19 +48,16 @@ export default function Hobbies() {
       <section className="mt-12 bg-black px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.12em] text-white" aria-label="Coleção de jogos de tabuleiro">
         COLEÇÃO DE JOGOS DE TABULEIRO
       </section>
-      <div className="grid border-b border-l border-[#1a1a1a] md:grid-cols-2 xl:grid-cols-3">
+      <div className={`grid gap-4 border border-t-0 border-[#1a1a1a] p-4 ${getResponsiveGridClass(boardGames.length)}`}>
         {boardGames.map((game) => (
-          <article key={game.title} className="border-r border-t border-[#1a1a1a] bg-white p-5">
-            <img src={game.image} alt="Placeholder para capa de jogo de tabuleiro" className="mb-5 aspect-video w-full object-cover grayscale" />
+          <article key={game.title} className="border border-[#1a1a1a] bg-white p-4">
+            <img src={game.image} alt={`Capa do jogo ${game.title}`} className="mb-5 aspect-square w-full object-cover" />
             <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#757575]">{game.players}</p>
             <h2 className="my-2 text-3xl font-extrabold leading-tight tracking-[-0.04em]">{game.title}</h2>
             <p className="font-serif leading-7 text-[#1a1a1a]">{game.note}</p>
           </article>
         ))}
       </div>
-      <p className="mt-6 max-w-[720px] border-l-2 border-[#1a1a1a] pl-4 font-mono text-xs uppercase leading-5 tracking-[0.08em] text-[#757575]">
-        As capas são placeholders temporários. Vou substituir cada uma pelas imagens reais da coleção aos poucos.
-      </p>
     </div>
   )
 }

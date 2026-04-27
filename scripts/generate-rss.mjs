@@ -4,9 +4,9 @@ import { join } from 'node:path'
 const siteUrl = 'https://whoisclebs.com'
 
 function parseFrontmatter(raw) {
-  const match = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/)
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/)
   if (!match) throw new Error('Markdown sem frontmatter')
-  const metadata = Object.fromEntries(match[1].split('\n').map((line) => {
+  const metadata = Object.fromEntries(match[1].split(/\r?\n/).map((line) => {
     const index = line.indexOf(':')
     return [line.slice(0, index).trim(), line.slice(index + 1).trim()]
   }))

@@ -66,6 +66,14 @@ export function getResponsiveGridClass(count: number): string {
   return 'md:grid-cols-3'
 }
 
+export function getBalancedEditorialGridItemClass(index: number, count: number): string {
+  const remainder = count % 3
+
+  if (remainder === 1 && index === count - 1) return 'md:col-span-6'
+  if (remainder === 2 && index >= count - 2) return 'md:col-span-3'
+  return 'md:col-span-2'
+}
+
 export function paginatePosts<T>(postsToPaginate: T[], requestedPage: number, perPage = BLOG_POSTS_PER_PAGE): PaginatedItems<T> {
   const totalItems = postsToPaginate.length
   const totalPages = Math.max(1, Math.ceil(totalItems / perPage))

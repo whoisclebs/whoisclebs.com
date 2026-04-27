@@ -1,6 +1,6 @@
 import { PostCard } from '@/components/blog/post-card'
 import { Link, useSearchParams } from 'react-router'
-import { getPublishedPosts, getResponsiveGridClass, paginatePosts } from '@/lib/posts'
+import { getBalancedEditorialGridItemClass, getPublishedPosts, paginatePosts } from '@/lib/posts'
 
 export default function Blog() {
   const [searchParams] = useSearchParams()
@@ -24,8 +24,10 @@ export default function Blog() {
       {rest.length > 0 && (
         <>
           <section className="mt-12 bg-black px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.12em] text-white" aria-label="Artigos recentes">ARTIGOS RECENTES</section>
-          <div className={`grid border-b border-l border-[#1a1a1a] ${getResponsiveGridClass(rest.length)}`} data-testid="recent-post-grid">
-            {rest.map((post) => <PostCard key={post.slug} post={post} />)}
+          <div className="grid border-b border-l border-[#1a1a1a] md:grid-cols-6" data-testid="recent-post-grid">
+            {rest.map((post, index) => (
+              <PostCard key={post.slug} post={post} className={getBalancedEditorialGridItemClass(index, rest.length)} />
+            ))}
           </div>
         </>
       )}

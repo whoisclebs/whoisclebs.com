@@ -3,7 +3,7 @@ import { PostCard } from "@/components/blog/post-card";
 import { OpenSourceSection } from "@/components/home/open-source-section";
 import { SEO } from "@/components/seo";
 import { Button } from "@/components/ui/button";
-import { getPublishedPosts, getResponsiveGridClass } from "@/lib/posts";
+import { getBalancedEditorialGridItemClass, getPublishedPosts, getResponsiveGridClass } from "@/lib/posts";
 import { getPublishedTilEntries } from "@/lib/til";
 import { Briefcase, Github, Linkedin, Mail, MapPin, Youtube } from "lucide-react";
 
@@ -91,8 +91,10 @@ const Home: React.FC = () => {
             </section>
 
             <section className="mt-12 bg-black px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.12em] text-white" aria-label="Últimos textos">ÚLTIMOS TEXTOS</section>
-            <div className={`grid border-b border-l border-[#1a1a1a] ${getResponsiveGridClass(posts.length)}`}>
-                {posts.map((post) => <PostCard key={post.slug} post={post} />)}
+            <div className="grid border-b border-l border-[#1a1a1a] md:grid-cols-6">
+                {posts.map((post, index) => (
+                    <PostCard key={post.slug} post={post} className={getBalancedEditorialGridItemClass(index, posts.length)} />
+                ))}
             </div>
             <OpenSourceSection />
             <section className="mt-12 bg-black px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.12em] text-white" aria-label="Today I Learned">TODAY I LEARNED</section>

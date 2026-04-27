@@ -1,4 +1,3 @@
-import { Link } from "react-router";
 import { useState } from "react";
 import { credlyBadges } from "@/content/credly-badges";
 
@@ -91,15 +90,30 @@ export default function About() {
             explorando mundos em jogos, consumindo universos fantásticos, mexendo
             em automações ou contribuindo com algum projeto aberto.
           </p>
+          <img
+            src="/cover/d&d.png"
+            alt="Clebson em uma aventura pixel art de RPG concluindo uma quest"
+            className="mt-6 w-full border border-[#1a1a1a] object-cover"
+            loading="lazy"
+          />
         </div>
 
         <div className="border-2 border-[#1a1a1a] p-6">
-          <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">
-            SINAIS PÚBLICOS
-          </p>
-          <h2 className="mt-2 text-4xl font-extrabold leading-none tracking-[-0.045em]">
-            Badges, histórico e colaboração
+          <h2 className="text-4xl font-extrabold leading-none tracking-[-0.045em]">
+            Badges
           </h2>
+          <p className="mt-4 font-serif leading-7 text-[#1a1a1a]">
+            Sou uma pessoa que ama coleções, e uma dessas minhas coleções atuais são as badges no{' '}
+            <a
+              href="https://www.credly.com/users/whoisclebs"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#057dbc] underline underline-offset-4"
+            >
+              Credly
+            </a>
+            .
+          </p>
           <div className="my-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {visibleBadges.map((badge) => (
               <a
@@ -152,25 +166,42 @@ export default function About() {
               </button>
             </div>
           </nav>
-          <p className="font-serif leading-7 text-[#1a1a1a]">
-            Também coleciono badges no{" "}
-            <a
-              href="https://www.credly.com/users/whoisclebs"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#057dbc] underline underline-offset-4"
-            >
-              Credly
-            </a>
-            . Se você quiser colaboração em um projeto, fale comigo pelo LinkedIn
-            ou veja meu trabalho no portfolio.
+        </div>
+      </section>
+
+      <section className="mt-12 grid gap-8 border-2 border-[#1a1a1a] p-6 md:grid-cols-[0.75fr_1.25fr] md:items-center">
+        <img
+          src="/projects/md.png"
+          alt="Meeple & Decks"
+          className="aspect-square w-full border border-[#1a1a1a] object-cover"
+        />
+        <div>
+          <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">
+            SIDE PROJECT
           </p>
-          <Link
-            to="/portfolio"
+          <h2 className="mt-2 text-4xl font-extrabold leading-none tracking-[-0.045em] md:text-5xl">
+            Meeple & Decks
+          </h2>
+          <p className="mt-4 font-serif text-lg leading-8 text-[#1a1a1a]">
+            Meeple & Decks é uma comunidade com marketplace e catálogo para boardgames e TCGs, misturando elementos de fórum, acervo e loja.
+          </p>
+          <p className="mt-4 font-serif text-lg leading-8 text-[#1a1a1a]">
+            A ideia é criar um espaço para jogadores, colecionadores e comunidades conversarem sobre boardgames, TCGs, coleções, partidas, reviews, dúvidas e recomendações. Também quero incluir uma área para compra e venda de jogos de tabuleiro, cartas, acessórios e produtos relacionados ao hobby.
+          </p>
+          <p className="mt-4 font-serif text-lg leading-8 text-[#1a1a1a]">
+            O acervo será um registro organizado de jogos de tabuleiro e cartas, parecido com uma base de dados. Ele não precisa hospedar todo o conteúdo visual ou editorial dos jogos; o foco é manter informações estruturadas para o universo de jogos de tabuleiro e TCG.
+          </p>
+          <p className="mt-4 font-serif text-lg leading-8 text-[#1a1a1a]">
+            Vou fazer um build in public dele: registrar decisões, aprendizados, experimentos e bastidores enquanto o projeto evolui.
+          </p>
+          <a
+            href="https://www.meepledecks.com/"
+            target="_blank"
+            rel="noopener noreferrer"
             className="mt-5 inline-flex min-h-12 items-center justify-center border-2 border-[#1a1a1a] bg-[#1a1a1a] px-5 font-sans text-sm font-extrabold uppercase tracking-[0.08em] text-white transition-colors hover:bg-white hover:text-[#1a1a1a]"
           >
-            Ver portfolio
-          </Link>
+            Conhecer Meeple & Decks
+          </a>
         </div>
       </section>
     </div>

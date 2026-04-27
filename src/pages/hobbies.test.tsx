@@ -16,8 +16,11 @@ describe('hobbies page', () => {
 
     expect(screen.getByRole('heading', { level: 1, name: /fora do editor/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /steamcommunity.com\/id\/struzinov/i })).toHaveAttribute('href', 'https://steamcommunity.com/id/struzinov/')
-    expect(screen.getByText(/capas são placeholders temporários/i)).toBeInTheDocument()
-    expect(screen.getAllByAltText(/placeholder para capa de jogo de tabuleiro/i)).toHaveLength(6)
+    expect(screen.getAllByAltText(/capa do jogo/i)).toHaveLength(4)
+    expect(screen.getByRole('heading', { name: /azul: master chocolatier/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /clank!/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /scrabble/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /stella/i })).toBeInTheDocument()
   })
 
   it('shows YouTube alongside social icons on home', () => {
