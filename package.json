@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/generate-rss.mjs && tsc -b && vite build && node scripts/copy-spa-fallback.mjs",
+    "build": "node scripts/generate-rss.mjs && tsc -b && vite build && node scripts/inline-critical-css.mjs && node scripts/optimize-images.mjs && node scripts/copy-spa-fallback.mjs",
     "lint": "eslint .",
     "test": "vitest run",
     "screenshot": "playwright test -c screenshots/playwright.config.ts",
@@ -38,7 +38,7 @@
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react-swc": "^3.8.0",
+    "@vitejs/plugin-react": "^6.0.1",
     "autoprefixer": "^10.5.0",
     "eslint": "^9.39.4",
     "eslint-plugin-react-hooks": "^5.1.0",
@@ -47,10 +47,14 @@
     "husky": "^9.1.7",
     "jsdom": "^26.0.0",
     "postcss": "^8.5.12",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4.0.12",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.59.0",
-    "vite": "^6.2.0",
-    "vitest": "^3.0.8"
+    "vite": "^8.0.10",
+    "vitest": "^4.1.5"
+  },
+  "overrides": {
+    "flatted": "3.4.2"
   }
 }
