@@ -1,0 +1,10 @@
+Contact: mailto:hello@whoisclebs.com
+Contact: https://github.com/whoisclebs/whoisclebs.com/security/advisories/new
+Expires: 2027-04-27T23:59:59Z
+Preferred-Languages: pt-BR, en
+Canonical: https://whoisclebs.com/.well-known/security.txt
+
+# whoisclebs.com is a personal/editorial site. Please report vulnerabilities
+# affecting the public website, static assets, build/deploy configuration,
+# dependency supply chain, or integrations such as comments/newsletter embeds.
+# For low-risk content issues or typos, prefer a regular GitHub issue or PR.
