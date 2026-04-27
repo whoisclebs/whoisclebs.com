@@ -5,7 +5,39 @@ import { SEO } from "@/components/seo";
 import { Button } from "@/components/ui/button";
 import { getBalancedEditorialGridItemClass, getPublishedPosts, getResponsiveGridClass } from "@/lib/posts";
 import { getPublishedTilEntries } from "@/lib/til";
+import { useI18n, type Locale } from "@/lib/i18n";
 import { Briefcase, Mail, MapPinned } from "lucide-react";
+
+const homeCopy: Record<Locale, {
+    subtitle: string
+    paragraphs: string[]
+    talk: string
+    work: string
+    latest: string
+}> = {
+    'pt-BR': {
+        subtitle: 'Engenheiro de software, líder técnico e entusiasta de código aberto fazendo o que amo.',
+        paragraphs: [
+            'Sou desenvolvedor de software há mais de 6 anos, com forte experiência em e-commerce, pagamentos, autenticação 3DS e antifraude. Atuo tanto no frontend, com React, Angular e Vue, quanto no backend, com Java/Spring Boot, Node.js e Golang/Fiber.',
+            'No dia a dia, ajudo o time técnico a tomar decisões, destravar problemas e construir soluções que sejam sólidas, simples de manter e preparadas para evoluir. Tenho experiência com microsserviços, containers e automações que reduzem trabalho manual e aumentam a previsibilidade da operação.',
+            'Gosto de tecnologia aplicada com critério: sem hype desnecessário, sem complexidade gratuita e com foco em entregar algo que faça sentido para o produto, para o time e para quem vai manter o sistema depois.',
+        ],
+        talk: 'Converse comigo',
+        work: 'Conheça meu trabalho',
+        latest: 'ÚLTIMOS TEXTOS',
+    },
+    en: {
+        subtitle: 'Software engineer, technical leader, and open source enthusiast building what I love.',
+        paragraphs: [
+            'I have been building software for more than 6 years, with strong experience in e-commerce, payments, 3DS authentication, and anti-fraud flows. I work across frontend with React, Angular, and Vue, and backend with Java/Spring Boot, Node.js, and Golang/Fiber.',
+            'Day to day, I help technical teams make decisions, unblock problems, and build solutions that are solid, maintainable, and ready to evolve. I have experience with microservices, containers, and automation that reduces manual work and improves operational predictability.',
+            'I like applied technology with judgment: no unnecessary hype, no gratuitous complexity, and a focus on delivering something that makes sense for the product, the team, and whoever will maintain the system later.',
+        ],
+        talk: 'Talk to me',
+        work: 'See my work',
+        latest: 'LATEST WRITING',
+    },
+}
 
 function GithubIcon({ className }: { className?: string }) {
     return (
@@ -32,8 +64,10 @@ function YoutubeIcon({ className }: { className?: string }) {
 }
 
 const Home: React.FC = () => {
-    const posts = getPublishedPosts().slice(0, 3)
-    const tilEntries = getPublishedTilEntries().slice(0, 3)
+    const { locale } = useI18n()
+    const copy = homeCopy[locale]
+    const posts = getPublishedPosts(locale).slice(0, 3)
+    const tilEntries = getPublishedTilEntries(locale).slice(0, 3)
 
     return (
         <div>
@@ -43,7 +77,7 @@ const Home: React.FC = () => {
                     <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">@WHOISCLEBS</p>
                     <h1 className="my-3 text-6xl font-extrabold leading-none tracking-[-0.055em] md:text-8xl">Clebson A. Fonseca</h1>
                     <p className="font-serif text-lg leading-8 text-[#1a1a1a]">
-                        Engenheiro de software, líder técnico e entusiasta de código aberto fazendo o que amo.
+                        {copy.subtitle}
                     </p>
                     <div className="mt-6 flex gap-4 border-t border-[#1a1a1a] pt-5">
                         <img
@@ -92,29 +126,21 @@ const Home: React.FC = () => {
                     </div>
                 </div>
                 <div className="max-w-[760px] font-serif text-lg leading-8 md:pt-12 md:text-xl">
-                    <p className="mb-5">
-                        Sou desenvolvedor de software há mais de 6 anos, com forte experiência em e-commerce, pagamentos, autenticação 3DS e antifraude. Atuo tanto no frontend, com React, Angular e Vue, quanto no backend, com Java/Spring Boot, Node.js e Golang/Fiber.
-                    </p>
-                    <p className="mb-5">
-                        No dia a dia, ajudo o time técnico a tomar decisões, destravar problemas e construir soluções que sejam sólidas, simples de manter e preparadas para evoluir. Tenho experiência com microsserviços, containers e automações que reduzem trabalho manual e aumentam a previsibilidade da operação.
-                    </p>
-                    <p className="mb-5">
-                        Gosto de tecnologia aplicada com critério: sem hype desnecessário, sem complexidade gratuita e com foco em entregar algo que faça sentido para o produto, para o time e para quem vai manter o sistema depois.
-                    </p>
+                    {copy.paragraphs.map((paragraph) => <p key={paragraph} className="mb-5">{paragraph}</p>)}
                     <Button variant="outline" className="mt-4" asChild>
                         <a href="https://linkedin.com/in/whoisclebs" target="_blank" rel="noopener noreferrer">
-                            Converse comigo
+                            {copy.talk}
                         </a>
                     </Button>
                     <Button variant="ghost" className="mt-4" asChild>
                         <Link to="/portfolio">
-                            Conheça meu trabalho
+                            {copy.work}
                         </Link>
                     </Button>
                 </div>
             </section>
 
-            <section className="mt-12 bg-black px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.12em] text-white" aria-label="Últimos textos">ÚLTIMOS TEXTOS</section>
+            <section className="mt-12 bg-black px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.12em] text-white" aria-label={copy.latest}>{copy.latest}</section>
             <div className="grid border-b border-l border-[#1a1a1a] md:grid-cols-6">
                 {posts.map((post, index) => (
                     <PostCard key={post.slug} post={post} className={getBalancedEditorialGridItemClass(index, posts.length)} />

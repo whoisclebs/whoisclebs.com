@@ -1,5 +1,6 @@
 import { markdownTilSources } from '@/content/til'
 import { parseFrontmatter, parseMarkdownBlocks, type MarkdownBlock } from './markdown'
+import type { Locale } from './i18n'
 
 export type TilEntry = {
   sourcePath: string
@@ -8,6 +9,7 @@ export type TilEntry = {
   kicker: string
   date: string
   excerpt: string
+  locale: Locale
   published: boolean
   blocks: MarkdownBlock[]
 }
@@ -22,6 +24,7 @@ function parseTil(sourcePath: string, raw: string): TilEntry {
     kicker: metadata.kicker,
     date: metadata.date,
     excerpt: metadata.excerpt,
+    locale: metadata.locale === 'en' ? 'en' : 'pt-BR',
     published: metadata.published !== 'false',
     blocks: parseMarkdownBlocks(body),
   }
@@ -29,12 +32,20 @@ function parseTil(sourcePath: string, raw: string): TilEntry {
 
 const tilEntries = markdownTilSources.map(({ path, raw }) => parseTil(path, raw))
 
-export function getPublishedTilEntries(): TilEntry[] {
-  return [...tilEntries]
-    .filter((entry) => entry.published)
+function filterLocalizedEntries(entries: TilEntry[], locale?: Locale): TilEntry[] {
+  if (!locale) return entries
+  const localized = entries.filter((entry) => entry.locale === locale)
+  return localized.length > 0 ? localized : entries.filter((entry) => entry.locale === 'pt-BR')
+}
+
+export function getPublishedTilEntries(locale: Locale = 'pt-BR'): TilEntry[] {
+  const published = tilEntries.filter((entry) => entry.published)
+
+  return filterLocalizedEntries(published, locale)
     .sort((a, b) => b.date.localeCompare(a.date))
 }
 
-export function getTilBySlug(slug: string): TilEntry | undefined {
-  return getPublishedTilEntries().find((entry) => entry.slug === slug)
+export function getTilBySlug(slug: string, locale: Locale = 'pt-BR'): TilEntry | undefined {
+  return getPublishedTilEntries(locale).find((entry) => entry.slug === slug)
+    ?? tilEntries.find((entry) => entry.published && entry.slug === slug)
 }

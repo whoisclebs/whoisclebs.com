@@ -1,6 +1,39 @@
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { useRef } from "react";
+import { useI18n, type Locale } from "@/lib/i18n";
+
+const booksCopy: Record<Locale, {
+  kicker: string
+  title: string
+  description: string
+  affiliate: string
+  recommendations: string
+  previous: string
+  next: string
+  book: string
+}> = {
+  'pt-BR': {
+    kicker: 'LEITURAS',
+    title: 'Biblioteca de engenharia',
+    description: 'Livros que recomendo para desenvolvedores que querem melhorar código, criatividade e repertório técnico.',
+    affiliate: 'Nota: Links afiliados Amazon. Ao comprar por esses links, você ajuda a manter artigos, código aberto e novos conteúdos.',
+    recommendations: 'RECOMENDAÇÕES',
+    previous: 'Livro anterior',
+    next: 'Próximo livro',
+    book: 'LIVRO',
+  },
+  en: {
+    kicker: 'READING',
+    title: 'Engineering library',
+    description: 'Books I recommend for developers who want to improve code, creativity, and technical repertoire.',
+    affiliate: 'Note: Amazon affiliate links. Buying through these links helps support articles, open source, and new content.',
+    recommendations: 'RECOMMENDATIONS',
+    previous: 'Previous book',
+    next: 'Next book',
+    book: 'BOOK',
+  },
+}
 
 const booksData = [
   {
@@ -19,6 +52,8 @@ const booksData = [
 
 export default function Books() {
   const carouselRef = useRef<HTMLDivElement>(null);
+  const { locale } = useI18n()
+  const copy = booksCopy[locale]
 
   function scrollRecommendations(direction: "previous" | "next") {
     const carousel = carouselRef.current;
@@ -34,32 +69,30 @@ export default function Books() {
     <div>
       <section className="border-b border-[#1a1a1a] py-8">
         <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">
-          LEITURAS
+          {copy.kicker}
         </p>
         <h1 className="my-3 max-w-5xl text-6xl font-extrabold leading-none tracking-[-0.055em] md:text-8xl">
-          Biblioteca de engenharia
+          {copy.title}
         </h1>
         <p className="max-w-[720px] font-serif text-xl leading-8 text-[#1a1a1a]">
-          Livros que recomendo para desenvolvedores que querem melhorar código,
-          criatividade e repertório técnico.
+          {copy.description}
         </p>
         <p className="mt-5 max-w-[720px] border-l-2 border-[#1a1a1a] pl-4 font-mono text-xs uppercase leading-5 tracking-[0.08em] text-[#757575]">
-          Nota: Links afiliados Amazon. Ao comprar por esses links, você ajuda a
-          manter artigos, código aberto e novos conteúdos.
+          {copy.affiliate}
         </p>
       </section>
 
       <div className="mt-8 flex flex-col gap-3 bg-black px-4 py-3 text-white md:flex-row md:items-center md:justify-between">
         <section
           className="font-mono text-xs font-bold uppercase tracking-[0.12em]"
-          aria-label="Recomendações"
+          aria-label={copy.recommendations}
         >
-          RECOMENDAÇÕES
+          {copy.recommendations}
         </section>
         <div className="flex gap-2">
           <button
             type="button"
-            aria-label="Livro anterior"
+            aria-label={copy.previous}
             onClick={() => scrollRecommendations("previous")}
             className="inline-flex size-10 items-center justify-center border border-white transition-colors hover:bg-white hover:text-black"
           >
@@ -67,7 +100,7 @@ export default function Books() {
           </button>
           <button
             type="button"
-            aria-label="Próximo livro"
+            aria-label={copy.next}
             onClick={() => scrollRecommendations("next")}
             className="inline-flex size-10 items-center justify-center border border-white transition-colors hover:bg-white hover:text-black"
           >
@@ -94,7 +127,7 @@ export default function Books() {
             >
               <div className="mb-4 flex items-center justify-between gap-3">
                 <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">
-                  LIVRO
+                  {copy.book}
                 </p>
                 <Badge className="flex items-center gap-1 rounded-none border border-[#1a1a1a] bg-white font-mono text-[10px] uppercase tracking-[0.08em] text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-white">
                   <ExternalLink size={12} />

@@ -1,15 +1,26 @@
 import { render, screen } from '@testing-library/react'
+import type { ReactNode } from 'react'
 import { MemoryRouter, Route, Routes } from 'react-router'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import Home from './home'
 import Portfolio from './portfolio'
 import Books from './books'
+import { I18nProvider, i18nStorageKey } from '@/lib/i18n'
+
+function withI18n(children: ReactNode) {
+  return <I18nProvider>{children}</I18nProvider>
+}
 
 describe('editorial secondary pages', () => {
+  beforeEach(() => {
+    window.localStorage.clear()
+    window.localStorage.setItem(i18nStorageKey, 'pt-BR')
+  })
+
   it('connects the home work CTA to the local portfolio route', () => {
     render(
       <MemoryRouter>
-        <Home />
+        {withI18n(<Home />)}
       </MemoryRouter>,
     )
 
@@ -22,9 +33,11 @@ describe('editorial secondary pages', () => {
   it('renders the portfolio page in editorial sections', () => {
     render(
       <MemoryRouter initialEntries={['/portfolio']}>
-        <Routes>
-          <Route path="/portfolio" element={<Portfolio />} />
-        </Routes>
+        {withI18n(
+          <Routes>
+            <Route path="/portfolio" element={<Portfolio />} />
+          </Routes>,
+        )}
       </MemoryRouter>,
     )
 
@@ -36,7 +49,7 @@ describe('editorial secondary pages', () => {
   it('renders books with the same editorial visual hierarchy', () => {
     render(
       <MemoryRouter>
-        <Books />
+        {withI18n(<Books />)}
       </MemoryRouter>,
     )
 

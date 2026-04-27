@@ -1,16 +1,24 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import Home from './home'
 import Hobbies from './hobbies'
+import { I18nProvider, i18nStorageKey } from '@/lib/i18n'
 
 describe('hobbies page', () => {
+  beforeEach(() => {
+    window.localStorage.clear()
+    window.localStorage.setItem(i18nStorageKey, 'pt-BR')
+  })
+
   it('renders hobbies with board game placeholders and external profiles', () => {
     render(
       <MemoryRouter initialEntries={['/hobbies']}>
-        <Routes>
-          <Route path="/hobbies" element={<Hobbies />} />
-        </Routes>
+        <I18nProvider>
+          <Routes>
+            <Route path="/hobbies" element={<Hobbies />} />
+          </Routes>
+        </I18nProvider>
       </MemoryRouter>,
     )
 
@@ -26,7 +34,9 @@ describe('hobbies page', () => {
   it('shows YouTube alongside social icons on home', () => {
     render(
       <MemoryRouter>
-        <Home />
+        <I18nProvider>
+          <Home />
+        </I18nProvider>
       </MemoryRouter>,
     )
 

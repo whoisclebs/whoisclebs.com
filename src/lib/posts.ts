@@ -1,5 +1,6 @@
 import { markdownPostSources } from '@/content/posts'
 import { parseFrontmatter, parseMarkdownBlocks, type MarkdownBlock } from './markdown'
+import type { Locale } from './i18n'
 
 export type PostBlock = MarkdownBlock
 
@@ -14,6 +15,8 @@ export type BlogPost = {
   excerpt: string
   cover: string
   coverAlt: string
+  locale: Locale
+  translationKey: string
   published: boolean
   blocks: PostBlock[]
 }
@@ -32,6 +35,8 @@ function parsePost(sourcePath: string, raw: string): BlogPost {
     excerpt: metadata.excerpt,
     cover: metadata.cover,
     coverAlt: metadata.coverAlt,
+    locale: metadata.locale === 'en' ? 'en' : 'pt-BR',
+    translationKey: metadata.translationKey || metadata.slug,
     published: metadata.published !== 'false',
     blocks: parseMarkdownBlocks(body),
   }
@@ -50,14 +55,24 @@ export type PaginatedItems<T> = {
   hasNextPage: boolean
 }
 
-export function getPublishedPosts(): BlogPost[] {
-  return [...posts]
-    .filter((post) => post.published)
+function filterLocalizedPosts(postsToFilter: BlogPost[], locale?: Locale): BlogPost[] {
+  if (!locale) return postsToFilter
+
+  const localized = postsToFilter.filter((post) => post.locale === locale)
+  return localized.length > 0 ? localized : postsToFilter.filter((post) => post.locale === 'pt-BR')
+}
+
+export function getPublishedPosts(locale: Locale = 'pt-BR'): BlogPost[] {
+  const published = posts.filter((post) => post.published)
+
+  return filterLocalizedPosts(published, locale)
     .sort((a, b) => b.date.localeCompare(a.date))
 }
 
-export function getPostBySlug(slug: string): BlogPost | undefined {
-  return getPublishedPosts().find((post) => post.slug === slug)
+export function getPostBySlug(slug: string, locale: Locale = 'pt-BR'): BlogPost | undefined {
+  const published = getPublishedPosts(locale)
+  return published.find((post) => post.slug === slug)
+    ?? posts.find((post) => post.published && post.slug === slug)
 }
 
 export function getResponsiveGridClass(count: number): string {
@@ -91,8 +106,8 @@ export function paginatePosts<T>(postsToPaginate: T[], requestedPage: number, pe
   }
 }
 
-export function formatPostDate(date: string): string {
-  return new Intl.DateTimeFormat('pt-BR', {
+export function formatPostDate(date: string, locale: Locale = 'pt-BR'): string {
+  return new Intl.DateTimeFormat(locale, {
     day: '2-digit',
     month: 'short',
     year: 'numeric',

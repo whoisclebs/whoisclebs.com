@@ -5,10 +5,12 @@ import { RichContent } from "@/components/blog/rich-content";
 import { SEO } from "@/components/seo";
 import { getAuthorByUsername } from "@/content/authors";
 import { formatPostDate, getPostBySlug } from "@/lib/posts";
+import { useI18n } from "@/lib/i18n";
 
 export default function BlogPost() {
   const { slug = "" } = useParams();
-  const post = getPostBySlug(slug);
+  const { locale, t } = useI18n();
+  const post = getPostBySlug(slug, locale);
 
   if (!post) {
     return (
@@ -17,14 +19,14 @@ export default function BlogPost() {
           404
         </p>
         <h1 className="my-3 text-5xl font-extrabold leading-none tracking-[-0.055em]">
-          Artigo não encontrado
+          {t('blog.notFoundTitle')}
         </h1>
-        <p>Esse slug não existe ou o texto ainda não foi publicado.</p>
+        <p>{t('blog.notFoundDescription')}</p>
         <Link
           to="/blog"
           className="mt-4 inline-flex text-[#057dbc] underline underline-offset-4"
         >
-          Voltar para o blog
+          {t('blog.backToBlog')}
         </Link>
       </section>
     );
@@ -71,7 +73,7 @@ export default function BlogPost() {
           )}
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.095em] text-[#757575]">
-              POR {author?.name ?? post.author} · {formatPostDate(post.date)} ·{" "}
+              {t('blog.by')} {author?.name ?? post.author} · {formatPostDate(post.date, locale)} ·{" "}
               {post.readingTime}
             </p>
             {author && (
