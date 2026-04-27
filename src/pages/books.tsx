@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
-import { getResponsiveGridClass } from "@/lib/posts";
-import { ExternalLink } from "lucide-react";
+import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { useRef } from "react";
 
 const booksData = [
   {
@@ -18,6 +18,18 @@ const booksData = [
 ];
 
 export default function Books() {
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  function scrollRecommendations(direction: "previous" | "next") {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+
+    carousel.scrollBy({
+      left: direction === "next" ? carousel.clientWidth : -carousel.clientWidth,
+      behavior: "smooth",
+    });
+  }
+
   return (
     <div>
       <section className="border-b border-[#1a1a1a] py-8">
@@ -37,21 +49,42 @@ export default function Books() {
         </p>
       </section>
 
-      <section
-        className="mt-8 bg-black px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.12em] text-white"
-        aria-label="Recomendações"
-      >
-        RECOMENDAÇÕES
-      </section>
+      <div className="mt-8 flex flex-col gap-3 bg-black px-4 py-3 text-white md:flex-row md:items-center md:justify-between">
+        <section
+          className="font-mono text-xs font-bold uppercase tracking-[0.12em]"
+          aria-label="Recomendações"
+        >
+          RECOMENDAÇÕES
+        </section>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            aria-label="Livro anterior"
+            onClick={() => scrollRecommendations("previous")}
+            className="inline-flex size-10 items-center justify-center border border-white transition-colors hover:bg-white hover:text-black"
+          >
+            <ChevronLeft size={18} aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            aria-label="Próximo livro"
+            onClick={() => scrollRecommendations("next")}
+            className="inline-flex size-10 items-center justify-center border border-white transition-colors hover:bg-white hover:text-black"
+          >
+            <ChevronRight size={18} aria-hidden="true" />
+          </button>
+        </div>
+      </div>
 
       <div
-        className={`grid border-b border-l border-[#1a1a1a] ${getResponsiveGridClass(booksData.length)}`}
-        data-testid="books-grid"
+        ref={carouselRef}
+        className="flex snap-x snap-mandatory touch-pan-x cursor-grab overflow-x-auto border-b border-l border-[#1a1a1a] scroll-smooth active:cursor-grabbing"
+        data-testid="books-carousel"
       >
         {booksData.map((book) => (
           <article
             key={book.title}
-            className="border-r border-t border-[#1a1a1a] bg-white p-5"
+            className="min-w-full snap-start border-r border-t border-[#1a1a1a] bg-white p-5 md:min-w-1/2"
           >
             <a
               href={book.amazonLink}

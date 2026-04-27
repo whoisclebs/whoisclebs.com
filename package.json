@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && node scripts/copy-spa-fallback.mjs",
+    "build": "node scripts/generate-rss.mjs && tsc -b && vite build && node scripts/copy-spa-fallback.mjs",
     "lint": "eslint .",
     "test": "vitest run",
     "screenshot": "playwright test -c screenshots/playwright.config.ts",

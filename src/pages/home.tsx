@@ -1,14 +1,19 @@
 import { Link } from "react-router";
 import { PostCard } from "@/components/blog/post-card";
+import { OpenSourceSection } from "@/components/home/open-source-section";
+import { SEO } from "@/components/seo";
 import { Button } from "@/components/ui/button";
 import { getPublishedPosts, getResponsiveGridClass } from "@/lib/posts";
-import { Briefcase, Github, Linkedin, Mail, MapPin } from "lucide-react";
+import { getPublishedTilEntries } from "@/lib/til";
+import { Briefcase, Github, Linkedin, Mail, MapPin, Youtube } from "lucide-react";
 
 const Home: React.FC = () => {
     const posts = getPublishedPosts().slice(0, 3)
+    const tilEntries = getPublishedTilEntries().slice(0, 3)
 
     return (
         <div>
+            <SEO />
             <section className="grid gap-8 border-b border-[#1a1a1a] pb-10 md:grid-cols-[0.95fr_1.25fr] md:items-start">
                 <div className="border-b border-[#1a1a1a] pb-6 md:border-b-0 md:border-r md:pr-8">
                     <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">@WHOISCLEBS</p>
@@ -48,6 +53,18 @@ const Home: React.FC = () => {
                             <Linkedin className="h-4 w-4" />
                             </a>
                         </Button>
+                        <Button variant="outline" size="icon" asChild>
+                            <a href="https://whoisclebs.substack.com" target="_blank" rel="noopener noreferrer" aria-label="Substack">
+                                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="M4 3h16v2.8H4V3Zm0 5.2h16V11H4V8.2Zm0 5.2h16V21l-8-4.4L4 21v-7.6Z" />
+                                </svg>
+                            </a>
+                        </Button>
+                        <Button variant="outline" size="icon" asChild>
+                            <a href="https://www.youtube.com/@whoisclebs" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                                <Youtube className="h-4 w-4" />
+                            </a>
+                        </Button>
                     </div>
                 </div>
                 <div className="max-w-[760px] font-serif text-lg leading-8 md:pt-12 md:text-xl">
@@ -76,6 +93,19 @@ const Home: React.FC = () => {
             <section className="mt-12 bg-black px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.12em] text-white" aria-label="Últimos textos">ÚLTIMOS TEXTOS</section>
             <div className={`grid border-b border-l border-[#1a1a1a] ${getResponsiveGridClass(posts.length)}`}>
                 {posts.map((post) => <PostCard key={post.slug} post={post} />)}
+            </div>
+            <OpenSourceSection />
+            <section className="mt-12 bg-black px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.12em] text-white" aria-label="Today I Learned">TODAY I LEARNED</section>
+            <div className={`grid border-b border-l border-[#1a1a1a] ${getResponsiveGridClass(tilEntries.length)}`}>
+                {tilEntries.map((entry) => (
+                    <article key={entry.slug} className="border-r border-t border-[#1a1a1a] bg-white p-5">
+                        <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">{entry.kicker}</p>
+                        <h2 className="my-2 text-3xl font-extrabold leading-tight tracking-[-0.04em]">
+                            <Link className="transition-colors hover:text-[#057dbc] hover:underline hover:underline-offset-4" to={`/til/${entry.slug}`}>{entry.title}</Link>
+                        </h2>
+                        <p className="font-serif leading-7 text-[#1a1a1a]">{entry.excerpt}</p>
+                    </article>
+                ))}
             </div>
         </div>
     )

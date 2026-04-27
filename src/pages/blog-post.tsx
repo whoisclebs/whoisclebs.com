@@ -1,6 +1,8 @@
 import { Link, useParams } from "react-router";
-import { CodeBlock } from "@/components/blog/code-block";
+import { GiscusComments } from "@/components/blog/giscus-comments";
 import { NewsletterCta } from "@/components/blog/newsletter-cta";
+import { RichContent } from "@/components/blog/rich-content";
+import { SEO } from "@/components/seo";
 import { getAuthorByUsername } from "@/content/authors";
 import { formatPostDate, getPostBySlug } from "@/lib/posts";
 
@@ -32,6 +34,23 @@ export default function BlogPost() {
 
   return (
     <article className="article-container mx-auto max-w-[720px]">
+      <SEO
+        title={post.title}
+        description={post.excerpt}
+        path={`/blog/${post.slug}`}
+        image={post.cover}
+        type="article"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'BlogPosting',
+          headline: post.title,
+          description: post.excerpt,
+          image: post.cover,
+          datePublished: post.date,
+          url: `https://whoisclebs.com/blog/${post.slug}`,
+          author: { '@type': 'Person', name: author?.name ?? post.author },
+        }}
+      />
       <header className="border-b border-[#1a1a1a] py-8">
         <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">
           {post.kicker}
@@ -70,45 +89,10 @@ export default function BlogPost() {
         alt={post.coverAlt}
       />
 
-      <div className="font-serif text-lg leading-8 text-[#1a1a1a]">
-        {post.blocks.map((block, index) => {
-          if (block.type === "paragraph")
-            return (
-              <p key={index} className="mb-6">
-                {block.text}
-              </p>
-            );
-          if (block.type === "heading")
-            return (
-              <h2
-                key={index}
-                className="mb-4 mt-10 font-sans text-3xl font-extrabold leading-tight tracking-[-0.035em]"
-              >
-                {block.text}
-              </h2>
-            );
-          if (block.type === "list") {
-            return (
-              <ul key={index} className="mb-6 list-disc pl-6">
-                {block.items.map((item) => (
-                  <li key={item} className="mb-2">
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            );
-          }
-          return (
-            <CodeBlock
-              key={index}
-              language={block.language}
-              code={block.code}
-            />
-          );
-        })}
-      </div>
+      <RichContent blocks={post.blocks} />
 
       <NewsletterCta />
+      <GiscusComments />
     </article>
   );
 }

@@ -1,4 +1,8 @@
 import { Link } from "react-router";
+import { useState } from "react";
+import { credlyBadges } from "@/content/credly-badges";
+
+const BADGES_PER_PAGE = 6;
 
 const timeline = [
   {
@@ -19,6 +23,14 @@ const timeline = [
 ];
 
 export default function About() {
+  const [badgesPage, setBadgesPage] = useState(1);
+  const totalBadgePages = Math.max(1, Math.ceil(credlyBadges.length / BADGES_PER_PAGE));
+  const currentBadgePage = Math.min(badgesPage, totalBadgePages);
+  const visibleBadges = credlyBadges.slice(
+    (currentBadgePage - 1) * BADGES_PER_PAGE,
+    currentBadgePage * BADGES_PER_PAGE,
+  );
+
   return (
     <div>
       <section className="grid gap-8 border-b border-[#1a1a1a] py-8 md:grid-cols-[1.15fr_0.85fr] md:items-end">
@@ -61,32 +73,85 @@ export default function About() {
         ))}
       </div>
 
-      <section className="mx-auto mt-12 max-w-[720px]">
-        <p className="mb-6 font-serif text-lg leading-8 text-[#1a1a1a]">
-          Minha jornada no mundo da tecnologia começou quando ganhei meu primeiro
-          computador. Naquela época eu queria jogar com amigos e hospedar coisas;
-          sem perceber, comecei a aprender sobre servidores, automação e como a
-          internet realmente funciona.
-        </p>
-        <p className="mb-6 font-serif text-lg leading-8 text-[#1a1a1a]">
-          Hoje continuo amando brincar com servidores, mas faço isso no dia a dia
-          como trabalho. Atuo com aplicações web, APIs, integrações de pagamento,
-          observabilidade e liderança técnica de times.
-        </p>
-        <p className="mb-6 font-serif text-lg leading-8 text-[#1a1a1a]">
-          Quando não estou imerso em código, você provavelmente vai me encontrar
-          explorando mundos em jogos, consumindo universos fantásticos, mexendo
-          em automações ou contribuindo com algum projeto aberto.
-        </p>
+      <section className="mt-12 grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+        <div className="border-t border-[#1a1a1a] pt-6">
+          <p className="mb-6 font-serif text-lg leading-8 text-[#1a1a1a]">
+            Minha jornada no mundo da tecnologia começou quando ganhei meu primeiro
+            computador. Naquela época eu queria jogar com amigos e hospedar coisas;
+            sem perceber, comecei a aprender sobre servidores, automação e como a
+            internet realmente funciona.
+          </p>
+          <p className="mb-6 font-serif text-lg leading-8 text-[#1a1a1a]">
+            Hoje continuo amando brincar com servidores, mas faço isso no dia a dia
+            como trabalho. Atuo com aplicações web, APIs, integrações de pagamento,
+            observabilidade e liderança técnica de times.
+          </p>
+          <p className="font-serif text-lg leading-8 text-[#1a1a1a]">
+            Quando não estou imerso em código, você provavelmente vai me encontrar
+            explorando mundos em jogos, consumindo universos fantásticos, mexendo
+            em automações ou contribuindo com algum projeto aberto.
+          </p>
+        </div>
 
-        <div className="mt-10 border-2 border-[#1a1a1a] p-6">
+        <div className="border-2 border-[#1a1a1a] p-6">
           <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">
             SINAIS PÚBLICOS
           </p>
           <h2 className="mt-2 text-4xl font-extrabold leading-none tracking-[-0.045em]">
             Badges, histórico e colaboração
           </h2>
-          <img src="https://holopin.me/clebsonf" alt="Holopin badges de Clebson" className="my-6 w-full" />
+          <div className="my-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {visibleBadges.map((badge) => (
+              <a
+                key={badge.url}
+                href={badge.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex min-h-[260px] flex-col border border-[#1a1a1a] bg-white p-5 transition-colors hover:bg-[#f9fafb]"
+              >
+                <div className="flex min-h-28 items-center justify-center border-b border-[#e2e8f0] pb-4">
+                  <img
+                    src={badge.image}
+                    alt={badge.name}
+                    className="size-24 object-contain transition-transform duration-150 group-hover:scale-[1.03]"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="flex flex-1 flex-col pt-4">
+                  <p className="font-mono text-[10px] font-bold uppercase leading-4 tracking-[0.08em] text-[#757575]">
+                    {badge.issuer} · {badge.issuedAt}
+                  </p>
+                  <h3 className="mt-2 font-sans text-xl font-extrabold leading-tight tracking-[-0.035em] group-hover:text-[#057dbc] group-hover:underline group-hover:underline-offset-4">
+                    {badge.name}
+                  </h3>
+                  <span className="mt-auto pt-5 font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-[#1a1a1a]">
+                    Ver credencial
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+          <nav className="mb-6 flex flex-col gap-3 border-t border-[#1a1a1a] pt-4 font-mono text-xs uppercase tracking-[0.095em] md:flex-row md:items-center md:justify-between" aria-label="Paginação de badges">
+            <span className="text-[#757575]">Página {currentBadgePage} de {totalBadgePages}</span>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                disabled={currentBadgePage === 1}
+                onClick={() => setBadgesPage((page) => Math.max(1, page - 1))}
+                className="border-2 border-[#1a1a1a] px-4 py-3 transition-colors hover:bg-[#1a1a1a] hover:text-white disabled:border-[#e2e8f0] disabled:text-[#999999] disabled:hover:bg-white disabled:hover:text-[#999999]"
+              >
+                Anterior
+              </button>
+              <button
+                type="button"
+                disabled={currentBadgePage === totalBadgePages}
+                onClick={() => setBadgesPage((page) => Math.min(totalBadgePages, page + 1))}
+                className="border-2 border-[#1a1a1a] px-4 py-3 transition-colors hover:bg-[#1a1a1a] hover:text-white disabled:border-[#e2e8f0] disabled:text-[#999999] disabled:hover:bg-white disabled:hover:text-[#999999]"
+              >
+                Próxima
+              </button>
+            </div>
+          </nav>
           <p className="font-serif leading-7 text-[#1a1a1a]">
             Também coleciono badges no{" "}
             <a

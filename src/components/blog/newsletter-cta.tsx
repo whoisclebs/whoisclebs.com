@@ -1,8 +1,6 @@
-import { useState } from 'react'
+const substackEmbedUrl = 'https://whoisclebs.substack.com/embed?utm_campaign=pub&utm_medium=web'
 
 export function NewsletterCta() {
-  const [submitted, setSubmitted] = useState(false)
-
   return (
     <section className="mt-12 border-2 border-[#1a1a1a] bg-white p-6" aria-labelledby="newsletter-title">
       <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">NEWSLETTER</p>
@@ -10,18 +8,21 @@ export function NewsletterCta() {
       <p className="mt-3 max-w-2xl font-serif leading-7 text-[#1a1a1a]">
         Uma seleção curta sobre arquitetura, frontend, operação e decisões técnicas que sobrevivem ao mundo real.
       </p>
-      <form
-        className="mt-5 grid grid-cols-1 md:grid-cols-[1fr_auto]"
-        onSubmit={(event) => {
-          event.preventDefault()
-          setSubmitted(true)
-        }}
+      <iframe
+        title="Inscrição na Newsletter do Clebs pelo Substack"
+        src={substackEmbedUrl}
+        className="mt-5 h-[250px] w-full overflow-hidden border-0 bg-white md:h-[220px]"
+        loading="lazy"
+        scrolling="no"
+      />
+      <a
+        href="https://whoisclebs.substack.com/?utm_campaign=pub&utm_medium=web"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-4 inline-flex font-mono text-xs uppercase tracking-[0.095em] text-[#057dbc] underline underline-offset-4"
       >
-        <label htmlFor="newsletter-email" className="sr-only">Email</label>
-        <input id="newsletter-email" type="email" placeholder="voce@exemplo.com" className="min-h-12 border-2 border-[#1a1a1a] bg-white px-4 text-base outline-none md:border-r-0" />
-        <button type="submit" className="min-h-12 border-2 border-[#1a1a1a] bg-[#1a1a1a] px-5 font-sans text-sm font-extrabold uppercase tracking-[0.08em] text-white transition-colors hover:bg-white hover:text-[#1a1a1a]">Inscrever</button>
-      </form>
-      {submitted && <p className="mt-3 font-mono text-xs uppercase tracking-[0.08em] text-[#757575]">Inscrição local registrada. Integração da newsletter em breve.</p>}
+        Abrir newsletter no Substack
+      </a>
     </section>
   )
 }

@@ -34,7 +34,7 @@ describe('blog editorial pages', () => {
     renderBlogRoute()
 
     expect(screen.getByRole('heading', { level: 1, name: /engenharia em campo/i })).toBeInTheDocument()
-    expect(screen.getByTestId('recent-post-grid')).toHaveClass('md:grid-cols-2')
+    expect(screen.getByTestId('recent-post-grid')).toHaveClass('md:grid-cols-3')
 
     const articles = screen.getAllByRole('article')
     expect(articles).toHaveLength(getPublishedPosts().length)
@@ -55,7 +55,7 @@ describe('blog editorial pages', () => {
     renderBlogRoute('/blog?page=2')
 
     expect(screen.getAllByRole('article')).toHaveLength(getPublishedPosts().length)
-    expect(screen.getByTestId('recent-post-grid')).toHaveClass('md:grid-cols-2')
+    expect(screen.getByTestId('recent-post-grid')).toHaveClass('md:grid-cols-3')
     expect(screen.getByText(/página 1 de 1/i)).toBeInTheDocument()
   })
 
@@ -68,17 +68,14 @@ describe('blog editorial pages', () => {
     expect(screen.getByText('ARQUITETURA')).toBeInTheDocument()
     expect(screen.getByRole('img', { name: /clebson a. fonseca/i })).toHaveAttribute('src', '/profile/clebson.png')
     expect(screen.getByRole('heading', { name: /Receba notas de engenharia/i })).toBeInTheDocument()
-    expect(screen.getByRole('textbox', { name: /email/i })).toBeInTheDocument()
+    expect(screen.getByTitle(/inscrição na newsletter/i)).toHaveAttribute('src', expect.stringContaining('whoisclebs.substack.com/embed'))
+    expect(screen.getByLabelText(/comentários/i)).toBeInTheDocument()
   })
 
-  it('handles newsletter submit without leaving the static page', async () => {
-    const user = userEvent.setup()
+  it('links to the Substack newsletter', async () => {
     renderBlogRoute('/blog/arquitetura-de-software-sem-teatro')
 
-    await user.type(screen.getByRole('textbox', { name: /email/i }), 'dev@example.com')
-    await user.click(screen.getByRole('button', { name: /inscrever/i }))
-
-    expect(screen.getByText(/integração da newsletter em breve/i)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /abrir newsletter no substack/i })).toHaveAttribute('href', 'https://whoisclebs.substack.com/?utm_campaign=pub&utm_medium=web')
   })
 
   it('renders a friendly not found state for an unknown post slug', () => {
