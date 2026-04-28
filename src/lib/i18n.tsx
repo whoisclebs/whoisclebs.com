@@ -18,6 +18,8 @@ type TranslationKey =
   | 'language.pt'
   | 'language.en'
   | 'footer.madeWith'
+  | 'footer.privacy'
+  | 'footer.terms'
   | 'blog.kicker'
   | 'blog.title'
   | 'blog.description'
@@ -57,6 +59,8 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     'language.pt': 'Português',
     'language.en': 'English',
     'footer.madeWith': 'Feito com Vite, café e decisões explícitas.',
+    'footer.privacy': 'Política de Privacidade',
+    'footer.terms': 'Termos de Uso',
     'blog.kicker': 'BLOG DE ENGENHARIA',
     'blog.title': 'Engenharia em campo',
     'blog.description': 'Notas sobre arquitetura de software, interfaces, operação e decisões técnicas sem verniz corporativo.',
@@ -93,6 +97,8 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     'language.pt': 'Português',
     'language.en': 'English',
     'footer.madeWith': 'Built with Vite, coffee, and explicit decisions.',
+    'footer.privacy': 'Privacy Policy',
+    'footer.terms': 'Terms of Use',
     'blog.kicker': 'ENGINEERING BLOG',
     'blog.title': 'Engineering in the field',
     'blog.description': 'Notes on software architecture, interfaces, operations, and technical decisions without corporate varnish.',

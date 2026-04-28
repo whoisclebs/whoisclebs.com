@@ -26,7 +26,7 @@ function markdownSlugs(directory) {
 
 copyFileSync(appShell, 'dist/404.html')
 
-const staticRoutes = ['about', 'books', 'portfolio', 'hobbies', 'blog', 'til']
+const staticRoutes = ['about', 'books', 'portfolio', 'hobbies', 'blog', 'til', 'privacy-policy', 'terms-of-use']
 for (const route of staticRoutes) copyAppShell(route)
 
 for (const slug of markdownSlugs('src/content/posts')) copyAppShell(join('blog', slug))
