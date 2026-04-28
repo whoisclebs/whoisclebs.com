@@ -15,9 +15,9 @@ export const openSourceProjects: OpenSourceProject[] = [
     technologies: ['Go'],
   },
   {
-    name: 'go.rush',
-    repo: 'https://github.com/whoisclebs/go.rush',
-    docs: 'https://pkg.go.dev/github.com/whoisclebs/go.rush',
+    name: 'golpher',
+    repo: 'https://github.com/go-golpher/golpher',
+    docs: 'https://pkg.go.dev/github.com/go-golpher/golpher',
     problem: 'Micro framework HTTP para Go construído sobre net/http, com roteador simples por método, abstrações de Request/Response, parsing de body em JSON/XML e tratamento centralizado de erros para APIs pequenas e diretas.',
     technologies: ['Go'],
   },

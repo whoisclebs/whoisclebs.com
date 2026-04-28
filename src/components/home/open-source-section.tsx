@@ -22,7 +22,7 @@ const openSourceCopy: Record<Locale, {
     sponsor: 'Sponsor on GitHub Sponsors',
     problems: {
       tuxedo: 'Lightweight, chainable HTTP client for Go, built to reduce net/http boilerplate when assembling requests, setting headers, sending bodies, tracing calls, and decoding JSON responses through a simple API inspired by libraries like Resty.',
-      'go.rush': 'Small Go HTTP micro-framework built on top of net/http, with method-based routing, Request/Response abstractions, JSON/XML body parsing, and centralized error handling for small direct APIs.',
+      golpher: 'Small Go HTTP micro-framework built on top of net/http, with method-based routing, Request/Response abstractions, JSON/XML body parsing, and centralized error handling for small direct APIs.',
     },
   },
 }
