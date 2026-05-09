@@ -1,69 +1,56 @@
 import { openSourceProjects, technologyIcons } from '@/content/open-source'
-import { useI18n, type Locale } from '@/lib/i18n'
-
-const openSourceCopy: Record<Locale, {
-  maintain: string
-  repository: string
-  docs: string
-  sponsor: string
-  problems: Record<string, string>
-}> = {
-  'pt-BR': {
-    maintain: 'MANTENHO',
-    repository: 'Repositório',
-    docs: 'Documentação',
-    sponsor: 'Apoiar no GitHub Sponsors',
-    problems: {},
-  },
-  en: {
-    maintain: 'MAINTAINED BY ME',
-    repository: 'Repository',
-    docs: 'Documentation',
-    sponsor: 'Sponsor on GitHub Sponsors',
-    problems: {
-      tuxedo: 'Lightweight, chainable HTTP client for Go, built to reduce net/http boilerplate when assembling requests, setting headers, sending bodies, tracing calls, and decoding JSON responses through a simple API inspired by libraries like Resty.',
-      golpher: 'Small Go HTTP micro-framework built on top of net/http, with method-based routing, Request/Response abstractions, JSON/XML body parsing, and centralized error handling for small direct APIs.',
-    },
-  },
-}
+import { useI18n } from '@/lib/i18n'
 
 export function OpenSourceSection() {
-  const { locale } = useI18n()
-  const copy = openSourceCopy[locale]
+  const { messages } = useI18n()
+  const copy = messages.openSource
 
   return (
     <section className="mt-12" aria-labelledby="open-source-title">
-      <div className="bg-black px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.12em] text-white">
-        OPEN SOURCE
+      <div className="border-t-2 border-[#1a1a1a] pt-6">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-2xl">
+            <p className="font-mono text-xs font-bold uppercase tracking-[0.12em] text-[#757575]">{copy.kicker}</p>
+            <h2 id="open-source-title" className="mt-2 text-5xl font-extrabold leading-none tracking-[-0.055em]">{copy.title}</h2>
+            <p className="mt-3 font-serif text-lg leading-7 text-[#1a1a1a]">{copy.intro}</p>
+          </div>
+          <a
+            href="https://github.com/sponsors/whoisclebs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center justify-center border-2 border-[#1a1a1a] bg-[#1a1a1a] px-4 font-sans text-xs font-extrabold uppercase tracking-[0.08em] text-white transition-colors hover:bg-white hover:text-[#1a1a1a]"
+          >
+            {copy.sponsor}
+          </a>
+        </div>
       </div>
-      <div className="grid border-b border-l border-[#1a1a1a] md:grid-cols-2">
+
+      <div className="mt-8 grid gap-x-8 gap-y-9 md:grid-cols-2">
         {openSourceProjects.map((project) => (
-          <article key={project.name} className="border-r border-t border-[#1a1a1a] bg-white p-6">
-            <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">{copy.maintain}</p>
-            <h2 id={project.name === 'tuxedo' ? 'open-source-title' : undefined} className="my-3 text-4xl font-extrabold leading-none tracking-[-0.045em]">
-              {project.name}
-            </h2>
-            <p className="mb-5 font-serif leading-7 text-[#1a1a1a]">{copy.problems[project.name] ?? project.problem}</p>
-            <div className="mb-6 flex gap-3">
-              {project.technologies.map((technology) => (
-                <img key={technology} src={technologyIcons[technology]} alt={technology} title={technology} className="size-8 grayscale" />
-              ))}
+          <article key={project.name} className="border-t border-[#1a1a1a] pt-4">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 className="text-4xl font-extrabold leading-none tracking-[-0.045em]">{project.name}</h3>
+                <p className="mt-2 font-mono text-[10px] font-bold uppercase tracking-[0.095em] text-[#757575]">{copy.maintain}</p>
+              </div>
+              <div className="flex shrink-0 gap-2 pt-1">
+                {project.technologies.map((technology) => (
+                  <img key={technology} src={technologyIcons[technology]} alt={technology} title={technology} className="size-6 grayscale" />
+                ))}
+              </div>
             </div>
-            <div className="flex flex-wrap gap-3 font-mono text-xs uppercase tracking-[0.08em]">
+
+            <p className="mt-4 min-h-28 font-serif leading-7 text-[#1a1a1a]">{copy.projects[project.id]}</p>
+
+            <div className="mt-5 flex flex-wrap gap-2 font-mono text-xs uppercase tracking-[0.08em]">
               <a className="border-2 border-[#1a1a1a] px-4 py-3 transition-colors hover:bg-[#1a1a1a] hover:text-white" href={project.repo} target="_blank" rel="noopener noreferrer">{copy.repository}</a>
-              <a className="border-2 border-[#1a1a1a] px-4 py-3 transition-colors hover:bg-[#1a1a1a] hover:text-white" href={project.docs} target="_blank" rel="noopener noreferrer">{copy.docs}</a>
+              {project.docs !== project.repo && (
+                <a className="border-2 border-[#1a1a1a] px-4 py-3 transition-colors hover:bg-[#1a1a1a] hover:text-white" href={project.docs} target="_blank" rel="noopener noreferrer">{copy.docs}</a>
+              )}
             </div>
           </article>
         ))}
       </div>
-      <a
-        href="https://github.com/sponsors/whoisclebs"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-6 inline-flex min-h-12 items-center justify-center border-2 border-[#1a1a1a] bg-[#1a1a1a] px-5 font-sans text-sm font-extrabold uppercase tracking-[0.08em] text-white transition-colors hover:bg-white hover:text-[#1a1a1a]"
-      >
-        {copy.sponsor}
-      </a>
     </section>
   )
 }

@@ -5,12 +5,15 @@ import { describe, expect, it } from 'vitest'
 import Til from './til'
 import TilPost from './til-post'
 import { I18nProvider, i18nStorageKey } from '@/lib/i18n'
+import { ThemeProvider } from '@/lib/theme'
 
 function renderTilRoute(initialEntry: string, route: ReactNode) {
   window.localStorage.setItem(i18nStorageKey, 'pt-BR')
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
-      <I18nProvider>{route}</I18nProvider>
+      <ThemeProvider>
+        <I18nProvider>{route}</I18nProvider>
+      </ThemeProvider>
     </MemoryRouter>,
   )
 }
@@ -24,7 +27,7 @@ describe('today i learned pages', () => {
     )
 
     expect(screen.getByRole('heading', { level: 1, name: /notas de aprendizado/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /docker healthcheck para serviços pequenos/i })).toHaveAttribute('href', '/til/docker-healthcheck-para-servicos')
+    expect(screen.getByRole('link', { name: /docker healthcheck para serviços pequenos/i })).toHaveAttribute('href', '/pt/til/docker-healthcheck-para-servicos')
     expect(screen.getByTestId('til-grid')).toBeInTheDocument()
     expect(screen.getByText(/página 1 de 1/i)).toBeInTheDocument()
     expect(screen.getByText(/próxima página/i)).toBeInTheDocument()

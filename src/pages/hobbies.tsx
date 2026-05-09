@@ -1,49 +1,12 @@
 import { SEO } from '@/components/seo'
 import { boardGames } from '@/content/hobbies'
 import { getResponsiveGridClass } from '@/lib/posts'
-import { useI18n, type Locale } from '@/lib/i18n'
+import { useI18n } from '@/lib/i18n'
 import { Gamepad2, Library, Users } from 'lucide-react'
 
-const hobbiesCopy: Record<Locale, {
-  seoDescription: string
-  title: string
-  description: string
-  cards: Array<{ kicker: string; title: string; text: string }>
-  steamPrefix: string
-  collection: string
-  coverAlt: string
-}> = {
-  'pt-BR': {
-    seoDescription: 'Jogos de tabuleiro, jogos na Steam e literatura no repertório pessoal de Clebson.',
-    title: 'Fora do editor',
-    description: 'Nem tudo precisa virar deploy. Fora do trabalho, eu gosto de jogos de tabuleiro, de explorar a biblioteca da Steam e de manter um pouco de literatura por perto para lembrar que repertório também se constrói longe da tela de código.',
-    cards: [
-      { kicker: 'MESA', title: 'Jogos de tabuleiro', text: 'Gosto da combinação entre estratégia, leitura de mesa e pequenas regras que criam histórias inesperadas.' },
-      { kicker: 'STEAM', title: 'Jogos digitais', text: 'Também jogo na Steam. Meu perfil fica em' },
-      { kicker: 'LITERATURA', title: 'Leitura', text: 'Um pouco de ficção, fantasia e livros que alimentam criatividade — porque nem todo aprendizado vem de documentação técnica.' },
-    ],
-    steamPrefix: 'Também jogo na Steam. Meu perfil fica em',
-    collection: 'COLEÇÃO DE JOGOS DE TABULEIRO',
-    coverAlt: 'Capa do jogo',
-  },
-  en: {
-    seoDescription: 'Board games, Steam games, and literature in Clebson’s personal repertoire.',
-    title: 'Away from the editor',
-    description: 'Not everything needs to become a deploy. Outside work, I like board games, exploring my Steam library, and keeping literature nearby as a reminder that repertoire is also built away from the code editor.',
-    cards: [
-      { kicker: 'TABLE', title: 'Board games', text: 'I like the mix of strategy, reading the table, and small rules that create unexpected stories.' },
-      { kicker: 'STEAM', title: 'Digital games', text: 'I also play on Steam. My profile is at' },
-      { kicker: 'LITERATURE', title: 'Reading', text: 'Some fiction, fantasy, and books that feed creativity — because not every lesson comes from technical documentation.' },
-    ],
-    steamPrefix: 'I also play on Steam. My profile is at',
-    collection: 'BOARD GAME COLLECTION',
-    coverAlt: 'Game cover for',
-  },
-}
-
 export default function Hobbies() {
-  const { locale } = useI18n()
-  const copy = hobbiesCopy[locale]
+  const { messages } = useI18n()
+  const copy = messages.hobbies
 
   return (
     <div>

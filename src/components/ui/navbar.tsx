@@ -1,7 +1,9 @@
 import React from 'react'
 import { Link, NavLink } from 'react-router'
-import { Menu, X } from 'lucide-react'
+import { Menu, Moon, Sun, X } from 'lucide-react'
 import { useI18n, type Locale } from '@/lib/i18n'
+import { useTheme } from '@/lib/theme'
+import { useLocalizedPath } from '@/lib/use-localized-path'
 
 const navigationItems = [
   { to: '/', labelKey: 'nav.home' },
@@ -14,6 +16,23 @@ const navigationItems = [
 ] as const
 
 const locales: Locale[] = ['pt-BR', 'en']
+
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme()
+  const label = theme === 'dark' ? 'Usar tema claro' : 'Usar tema escuro'
+
+  return (
+    <button
+      type="button"
+      className="inline-flex size-10 items-center justify-center border border-[#1a1a1a] bg-white transition-colors hover:bg-[#1a1a1a] hover:text-white"
+      aria-label={label}
+      aria-pressed={theme === 'dark'}
+      onClick={toggleTheme}
+    >
+      {theme === 'dark' ? <Sun size={16} aria-hidden="true" /> : <Moon size={16} aria-hidden="true" />}
+    </button>
+  )
+}
 
 function LanguageSelect() {
   const { locale, setLocale, t } = useI18n()
@@ -37,9 +56,10 @@ function LanguageSelect() {
 
 function NavigationLinks({ onClick }: { onClick?: () => void }) {
   const { t } = useI18n()
+  const localizedPath = useLocalizedPath()
 
   return navigationItems.map((item) => (
-    <NavLink key={item.to} to={item.to} onClick={onClick} className={({ isActive }) => isActive ? 'font-medium' : ''}>
+    <NavLink key={item.to} to={localizedPath(item.to)} onClick={onClick} className={({ isActive }) => isActive ? 'font-medium' : ''}>
       {t(item.labelKey)}
     </NavLink>
   ))
@@ -48,12 +68,14 @@ function NavigationLinks({ onClick }: { onClick?: () => void }) {
 const Navbar: React.FC = () => {
   const [open, setOpen] = React.useState(false)
   const { t } = useI18n()
+  const localizedPath = useLocalizedPath()
 
   return (
     <header className="sticky top-0 z-50 border-b border-[#1a1a1a] bg-white/90 backdrop-blur-md">
       <div className="mx-auto flex min-h-16 w-full max-w-[1280px] items-center justify-between gap-6 px-4 md:px-6">
-        <Link to="/" className="text-xl font-extrabold tracking-[-0.04em] md:text-2xl">whoisclebs.com</Link>
+        <Link to={localizedPath('/')} className="text-xl font-extrabold tracking-[-0.04em] md:text-2xl">Clebson Augusto</Link>
         <div className="flex items-center gap-3 md:hidden">
+          <ThemeToggle />
           <LanguageSelect />
           <button
             type="button"
@@ -67,6 +89,7 @@ const Navbar: React.FC = () => {
         </div>
         <nav className="hidden flex-wrap items-center gap-4 font-mono text-xs uppercase tracking-[0.1em] md:flex" aria-label={t('nav.primary')}>
           <NavigationLinks />
+          <ThemeToggle />
           <LanguageSelect />
         </nav>
       </div>

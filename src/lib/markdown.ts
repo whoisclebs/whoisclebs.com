@@ -4,6 +4,11 @@ export type MarkdownBlock =
   | { type: "list"; items: string[] }
   | { type: "code"; language: string; code: string };
 
+export type TableOfContentsItem = {
+  id: string;
+  text: string;
+};
+
 export function parseFrontmatter(raw: string): { metadata: Record<string, string>; body: string } {
   const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
 
@@ -81,4 +86,32 @@ export function parseMarkdownBlocks(markdown: string): MarkdownBlock[] {
 
   pushParagraph(blocks, paragraphLines);
   return blocks;
+}
+
+function slugifyHeading(text: string): string {
+  const slug = text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return slug || "section";
+}
+
+export function buildTableOfContents(blocks: MarkdownBlock[]): TableOfContentsItem[] {
+  const counts = new Map<string, number>();
+
+  return blocks
+    .filter((block): block is Extract<MarkdownBlock, { type: "heading" }> => block.type === "heading")
+    .map((block) => {
+      const baseId = slugifyHeading(block.text);
+      const count = counts.get(baseId) ?? 0;
+      counts.set(baseId, count + 1);
+
+      return {
+        id: count === 0 ? baseId : `${baseId}-${count + 1}`,
+        text: block.text,
+      };
+    });
 }

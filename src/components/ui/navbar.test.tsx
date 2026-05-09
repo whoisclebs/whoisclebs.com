@@ -4,13 +4,16 @@ import { MemoryRouter } from 'react-router'
 import { beforeEach, describe, expect, it } from 'vitest'
 import Navbar from './navbar'
 import { I18nProvider, i18nStorageKey } from '@/lib/i18n'
+import { ThemeProvider, themeStorageKey } from '@/lib/theme'
 
 function renderNavbar() {
   return render(
     <MemoryRouter>
-      <I18nProvider>
-        <Navbar />
-      </I18nProvider>
+      <ThemeProvider>
+        <I18nProvider>
+          <Navbar />
+        </I18nProvider>
+      </ThemeProvider>
     </MemoryRouter>,
   )
 }
@@ -19,6 +22,8 @@ describe('navbar', () => {
   beforeEach(() => {
     window.localStorage.clear()
     window.localStorage.setItem(i18nStorageKey, 'pt-BR')
+    document.documentElement.classList.remove('dark')
+    document.documentElement.style.colorScheme = ''
   })
 
   it('orders desktop navigation links', () => {
@@ -45,5 +50,16 @@ describe('navbar', () => {
     expect(window.localStorage.getItem(i18nStorageKey)).toBe('en')
     expect(screen.getByLabelText('Primary')).toBeInTheDocument()
     expect(document.documentElement.lang).toBe('en')
+  })
+
+  it('toggles and persists dark mode', async () => {
+    const user = userEvent.setup()
+    renderNavbar()
+
+    await user.click(screen.getAllByRole('button', { name: /usar tema escuro/i })[0])
+
+    expect(window.localStorage.getItem(themeStorageKey)).toBe('dark')
+    expect(document.documentElement).toHaveClass('dark')
+    expect(screen.getAllByRole('button', { name: /usar tema claro/i })[0]).toHaveAttribute('aria-pressed', 'true')
   })
 })

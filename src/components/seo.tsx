@@ -10,8 +10,9 @@ type SeoProps = {
 }
 
 const siteUrl = 'https://whoisclebs.com'
-const defaultTitle = 'whoisclebs.com — Engenharia de software sem teatro'
-const defaultDescription = 'Blog e portfolio de Clebson A. Fonseca sobre engenharia de software, arquitetura, pagamentos, frontend e operação.'
+const siteName = 'Clebson Augusto'
+const defaultTitle = 'Clebson Augusto - Engenharia de software sem teatro'
+const defaultDescription = 'Blog e portfolio de Clebson A. Fonseca sobre engenharia de software, arquitetura, pagamentos, frontend e operacao.'
 const defaultImage = '/profile/clebson.png'
 
 function upsertMeta(selector: string, attributes: Record<string, string>) {
@@ -29,7 +30,7 @@ function upsertMeta(selector: string, attributes: Record<string, string>) {
 
 export function SEO({ title, description, path = '/', image = defaultImage, type = 'website', jsonLd }: SeoProps) {
   useEffect(() => {
-    const resolvedTitle = title ? `${title} — whoisclebs.com` : defaultTitle
+    const resolvedTitle = title ? `${title} - ${siteName}` : defaultTitle
     const resolvedDescription = description ?? defaultDescription
     const canonical = `${siteUrl}${path}`
     const imageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`
@@ -60,7 +61,7 @@ export function SEO({ title, description, path = '/', image = defaultImage, type
       name: 'Clebson A. Fonseca',
       url: siteUrl,
       image: `${siteUrl}/profile/clebson.png`,
-      sameAs: ['https://github.com/whoisclebs', 'https://linkedin.com/in/whoisclebs'],
+      sameAs: ['https://github.com/whoisclebs', 'https://linkedin.com/in/whoisclebs', 'https://dribbble.com/whoisclebs'],
       jobTitle: 'Software Engineer',
     })
   }, [description, image, jsonLd, path, title, type])
