@@ -2,10 +2,12 @@ import { PostCard } from '@/components/blog/post-card'
 import { Link, useSearchParams } from 'react-router'
 import { getBalancedEditorialGridItemClass, getPublishedPosts, paginatePosts } from '@/lib/posts'
 import { useI18n } from '@/lib/i18n'
+import { useLocalizedPath } from '@/lib/use-localized-path'
 
 export default function Blog() {
   const [searchParams] = useSearchParams()
   const { locale, t, format } = useI18n()
+  const localizedPath = useLocalizedPath()
   const posts = getPublishedPosts(locale)
   const requestedPage = Number(searchParams.get('page') ?? '1')
   const pagination = paginatePosts(posts, requestedPage)
@@ -38,14 +40,14 @@ export default function Blog() {
         <span className="text-[#757575]">{format('blog.pageStatus', { current: pagination.currentPage, total: pagination.totalPages })}</span>
         <div className="flex gap-3">
           {pagination.hasPreviousPage ? (
-            <Link className="border-2 border-[#1a1a1a] px-4 py-3 transition-colors hover:bg-[#1a1a1a] hover:text-white" to={`/blog?page=${pagination.currentPage - 1}`}>
+            <Link className="border-2 border-[#1a1a1a] px-4 py-3 transition-colors hover:bg-[#1a1a1a] hover:text-white" to={localizedPath(`/blog?page=${pagination.currentPage - 1}`)}>
               {t('blog.previousPage')}
             </Link>
           ) : (
             <span className="border-2 border-[#e2e8f0] px-4 py-3 text-[#999999]">{t('blog.previousPage')}</span>
           )}
           {pagination.hasNextPage ? (
-            <Link className="border-2 border-[#1a1a1a] px-4 py-3 transition-colors hover:bg-[#1a1a1a] hover:text-white" to={`/blog?page=${pagination.currentPage + 1}`}>
+            <Link className="border-2 border-[#1a1a1a] px-4 py-3 transition-colors hover:bg-[#1a1a1a] hover:text-white" to={localizedPath(`/blog?page=${pagination.currentPage + 1}`)}>
               {t('blog.nextPage')}
             </Link>
           ) : (

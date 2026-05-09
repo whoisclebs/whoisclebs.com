@@ -1,49 +1,11 @@
 import { Link } from 'react-router'
-import { useI18n, type Locale } from '@/lib/i18n'
-
-const portfolioCopy: Record<Locale, {
-  title: string
-  description: string
-  areasLabel: string
-  availability: string
-  ctaTitle: string
-  ctaText: string
-  ctaLink: string
-  projects: Array<{ name: string; kicker: string; summary: string; stack: string }>
-}> = {
-  'pt-BR': {
-    title: 'Trabalho aplicado em software real',
-    description: 'Uma seleção editorial das áreas onde costumo atuar: arquitetura, frontend, integrações de pagamento e operação de sistemas.',
-    areasLabel: 'Áreas de atuação',
-    availability: 'DISPONIBILIDADE',
-    ctaTitle: 'Vamos transformar contexto em entrega?',
-    ctaText: 'Posso ajudar em revisão técnica, desenho de arquitetura, estratégia de frontend, integrações e liderança técnica de times.',
-    ctaLink: 'Conheça minha história',
-    projects: [
-      { name: 'Arquitetura para plataformas de pagamento', kicker: 'PAGAMENTOS', summary: 'Desenho de integrações, antifraude, 3DS e conciliação para fluxos de checkout com alto impacto operacional.', stack: 'Java · Spring Boot · Node.js · Mensageria · Observabilidade' },
-      { name: 'Sistemas web para operação e produto', kicker: 'FRONTEND', summary: 'Interfaces React, Angular e Vue com contratos pequenos, componentes testáveis e foco em legibilidade de estado.', stack: 'React · Angular · Vue · TypeScript · Design Systems' },
-      { name: 'Automação e confiabilidade de runtime', kicker: 'OPERAÇÃO', summary: 'Containers, pipelines e práticas de suporte ao dia dois para reduzir incerteza em deploys e incidentes.', stack: 'Docker · CI/CD · Linux · Logs · Métricas' },
-    ],
-  },
-  en: {
-    title: 'Applied work in real software',
-    description: 'An editorial selection of the areas where I usually work: architecture, frontend, payment integrations, and system operations.',
-    areasLabel: 'Areas of work',
-    availability: 'AVAILABILITY',
-    ctaTitle: 'Shall we turn context into delivery?',
-    ctaText: 'I can help with technical reviews, architecture design, frontend strategy, integrations, and technical leadership for teams.',
-    ctaLink: 'Read my story',
-    projects: [
-      { name: 'Architecture for payment platforms', kicker: 'PAYMENTS', summary: 'Integration, anti-fraud, 3DS, and reconciliation design for checkout flows with high operational impact.', stack: 'Java · Spring Boot · Node.js · Messaging · Observability' },
-      { name: 'Web systems for operations and product', kicker: 'FRONTEND', summary: 'React, Angular, and Vue interfaces with small contracts, testable components, and readable state management.', stack: 'React · Angular · Vue · TypeScript · Design Systems' },
-      { name: 'Runtime automation and reliability', kicker: 'OPERATIONS', summary: 'Containers, pipelines, and day-two practices to reduce uncertainty in deployments and incidents.', stack: 'Docker · CI/CD · Linux · Logs · Metrics' },
-    ],
-  },
-}
+import { useI18n } from '@/lib/i18n'
+import { useLocalizedPath } from '@/lib/use-localized-path'
 
 export default function Portfolio() {
-  const { locale } = useI18n()
-  const copy = portfolioCopy[locale]
+  const { messages } = useI18n()
+  const localizedPath = useLocalizedPath()
+  const copy = messages.portfolio
 
   return (
     <div>
@@ -77,7 +39,7 @@ export default function Portfolio() {
           </p>
         </div>
         <Link
-          to="/about"
+          to={localizedPath('/about')}
           className="inline-flex min-h-12 items-center justify-center border-2 border-[#1a1a1a] bg-[#1a1a1a] px-6 font-sans text-sm font-extrabold uppercase tracking-[0.08em] text-white transition-colors hover:bg-white hover:text-[#1a1a1a]"
         >
           {copy.ctaLink}

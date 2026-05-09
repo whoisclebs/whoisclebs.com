@@ -1,39 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { useRef } from "react";
-import { useI18n, type Locale } from "@/lib/i18n";
-
-const booksCopy: Record<Locale, {
-  kicker: string
-  title: string
-  description: string
-  affiliate: string
-  recommendations: string
-  previous: string
-  next: string
-  book: string
-}> = {
-  'pt-BR': {
-    kicker: 'LEITURAS',
-    title: 'Biblioteca de engenharia',
-    description: 'Livros que recomendo para desenvolvedores que querem melhorar código, criatividade e repertório técnico.',
-    affiliate: 'Nota: Links afiliados Amazon. Ao comprar por esses links, você ajuda a manter artigos, código aberto e novos conteúdos.',
-    recommendations: 'RECOMENDAÇÕES',
-    previous: 'Livro anterior',
-    next: 'Próximo livro',
-    book: 'LIVRO',
-  },
-  en: {
-    kicker: 'READING',
-    title: 'Engineering library',
-    description: 'Books I recommend for developers who want to improve code, creativity, and technical repertoire.',
-    affiliate: 'Note: Amazon affiliate links. Buying through these links helps support articles, open source, and new content.',
-    recommendations: 'RECOMMENDATIONS',
-    previous: 'Previous book',
-    next: 'Next book',
-    book: 'BOOK',
-  },
-}
+import { useI18n } from "@/lib/i18n";
 
 const booksData = [
   {
@@ -52,8 +20,8 @@ const booksData = [
 
 export default function Books() {
   const carouselRef = useRef<HTMLDivElement>(null);
-  const { locale } = useI18n()
-  const copy = booksCopy[locale]
+  const { messages } = useI18n()
+  const copy = messages.books
 
   function scrollRecommendations(direction: "previous" | "next") {
     const carousel = carouselRef.current;

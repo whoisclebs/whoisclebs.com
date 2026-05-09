@@ -1,7 +1,13 @@
 import { useEffect, useRef } from 'react'
+import { useTheme } from '@/lib/theme'
+
+function getGiscusTheme(theme: 'light' | 'dark') {
+  return theme === 'dark' ? 'transparent_dark' : 'light'
+}
 
 export function GiscusComments() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const { theme } = useTheme()
 
   useEffect(() => {
     const container = containerRef.current
@@ -20,13 +26,24 @@ export function GiscusComments() {
     script.setAttribute('data-reactions-enabled', '1')
     script.setAttribute('data-emit-metadata', '0')
     script.setAttribute('data-input-position', 'bottom')
-    script.setAttribute('data-theme', 'light')
+    script.setAttribute('data-theme', getGiscusTheme(theme))
     script.setAttribute('data-lang', 'pt')
     script.setAttribute('data-loading', 'lazy')
 
     container.dataset.loaded = 'true'
     container.appendChild(script)
-  }, [])
+  }, [theme])
+
+  useEffect(() => {
+    const iframe = containerRef.current?.querySelector<HTMLIFrameElement>('iframe.giscus-frame')
+    iframe?.contentWindow?.postMessage({
+      giscus: {
+        setConfig: {
+          theme: getGiscusTheme(theme),
+        },
+      },
+    }, 'https://giscus.app')
+  }, [theme])
 
   return (
     <section className="mt-12 border-t border-[#1a1a1a] pt-8" aria-label="Comentários">

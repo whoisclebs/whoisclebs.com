@@ -1,94 +1,12 @@
 import { useState } from "react";
 import { credlyBadges } from "@/content/credly-badges";
-import { useI18n, type Locale } from "@/lib/i18n";
+import { useI18n } from "@/lib/i18n";
 
 const BADGES_PER_PAGE = 6;
 
-const aboutCopy: Record<Locale, {
-  kicker: string
-  title: string
-  intro: string
-  journey: string
-  timeline: Array<{ label: string; title: string; text: string }>
-  paragraphs: string[]
-  dndAlt: string
-  badgesText: string
-  credential: string
-  badgesPagination: string
-  pageStatus: (current: number, total: number) => string
-  previous: string
-  next: string
-  sideProject: string
-  mdParagraphs: string[]
-  mdLink: string
-}> = {
-  'pt-BR': {
-    kicker: 'SOBRE',
-    title: 'Quem é Clebson?',
-    intro: 'Eu criei e quebrei coisas na internet por mais de 10 anos: blogs, jogos, artigos, comunidades, produtos e startups. Hoje transformo esse repertório em engenharia de software para problemas reais.',
-    journey: 'TRAJETÓRIA',
-    timeline: [
-      { label: '2012', title: 'Primeiros servidores', text: 'Meu primeiro computador abriu a porta para blogs, jogos, comunidades e uma briga honesta com PHP e Apache.' },
-      { label: '10+ ANOS', title: 'Produto, web e operação', text: 'Desde então, criei e quebrei coisas na internet, colaborei com projetos e aprendi a gostar do dia dois dos sistemas.' },
-      { label: 'HOJE', title: 'Engenharia aplicada', text: 'Trabalho como desenvolvedor fullstack e líder técnico, conectando frontend, backend, DevOps e decisões de arquitetura.' },
-    ],
-    paragraphs: [
-      'Minha jornada no mundo da tecnologia começou quando ganhei meu primeiro computador. Naquela época eu queria jogar com amigos e hospedar coisas; sem perceber, comecei a aprender sobre servidores, automação e como a internet realmente funciona.',
-      'Hoje continuo amando brincar com servidores, mas faço isso no dia a dia como trabalho. Atuo com aplicações web, APIs, integrações de pagamento, observabilidade e liderança técnica de times.',
-      'Quando não estou imerso em código, você provavelmente vai me encontrar explorando mundos em jogos, consumindo universos fantásticos, mexendo em automações ou contribuindo com algum projeto aberto.',
-    ],
-    dndAlt: 'Clebson em uma aventura pixel art de RPG concluindo uma quest',
-    badgesText: 'Sou uma pessoa que ama coleções, e uma dessas minhas coleções atuais são as badges no',
-    credential: 'Ver credencial',
-    badgesPagination: 'Paginação de badges',
-    pageStatus: (current, total) => `Página ${current} de ${total}`,
-    previous: 'Anterior',
-    next: 'Próxima',
-    sideProject: 'SIDE PROJECT',
-    mdParagraphs: [
-      'Meeple & Decks é uma comunidade com marketplace e catálogo para boardgames e TCGs, misturando elementos de fórum, acervo e loja.',
-      'A ideia é criar um espaço para jogadores, colecionadores e comunidades conversarem sobre boardgames, TCGs, coleções, partidas, reviews, dúvidas e recomendações. Também quero incluir uma área para compra e venda de jogos de tabuleiro, cartas, acessórios e produtos relacionados ao hobby.',
-      'O acervo será um registro organizado de jogos de tabuleiro e cartas, parecido com uma base de dados. Ele não precisa hospedar todo o conteúdo visual ou editorial dos jogos; o foco é manter informações estruturadas para o universo de jogos de tabuleiro e TCG.',
-      'Vou fazer um build in public dele: registrar decisões, aprendizados, experimentos e bastidores enquanto o projeto evolui.',
-    ],
-    mdLink: 'Conhecer Meeple & Decks',
-  },
-  en: {
-    kicker: 'ABOUT',
-    title: 'Who is Clebson?',
-    intro: 'I have built and broken things on the internet for more than 10 years: blogs, games, articles, communities, products, and startups. Today I turn that repertoire into software engineering for real problems.',
-    journey: 'JOURNEY',
-    timeline: [
-      { label: '2012', title: 'First servers', text: 'My first computer opened the door to blogs, games, communities, and an honest fight with PHP and Apache.' },
-      { label: '10+ YEARS', title: 'Product, web, and operations', text: 'Since then, I have built and broken things online, contributed to projects, and learned to appreciate day two of systems.' },
-      { label: 'TODAY', title: 'Applied engineering', text: 'I work as a fullstack developer and technical lead, connecting frontend, backend, DevOps, and architecture decisions.' },
-    ],
-    paragraphs: [
-      'My journey in technology started when I got my first computer. Back then I wanted to play with friends and host things; without noticing, I started learning about servers, automation, and how the internet really works.',
-      'I still love playing with servers, but now I do it professionally. I work with web applications, APIs, payment integrations, observability, and technical leadership.',
-      'When I am not immersed in code, you will probably find me exploring game worlds, consuming fantasy universes, tinkering with automation, or contributing to an open project.',
-    ],
-    dndAlt: 'Clebson in a pixel art RPG adventure completing a quest',
-    badgesText: 'I love collections, and one of my current collections is badges on',
-    credential: 'View credential',
-    badgesPagination: 'Badge pagination',
-    pageStatus: (current, total) => `Page ${current} of ${total}`,
-    previous: 'Previous',
-    next: 'Next',
-    sideProject: 'SIDE PROJECT',
-    mdParagraphs: [
-      'Meeple & Decks is a community with a marketplace and catalog for board games and TCGs, mixing forum, collection, and store elements.',
-      'The idea is to create a space for players, collectors, and communities to talk about board games, TCGs, collections, matches, reviews, questions, and recommendations. I also want to include an area for buying and selling board games, cards, accessories, and hobby-related products.',
-      'The catalog will be an organized record of board and card games, similar to a database. It does not need to host all visual or editorial content from games; the focus is keeping structured information for the board game and TCG universe.',
-      'I will build it in public: registering decisions, learnings, experiments, and behind-the-scenes notes as the project evolves.',
-    ],
-    mdLink: 'Visit Meeple & Decks',
-  },
-};
-
 export default function About() {
-  const { locale } = useI18n()
-  const copy = aboutCopy[locale]
+  const { messages } = useI18n()
+  const copy = messages.about
   const [badgesPage, setBadgesPage] = useState(1);
   const totalBadgePages = Math.max(1, Math.ceil(credlyBadges.length / BADGES_PER_PAGE));
   const currentBadgePage = Math.min(badgesPage, totalBadgePages);
@@ -96,6 +14,9 @@ export default function About() {
     (currentBadgePage - 1) * BADGES_PER_PAGE,
     currentBadgePage * BADGES_PER_PAGE,
   );
+  const badgePageStatus = copy.pageStatus
+    .replace('{current}', String(currentBadgePage))
+    .replace('{total}', String(totalBadgePages))
 
   return (
     <div>
@@ -196,7 +117,7 @@ export default function About() {
             ))}
           </div>
           <nav className="mb-6 flex flex-col gap-3 border-t border-[#1a1a1a] pt-4 font-mono text-xs uppercase tracking-[0.095em] md:flex-row md:items-center md:justify-between" aria-label={copy.badgesPagination}>
-            <span className="text-[#757575]">{copy.pageStatus(currentBadgePage, totalBadgePages)}</span>
+            <span className="text-[#757575]">{badgePageStatus}</span>
             <div className="flex gap-3">
               <button
                 type="button"

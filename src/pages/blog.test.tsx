@@ -6,18 +6,21 @@ import Blog from './blog'
 import BlogPost from './blog-post'
 import { BLOG_POSTS_PER_PAGE, getPublishedPosts } from '@/lib/posts'
 import { I18nProvider, i18nStorageKey } from '@/lib/i18n'
+import { ThemeProvider } from '@/lib/theme'
 
 const clipboardWrite = vi.fn()
 
 function renderBlogRoute(initialEntry = '/blog') {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
-      <I18nProvider>
-        <Routes>
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
-        </Routes>
-      </I18nProvider>
+      <ThemeProvider>
+        <I18nProvider>
+          <Routes>
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+          </Routes>
+        </I18nProvider>
+      </ThemeProvider>
     </MemoryRouter>,
   )
 }
@@ -47,7 +50,7 @@ describe('blog editorial pages', () => {
     for (const post of getPublishedPosts().slice(0, BLOG_POSTS_PER_PAGE)) {
       const tile = screen.getByTestId(`post-card-${post.slug}`)
       expect(within(tile).getByText(post.kicker)).toBeInTheDocument()
-      expect(within(tile).getByRole('link', { name: post.title })).toHaveAttribute('href', `/blog/${post.slug}`)
+      expect(within(tile).getByRole('link', { name: post.title })).toHaveAttribute('href', `/pt/blog/${post.slug}`)
       expect(within(tile).getByText(post.excerpt)).toBeInTheDocument()
       expect(within(tile).getByText((content) => content.includes(post.readingTime))).toBeInTheDocument()
     }
@@ -77,8 +80,13 @@ describe('blog editorial pages', () => {
     expect(screen.getByRole('heading', { level: 1, name: /Arquitetura de software sem teatro/i })).toBeInTheDocument()
     expect(screen.getByText('ARQUITETURA')).toBeInTheDocument()
     expect(screen.getByRole('img', { name: /clebson a. fonseca/i })).toHaveAttribute('src', '/profile/clebson.png')
+    expect(screen.getByRole('link', { name: /github/i })).toHaveAttribute('href', 'https://github.com/whoisclebs')
+    expect(screen.getByRole('link', { name: /youtube/i })).toHaveAttribute('href', 'https://www.youtube.com/@whoisclebs')
+    expect(screen.getByRole('link', { name: /dribbble/i })).toHaveAttribute('href', 'https://dribbble.com/whoisclebs')
+    expect(screen.getByRole('navigation', { name: /neste texto/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /Receba notas de engenharia/i })).toBeInTheDocument()
-    expect(screen.getByTitle(/inscrição na newsletter/i)).toHaveAttribute('src', expect.stringContaining('whoisclebs.substack.com/embed'))
+    expect(screen.getByRole('form', { name: /inscrição na newsletter/i })).toHaveAttribute('action', 'https://whoisclebs.substack.com/api/v1/free?nojs=true')
+    expect(screen.getByRole('button', { name: /assinar/i })).toBeInTheDocument()
     expect(screen.getByLabelText(/comentários/i)).toBeInTheDocument()
   })
 
@@ -88,11 +96,22 @@ describe('blog editorial pages', () => {
     expect(screen.getByRole('link', { name: /abrir newsletter no substack/i })).toHaveAttribute('href', 'https://whoisclebs.substack.com/?utm_campaign=pub&utm_medium=web')
   })
 
+  it('localizes the newsletter CTA in English', () => {
+    window.localStorage.setItem(i18nStorageKey, 'en')
+    renderBlogRoute('/blog/arquitetura-de-software-sem-teatro')
+
+    expect(screen.getByRole('heading', { name: /get engineering notes/i })).toBeInTheDocument()
+    expect(screen.getByRole('form', { name: /newsletter subscription/i })).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('you@example.com')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /subscribe/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /open newsletter on substack/i })).toHaveAttribute('href', 'https://whoisclebs.substack.com/?utm_campaign=pub&utm_medium=web')
+  })
+
   it('renders a friendly not found state for an unknown post slug', () => {
     renderBlogRoute('/blog/slug-inexistente')
 
     expect(screen.getByRole('heading', { name: /artigo não encontrado/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /voltar para o blog/i })).toHaveAttribute('href', '/blog')
+    expect(screen.getByRole('link', { name: /voltar para o blog/i })).toHaveAttribute('href', '/pt/blog')
   })
 
   it('shows language metadata and copies code block content', async () => {

@@ -17,17 +17,19 @@ describe('editorial secondary pages', () => {
     window.localStorage.setItem(i18nStorageKey, 'pt-BR')
   })
 
-  it('connects the home work CTA to the local portfolio route', () => {
+  it('renders the minimal home with open source projects and latest writing', () => {
     render(
       <MemoryRouter>
         {withI18n(<Home />)}
       </MemoryRouter>,
     )
 
-    expect(screen.getByRole('link', { name: /conheça meu trabalho/i })).toHaveAttribute('href', '/portfolio')
+    expect(screen.queryByRole('link', { name: /conheca meu trabalho/i })).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /tuxedo/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /seishin engine/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /rsgit/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /apoiar no github sponsors/i })).toHaveAttribute('href', 'https://github.com/sponsors/whoisclebs')
-    expect(screen.getByRole('link', { name: /docker healthcheck para serviços pequenos/i })).toHaveAttribute('href', '/til/docker-healthcheck-para-servicos')
+    expect(screen.getByRole('link', { name: /docker healthcheck para/i })).toHaveAttribute('href', '/pt/til/docker-healthcheck-para-servicos')
   })
 
   it('renders the portfolio page in editorial sections', () => {
@@ -56,7 +58,7 @@ describe('editorial secondary pages', () => {
     expect(screen.getByRole('heading', { level: 1, name: /biblioteca de engenharia/i })).toBeInTheDocument()
     expect(screen.getByTestId('books-carousel')).toHaveClass('overflow-x-auto')
     expect(screen.getByRole('button', { name: /livro anterior/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /próximo livro/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /pr.ximo livro/i })).toBeInTheDocument()
     expect(screen.getAllByRole('article')).toHaveLength(2)
     expect(screen.getByText(/links afiliados amazon/i)).toBeInTheDocument()
   })

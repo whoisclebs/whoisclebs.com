@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { beforeEach, describe, expect, it } from 'vitest'
-import Home from './home'
 import Hobbies from './hobbies'
 import { I18nProvider, i18nStorageKey } from '@/lib/i18n'
 
@@ -31,15 +30,4 @@ describe('hobbies page', () => {
     expect(screen.getByRole('heading', { name: /stella/i })).toBeInTheDocument()
   })
 
-  it('shows YouTube alongside social icons on home', () => {
-    render(
-      <MemoryRouter>
-        <I18nProvider>
-          <Home />
-        </I18nProvider>
-      </MemoryRouter>,
-    )
-
-    expect(screen.getByRole('link', { name: /youtube/i })).toHaveAttribute('href', 'https://www.youtube.com/@whoisclebs')
-  })
 })

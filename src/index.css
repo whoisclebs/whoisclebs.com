@@ -10,8 +10,22 @@
 }
 
 @layer base {
+  :root {
+    --dark-bg: #11100f;
+    --dark-surface: #191715;
+    --dark-surface-strong: #24211e;
+    --dark-text: #eee8df;
+    --dark-muted: #aaa196;
+    --dark-border: #3b352f;
+    --dark-accent: #8ecdf7;
+  }
+
   html {
     background: #ffffff;
+  }
+
+  html.dark {
+    background: var(--dark-bg);
   }
 
   body {
@@ -21,5 +35,95 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+
+  html.dark body {
+    background: var(--dark-bg);
+    color: var(--dark-text);
+  }
+}
+
+@layer utilities {
+  .dark .bg-white,
+  .dark .bg-white\/90 {
+    background-color: rgb(25 23 21 / var(--tw-bg-opacity, 1));
+  }
+
+  .dark .bg-white\/90 {
+    background-color: rgb(17 16 15 / 0.9);
+  }
+
+  .dark .bg-black,
+  .dark .bg-\[\#1a1a1a\] {
+    background-color: var(--dark-surface-strong);
+  }
+
+  .dark .bg-\[\#111111\] {
+    background-color: #151311;
+  }
+
+  .dark .text-\[\#1a1a1a\],
+  .dark .text-black {
+    color: var(--dark-text);
+  }
+
+  .dark .text-white {
+    color: var(--dark-text);
+  }
+
+  .dark .text-\[\#757575\],
+  .dark .text-\[\#6b7280\],
+  .dark .text-\[\#5f5f5f\],
+  .dark .text-zinc-300 {
+    color: var(--dark-muted);
+  }
+
+  .dark .border-\[\#1a1a1a\],
+  .dark .border-black {
+    border-color: var(--dark-border);
+  }
+
+  .dark .border-\[\#e2e8f0\] {
+    border-color: #332f2a;
+  }
+
+  .dark .border-white {
+    border-color: var(--dark-border);
+  }
+
+  .dark .hover\:bg-\[\#1a1a1a\]:hover,
+  .dark .hover\:bg-black:hover {
+    background-color: var(--dark-text);
+  }
+
+  .dark .hover\:bg-white:hover {
+    background-color: var(--dark-bg);
+  }
+
+  .dark .hover\:text-white:hover {
+    color: var(--dark-bg);
+  }
+
+  .dark .hover\:text-\[\#1a1a1a\]:hover,
+  .dark .hover\:text-black:hover {
+    color: var(--dark-text);
+  }
+
+  .dark .hover\:text-\[\#057dbc\]:hover,
+  .dark .text-\[\#057dbc\] {
+    color: var(--dark-accent);
+  }
+
+  .dark iframe.bg-white {
+    background-color: var(--dark-surface);
+  }
+
+  .dark input.bg-white {
+    background-color: var(--dark-bg);
+  }
+
+  .dark img.grayscale,
+  .dark img[class*="grayscale"] {
+    filter: grayscale(1) brightness(0.86);
   }
 }
