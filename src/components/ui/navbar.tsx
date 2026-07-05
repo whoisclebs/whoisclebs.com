@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, NavLink } from 'react-router'
-import { Menu, Moon, Sun, X } from 'lucide-react'
+import { ChevronDown, Menu, Moon, Sun, X } from 'lucide-react'
 import { useI18n, type Locale } from '@/lib/i18n'
 import { useTheme } from '@/lib/theme'
 import { useLocalizedPath } from '@/lib/use-localized-path'
@@ -24,12 +24,13 @@ function ThemeToggle() {
   return (
     <button
       type="button"
-      className="inline-flex size-10 items-center justify-center border border-[#1a1a1a] bg-white transition-colors hover:bg-[#1a1a1a] hover:text-white"
+      data-nav-item
+      className="inline-flex size-[38px] cursor-pointer items-center justify-center border border-line text-ink transition-colors hover:bg-graphite hover:text-bg"
       aria-label={label}
       aria-pressed={theme === 'dark'}
       onClick={toggleTheme}
     >
-      {theme === 'dark' ? <Sun size={16} aria-hidden="true" /> : <Moon size={16} aria-hidden="true" />}
+      {theme === 'dark' ? <Sun size={15} aria-hidden="true" /> : <Moon size={15} aria-hidden="true" />}
     </button>
   )
 }
@@ -38,19 +39,22 @@ function LanguageSelect() {
   const { locale, setLocale, t } = useI18n()
 
   return (
-    <label className="flex items-center gap-2">
+    <div className="relative inline-flex cursor-pointer items-center border border-line transition-colors hover:bg-graphite hover:text-bg">
       <span className="sr-only">{t('language.label')}</span>
       <select
         value={locale}
         onChange={(event) => setLocale(event.target.value as Locale)}
-        className="border border-[#1a1a1a] bg-white px-2 py-1 font-mono text-xs uppercase tracking-[0.1em]"
+        className="cursor-pointer appearance-none bg-transparent py-[7px] pr-7 pl-3 font-mono text-[11px] font-bold uppercase tracking-[1.1px] text-current outline-none"
         aria-label={t('language.label')}
       >
         {locales.map((item) => (
-          <option key={item} value={item}>{item === 'pt-BR' ? t('language.pt') : t('language.en')}</option>
+          <option key={item} value={item} className="bg-paper text-ink">
+            {item === 'pt-BR' ? t('language.pt') : t('language.en')}
+          </option>
         ))}
       </select>
-    </label>
+      <ChevronDown size={12} className="pointer-events-none absolute right-3" aria-hidden="true" />
+    </div>
   )
 }
 
@@ -59,7 +63,17 @@ function NavigationLinks({ onClick }: { onClick?: () => void }) {
   const localizedPath = useLocalizedPath()
 
   return navigationItems.map((item) => (
-    <NavLink key={item.to} to={localizedPath(item.to)} onClick={onClick} className={({ isActive }) => isActive ? 'font-medium' : ''}>
+    <NavLink
+      key={item.to}
+      to={localizedPath(item.to)}
+      onClick={onClick}
+      data-nav-item
+      className={({ isActive }) =>
+        isActive
+          ? 'relative font-mono text-[11px] font-bold uppercase tracking-[1.15px] text-accent after:absolute after:-bottom-[6px] after:left-0 after:h-0.5 after:w-full after:bg-accent'
+          : 'font-mono text-[11px] font-bold uppercase tracking-[1.15px] text-muted transition-colors hover:text-ink'
+      }
+    >
       {t(item.labelKey)}
     </NavLink>
   ))
@@ -71,30 +85,57 @@ const Navbar: React.FC = () => {
   const localizedPath = useLocalizedPath()
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#1a1a1a] bg-white/90 backdrop-blur-md">
-      <div className="mx-auto flex min-h-16 w-full max-w-[1280px] items-center justify-between gap-6 px-4 md:px-6">
-        <Link to={localizedPath('/')} className="text-xl font-extrabold tracking-[-0.04em] md:text-2xl">Clebson Augusto</Link>
+    <header className="sticky top-0 z-50 bg-paper/90 backdrop-blur-md">
+      {/* Top rule */}
+      <div className="border-t border-line" />
+
+      <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-6 px-4 py-[10px] md:px-6">
+        {/* Brand area */}
+        <div className="flex shrink-0 flex-col">
+          <Link
+            to={localizedPath('/')}
+            data-nav-item
+            className="font-serif text-[25px] font-extrabold leading-none text-ink"
+          >
+            Clebson Augusto
+          </Link>
+          <p className="mt-0.5 font-mono text-[10px] font-normal uppercase tracking-[1.1px] text-muted">
+            WHOISCLEBS / SOFTWARE ENGINEER / João Pessoa
+          </p>
+        </div>
+
+        {/* Mobile controls */}
         <div className="flex items-center gap-3 md:hidden">
           <ThemeToggle />
           <LanguageSelect />
           <button
             type="button"
-            className="inline-flex size-10 items-center justify-center border border-[#1a1a1a]"
+            data-nav-item
+            className="inline-flex size-[38px] cursor-pointer items-center justify-center border border-line transition-colors hover:bg-graphite hover:text-bg"
             aria-label={open ? t('nav.closeMenu') : t('nav.openMenu')}
             aria-expanded={open}
             onClick={() => setOpen((current) => !current)}
           >
-            {open ? <X size={18} aria-hidden="true" /> : <Menu size={18} aria-hidden="true" />}
+            {open ? <X size={15} aria-hidden="true" /> : <Menu size={15} aria-hidden="true" />}
           </button>
         </div>
-        <nav className="hidden flex-wrap items-center gap-4 font-mono text-xs uppercase tracking-[0.1em] md:flex" aria-label={t('nav.primary')}>
+
+        {/* Desktop nav + controls */}
+        <nav className="hidden items-center gap-5 md:flex" aria-label={t('nav.primary')}>
           <NavigationLinks />
-          <ThemeToggle />
-          <LanguageSelect />
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <LanguageSelect />
+          </div>
         </nav>
       </div>
+
+      {/* Bottom rule */}
+      <div className="border-t border-line" />
+
+      {/* Mobile menu */}
       {open && (
-        <nav className="border-t border-[#1a1a1a] bg-white px-4 py-4 font-mono text-xs uppercase tracking-[0.1em] md:hidden" aria-label={t('nav.primaryMobile')}>
+        <nav className="border-t border-line bg-paper px-4 py-4 font-mono text-xs uppercase tracking-[0.1em] md:hidden" aria-label={t('nav.primaryMobile')}>
           <div className="mx-auto grid w-full max-w-[1280px] gap-4">
             <NavigationLinks onClick={() => setOpen(false)} />
           </div>

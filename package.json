@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/generate-rss.mjs && tsc -b && vite build && node scripts/inline-critical-css.mjs && node scripts/optimize-images.mjs",
+    "build": "node scripts/generate-rss.mjs && tsc -b && vite build && node scripts/prerender.mjs && node scripts/inline-critical-css.mjs && node scripts/optimize-images.mjs",
     "build:github-pages": "npm run build && node scripts/prepare-github-pages.mjs",
     "lint": "eslint .",
     "test": "vitest run",
@@ -15,6 +15,9 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@fontsource/anton": "^5.2.7",
+    "@fontsource/geist-mono": "^5.2.8",
+    "@fontsource/newsreader": "^5.2.10",
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",

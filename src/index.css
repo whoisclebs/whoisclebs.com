@@ -1,12 +1,29 @@
+/* Self-hosted fonts — no third-party CDN */
+@import "@fontsource/anton/400.css";
+@import "@fontsource/newsreader/400.css";
+@import "@fontsource/newsreader/500.css";
+@import "@fontsource/geist-mono/400.css";
+@import "@fontsource/geist-mono/700.css";
+
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
 @plugin "tailwindcss-animate";
 
 @theme {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-serif: Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Monaco, "Courier New", monospace;
+  --color-bg: #F7F3EA;
+  --color-paper: #FFFDF7;
+  --color-ink: #171717;
+  --color-muted: #4D4D4D;
+  --color-soft: #8B8B83;
+  --color-line: #2A2A2A;
+  --color-hairline: #C9C3B8;
+  --color-graphite: #1B1B1F;
+  --color-accent: #263CFF;
+  --font-display: "Anton", sans-serif;
+  --font-serif: "Newsreader", serif;
+  --font-mono: "Geist Mono", monospace;
+  --font-sans: "Newsreader", serif;
 }
 
 @layer base {
@@ -21,25 +38,35 @@
   }
 
   html {
-    background: #ffffff;
+    background: var(--color-bg);
   }
 
   html.dark {
-    background: var(--dark-bg);
+    --color-bg: var(--dark-bg);
+    --color-paper: var(--dark-surface);
+    --color-ink: var(--dark-text);
+    --color-muted: var(--dark-muted);
+    --color-soft: #8f867a;
+    --color-line: var(--dark-border);
+    --color-hairline: #4a433c;
+    --color-graphite: #0d0c0b;
+    --color-accent: var(--dark-accent);
+
+    background: var(--color-bg);
   }
 
   body {
     margin: 0;
-    background: #ffffff;
-    color: #1a1a1a;
-    font-family: var(--font-sans);
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-serif);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
 
   html.dark body {
-    background: var(--dark-bg);
-    color: var(--dark-text);
+    background: var(--color-bg);
+    color: var(--color-ink);
   }
 }
 
@@ -53,18 +80,8 @@
     background-color: rgb(17 16 15 / 0.9);
   }
 
-  .dark .bg-black,
-  .dark .bg-\[\#1a1a1a\] {
-    background-color: var(--dark-surface-strong);
-  }
-
   .dark .bg-\[\#111111\] {
     background-color: #151311;
-  }
-
-  .dark .text-\[\#1a1a1a\],
-  .dark .text-black {
-    color: var(--dark-text);
   }
 
   .dark .text-white {
@@ -78,11 +95,6 @@
     color: var(--dark-muted);
   }
 
-  .dark .border-\[\#1a1a1a\],
-  .dark .border-black {
-    border-color: var(--dark-border);
-  }
-
   .dark .border-\[\#e2e8f0\] {
     border-color: #332f2a;
   }
@@ -91,27 +103,12 @@
     border-color: var(--dark-border);
   }
 
-  .dark .hover\:bg-\[\#1a1a1a\]:hover,
-  .dark .hover\:bg-black:hover {
-    background-color: var(--dark-text);
-  }
-
   .dark .hover\:bg-white:hover {
     background-color: var(--dark-bg);
   }
 
   .dark .hover\:text-white:hover {
     color: var(--dark-bg);
-  }
-
-  .dark .hover\:text-\[\#1a1a1a\]:hover,
-  .dark .hover\:text-black:hover {
-    color: var(--dark-text);
-  }
-
-  .dark .hover\:text-\[\#057dbc\]:hover,
-  .dark .text-\[\#057dbc\] {
-    color: var(--dark-accent);
   }
 
   .dark iframe.bg-white {
@@ -126,4 +123,26 @@
   .dark img[class*="grayscale"] {
     filter: grayscale(1) brightness(0.86);
   }
+}
+
+/* Keyboard focus ring — .pen style */
+[data-nav-item]:focus-visible,
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-accent, #263CFF);
+  outline-offset: 2px;
+}
+
+[data-nav-item]:focus-visible {
+  outline: 2px solid var(--color-accent, #263CFF);
+  outline-offset: 2px;
+}
+
+/* Project card: visible focus on the parent article via :has() */
+article:has(> .project-card-link:focus-visible) {
+  border-color: var(--color-accent);
+  box-shadow: inset 0 0 0 2px var(--color-accent);
+}
+.project-card-link:focus-visible {
+  outline: none;
 }

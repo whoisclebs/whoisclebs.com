@@ -1,18 +1,16 @@
 import type { Locale } from './i18n'
 
-export const localeSegments: Record<Locale, string> = {
-  'pt-BR': 'pt',
+export const localeSegments: Partial<Record<Locale, string>> = {
   en: 'en',
 }
 
 export function localeFromSegment(segment: string | undefined): Locale | null {
-  if (segment === 'pt') return 'pt-BR'
   if (segment === 'en') return 'en'
   return null
 }
 
 export function segmentFromLocale(locale: Locale): string {
-  return localeSegments[locale]
+  return locale === 'en' ? 'en' : ''
 }
 
 export function stripLocaleFromPath(pathname: string): string {
@@ -28,9 +26,15 @@ export function localizePath(path: string, locale: Locale): string {
   const [pathnameWithSearch, hash = ''] = path.split('#')
   const [pathname, search = ''] = pathnameWithSearch.split('?')
   const cleanPath = stripLocaleFromPath(pathname)
-  const localizedPath = cleanPath === '/'
-    ? `/${segmentFromLocale(locale)}`
-    : `/${segmentFromLocale(locale)}${cleanPath}`
+  const segment = segmentFromLocale(locale)
 
-  return `${localizedPath}${search ? `?${search}` : ''}${hash ? `#${hash}` : ''}`
+  if (segment) {
+    const localizedPath = cleanPath === '/'
+      ? `/${segment}`
+      : `/${segment}${cleanPath}`
+    return `${localizedPath}${search ? `?${search}` : ''}${hash ? `#${hash}` : ''}`
+  }
+
+  // No prefix for the default locale (pt-BR)
+  return `${cleanPath}${search ? `?${search}` : ''}${hash ? `#${hash}` : ''}`
 }

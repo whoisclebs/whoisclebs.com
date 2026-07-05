@@ -38,12 +38,16 @@ function normalizeLocale(value: string | null | undefined): Locale | null {
 }
 
 function detectInitialLocale(): Locale {
-  if (typeof window !== 'undefined') {
+  // SSR guard: Node.js 22+ exposes a global navigator with language "en-US",
+  // so we must also check that window (the real browser global) exists.
+  const isBrowser = typeof window !== 'undefined'
+
+  if (isBrowser) {
     const persisted = normalizeLocale(window.localStorage.getItem(STORAGE_KEY))
     if (persisted) return persisted
   }
 
-  if (typeof navigator !== 'undefined') {
+  if (isBrowser && typeof navigator !== 'undefined') {
     const browserLocales = [navigator.language, ...(navigator.languages ?? [])]
     const detected = browserLocales.map(normalizeLocale).find(Boolean)
     if (detected) return detected

@@ -28,7 +28,7 @@ export default function TilPost() {
   const tocItems = buildTableOfContents(entry.blocks)
 
   return (
-    <article id="top" className="article-container mx-auto max-w-[1180px]">
+    <article id="top" data-longform className="article-container mx-auto max-w-[1180px]">
       <SEO
         title={entry.title}
         description={entry.excerpt}

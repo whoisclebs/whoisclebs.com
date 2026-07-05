@@ -27,7 +27,7 @@ describe('today i learned pages', () => {
     )
 
     expect(screen.getByRole('heading', { level: 1, name: /notas de aprendizado/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /docker healthcheck para serviços pequenos/i })).toHaveAttribute('href', '/pt/til/docker-healthcheck-para-servicos')
+    expect(screen.getByRole('link', { name: /docker healthcheck para serviços pequenos/i })).toHaveAttribute('href', '/til/docker-healthcheck-para-servicos')
     expect(screen.getByTestId('til-grid')).toBeInTheDocument()
     expect(screen.getByText(/página 1 de 1/i)).toBeInTheDocument()
     expect(screen.getByText(/próxima página/i)).toBeInTheDocument()

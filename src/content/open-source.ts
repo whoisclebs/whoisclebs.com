@@ -4,6 +4,7 @@ export type OpenSourceProject = {
   repo: string
   docs: string
   technologies: Array<'Java' | 'Spring' | 'Go' | 'Docker' | 'Rust'>
+  year: string
 }
 
 export const openSourceProjects: OpenSourceProject[] = [
@@ -13,6 +14,7 @@ export const openSourceProjects: OpenSourceProject[] = [
     repo: 'https://github.com/whoisclebs/tuxedo',
     docs: 'https://pkg.go.dev/github.com/whoisclebs/tuxedo',
     technologies: ['Go'],
+    year: '2025',
   },
   {
     id: 'golpher',
@@ -20,6 +22,7 @@ export const openSourceProjects: OpenSourceProject[] = [
     repo: 'https://github.com/go-golpher/golpher',
     docs: 'https://pkg.go.dev/github.com/go-golpher/golpher',
     technologies: ['Go'],
+    year: '2025',
   },
   {
     id: 'seishin',
@@ -27,6 +30,7 @@ export const openSourceProjects: OpenSourceProject[] = [
     repo: 'https://github.com/whoisclebs/seishin',
     docs: 'https://github.com/whoisclebs/seishin',
     technologies: ['Rust'],
+    year: '2026',
   },
   {
     id: 'rsgit',
@@ -34,6 +38,7 @@ export const openSourceProjects: OpenSourceProject[] = [
     repo: 'https://github.com/whoisclebs/rsgit',
     docs: 'https://github.com/whoisclebs/rsgit',
     technologies: ['Rust'],
+    year: '2026',
   },
 ]
 

@@ -57,9 +57,7 @@ export type PaginatedItems<T> = {
 
 function filterLocalizedPosts(postsToFilter: BlogPost[], locale?: Locale): BlogPost[] {
   if (!locale) return postsToFilter
-
-  const localized = postsToFilter.filter((post) => post.locale === locale)
-  return localized.length > 0 ? localized : postsToFilter.filter((post) => post.locale === 'pt-BR')
+  return postsToFilter.filter((post) => post.locale === locale)
 }
 
 export function getPublishedPosts(locale: Locale = 'pt-BR'): BlogPost[] {
@@ -72,7 +70,6 @@ export function getPublishedPosts(locale: Locale = 'pt-BR'): BlogPost[] {
 export function getPostBySlug(slug: string, locale: Locale = 'pt-BR'): BlogPost | undefined {
   const published = getPublishedPosts(locale)
   return published.find((post) => post.slug === slug)
-    ?? posts.find((post) => post.published && post.slug === slug)
 }
 
 export function getResponsiveGridClass(count: number): string {

@@ -3,7 +3,6 @@ import { Link, useSearchParams } from 'react-router'
 import { getBalancedEditorialGridItemClass, getPublishedPosts, paginatePosts } from '@/lib/posts'
 import { useI18n } from '@/lib/i18n'
 import { useLocalizedPath } from '@/lib/use-localized-path'
-
 export default function Blog() {
   const [searchParams] = useSearchParams()
   const { locale, t, format } = useI18n()
@@ -23,18 +22,20 @@ export default function Blog() {
         </p>
       </section>
 
-      <div className="mt-8">{hero && <PostCard post={hero} featured />}</div>
+      <div>
+        <div className="mt-8">{hero && <PostCard post={hero} featured />}</div>
 
-      {rest.length > 0 && (
-        <>
-          <section className="mt-12 bg-black px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.12em] text-white" aria-label={t('blog.recentArticles')}>{t('blog.recentArticles')}</section>
-          <div className="grid border-b border-l border-[#1a1a1a] md:grid-cols-6" data-testid="recent-post-grid">
-            {rest.map((post, index) => (
-              <PostCard key={post.slug} post={post} className={getBalancedEditorialGridItemClass(index, rest.length)} />
-            ))}
-          </div>
-        </>
-      )}
+        {rest.length > 0 && (
+          <>
+            <section className="mt-12 bg-black px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.12em] text-white" aria-label={t('blog.recentArticles')}>{t('blog.recentArticles')}</section>
+            <div className="grid border-b border-l border-[#1a1a1a] md:grid-cols-6" data-testid="recent-post-grid">
+              {rest.map((post, index) => (
+                <PostCard key={post.slug} post={post} className={getBalancedEditorialGridItemClass(index, rest.length)} />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
 
       <nav className="mt-8 flex flex-col gap-4 border-t border-[#1a1a1a] pt-5 font-mono text-xs uppercase tracking-[0.095em] text-[#1a1a1a] md:flex-row md:items-center md:justify-between" aria-label={t('blog.paginationLabel')}>
         <span className="text-[#757575]">{format('blog.pageStatus', { current: pagination.currentPage, total: pagination.totalPages })}</span>

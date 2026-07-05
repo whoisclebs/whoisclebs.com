@@ -41,7 +41,7 @@ export default function BlogPost() {
   const tocItems = buildTableOfContents(post.blocks);
 
   return (
-    <article id="top" className="article-container mx-auto min-w-0 max-w-[1180px] overflow-visible">
+    <article id="top" data-longform className="article-container mx-auto min-w-0 max-w-[1180px] overflow-visible">
       <SEO
         title={post.title}
         description={post.excerpt}
