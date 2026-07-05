@@ -5,6 +5,7 @@ kicker: DEVOPS
 date: 2026-04-27
 excerpt: Um healthcheck simples ajuda o container a comunicar quando o processo está vivo, pronto e minimamente confiável.
 published: true
+locale: pt-BR
 ---
 
 Aprendi que um healthcheck útil não precisa tentar validar o sistema inteiro. Ele precisa responder se o processo principal está pronto para receber tráfego ou se entrou em um estado ruim conhecido.

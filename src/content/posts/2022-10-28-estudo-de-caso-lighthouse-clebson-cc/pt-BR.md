@@ -1,5 +1,6 @@
 ---
 slug: estudo-de-caso-lighthouse-clebson-cc
+translationKey: estudo-de-caso-lighthouse-clebson-cc
 title: Estudo de caso Lighthouse no antigo clebson.cc
 kicker: SEO
 date: 2022-10-28
@@ -9,7 +10,9 @@ excerpt: Como trabalhei acessibilidade, melhores práticas e SEO para alcançar 
 cover: https://miro.medium.com/v2/resize:fit:700/1*rnvdQgcC4I-dAP04j_C0fQ.png
 coverAlt: Screenshot de auditoria Lighthouse com pontuações em verde
 published: true
+locale: pt-BR
 ---
+
 
 Um tempo atrás, quando ainda usava o domínio clebson.cc, eu estava trabalhando para melhorar meu branding pessoal. Um dos primeiros objetivos era melhorar o SEO da página que eu usava para falar sobre mim.
 

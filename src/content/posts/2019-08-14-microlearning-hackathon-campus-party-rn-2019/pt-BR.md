@@ -1,5 +1,6 @@
 ---
 slug: microlearning-hackathon-campus-party-rn-2019
+translationKey: microlearning-hackathon-campus-party-rn-2019
 title: Meu primeiro hackathon e o 3º lugar na Campus Party RN
 kicker: HACKATHON
 date: 2019-08-14
@@ -9,7 +10,9 @@ excerpt: No segundo semestre da faculdade, participei do meu primeiro hackathon 
 cover: /cover/campus-party-3-lugar.jfif
 coverAlt: Premiação do Micro Learning Hackathon na Campus Party RN 2019
 published: true
+locale: pt-BR
 ---
+
 
 Estou no segundo semestre da faculdade e acabei de sair do meu primeiro hackathon. Ainda é estranho escrever isso, porque parece que a Campus Party RN condensou muita coisa em poucos dias: ansiedade, código, gente nova, noites mal dormidas e a sensação de que eu tinha entrado em um tipo de experiência que ainda ia se repetir muitas vezes.
 

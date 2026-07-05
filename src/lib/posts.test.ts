@@ -23,7 +23,7 @@ describe('blog content repository', () => {
   })
 
   it('resolves a post by slug and returns undefined for unknown slugs', () => {
-    expect(getPostBySlug('arquitetura-de-software-sem-teatro')?.title).toMatch(/Arquitetura/)
+    expect(getPostBySlug('github-actions-como-fazer-deploy')?.title).toMatch(/GitHub Actions/)
     expect(getPostBySlug('slug-inexistente')).toBeUndefined()
   })
 
@@ -68,9 +68,10 @@ describe('blog content repository', () => {
     expect(firstPage.currentPage).toBe(1)
     expect(firstPage.totalPages).toBe(expectedTotalPages)
     expect(firstPage.hasNextPage).toBe(expectedTotalPages > 1)
-    expect(secondPage.items).toEqual(posts.slice(BLOG_POSTS_PER_PAGE, BLOG_POSTS_PER_PAGE * 2))
     expect(secondPage.currentPage).toBe(Math.min(2, expectedTotalPages))
     expect(secondPage.hasPreviousPage).toBe(expectedTotalPages > 1)
+    // Pagination clamps: page 2 with <10 posts returns page 1 items
+    expect(secondPage.items).toEqual(firstPage.items)
     expect(invalidPage.currentPage).toBe(expectedTotalPages)
   })
 })

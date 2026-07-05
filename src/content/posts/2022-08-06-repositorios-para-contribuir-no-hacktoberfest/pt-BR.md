@@ -1,5 +1,6 @@
 ---
 slug: repositorios-para-contribuir-no-hacktoberfest
+translationKey: repositorios-para-contribuir-no-hacktoberfest
 title: Lista de repositórios para contribuir no Hacktoberfest
 kicker: OPEN SOURCE
 date: 2022-08-06
@@ -9,7 +10,9 @@ excerpt: Uma lista inicial de projetos open source para quem quer começar a con
 cover: https://miro.medium.com/v2/resize:fit:1100/format:webp/1*zMTRYoNlSV_w7fyIVDiKmw.jpeg
 coverAlt: Ilustração do Hacktoberfest com referência a open source
 published: true
+locale: pt-BR
 ---
+
 
 O Hacktoberfest chegou e estamos a todo gás.
 

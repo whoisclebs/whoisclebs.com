@@ -10,8 +10,9 @@ author: whoisclebs
 excerpt: A technical study about editorial rebranding, Markdown content, safe supply chain, TypeScript 6, critical CSS, image optimization, and Cloudflare for a static site.
 cover: /cover/d&d.png
 coverAlt: Pixel art illustration of a completed quest in a fantasy scene
-published: true
+published: false
 ---
+
 
 A personal website looks small until it becomes a product. It has a visual identity, content architecture, SEO, deployment rules, dependencies, a public attack surface, and performance expectations. Being static removes a lot of operational complexity, but it does not remove engineering. This update treated whoisclebs.com as a small editorial product: redesign, hardening, and performance were handled together.
 

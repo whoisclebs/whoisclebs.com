@@ -1,4 +1,5 @@
 import type { TableOfContentsItem } from '@/lib/markdown'
+import { useI18n } from '@/lib/i18n'
 
 type TableOfContentsProps = {
   items: TableOfContentsItem[]
@@ -7,6 +8,8 @@ type TableOfContentsProps = {
 }
 
 export function TableOfContents({ items, title, className = '' }: TableOfContentsProps) {
+  const { t } = useI18n()
+
   if (items.length === 0) return null
 
   return (
@@ -28,7 +31,7 @@ export function TableOfContents({ items, title, className = '' }: TableOfContent
       </ol>
       <div className="mt-8 border-t border-[#e5e0d8] pt-6">
         <a className="inline-flex items-center gap-2 font-sans text-xs font-semibold text-[#6b7280] transition-colors hover:text-[#057dbc]" href="#top">
-          <span>Scroll to top</span>
+          <span>{t('blog.tocScrollTop')}</span>
           <span className="inline-flex size-3 items-center justify-center rounded-full border border-current text-[8px] leading-none" aria-hidden="true">↑</span>
         </a>
       </div>

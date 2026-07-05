@@ -1,5 +1,6 @@
 ---
 slug: strike-campus-party-digital-goias-2021
+translationKey: strike-campus-party-digital-goias-2021
 title: Strike: 1º lugar no Hackathon Reboot The World
 kicker: HACKATHON
 date: 2021-07-31
@@ -9,7 +10,9 @@ excerpt: O Strike venceu o Hackathon Reboot The World com uma proposta de passap
 cover: https://goias.gov.br/inovacao/wp-content/uploads/sites/26/2021/07/Tela_final_Hackaton2-c34.png
 coverAlt: Anúncio online da premiação do hackathon da Campus Party Digital Goiás
 published: true
+locale: pt-BR
 ---
+
 
 Ainda estou processando o que aconteceu nos últimos dias: ficamos em 1º lugar no Hackathon Reboot The World, durante a Campus Party Digital Goiás 2021.
 

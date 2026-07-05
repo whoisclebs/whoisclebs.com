@@ -1,5 +1,6 @@
 ---
 slug: open-data-hackathon-campus-party-goias-2020
+translationKey: open-data-hackathon-campus-party-goias-2020
 title: 2º lugar no Hackathon de Dados Abertos
 kicker: HACKATHON
 date: 2020-09-07
@@ -9,7 +10,9 @@ excerpt: Quase um ano depois do meu primeiro hackathon, voltei à Campus Party p
 cover: /cover/campus-party-2-lugar.jfif
 coverAlt: Participantes e organização em transmissão ao vivo do Hackathon Goiás durante a Campus Party Digital
 published: true
+locale: pt-BR
 ---
+
 
 Quase um ano depois do meu primeiro hackathon, aqui estou eu de novo. Dessa vez, no Hackathon de Dados Abertos da Campus Party Digital Goiás, em plena pandemia, com uma equipe em que eu praticamente não conhecia ninguém — com exceção de Josinaldo Júnior, que já me acompanhava desde o primeiro hackathon.
 

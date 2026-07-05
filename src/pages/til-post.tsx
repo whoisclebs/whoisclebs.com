@@ -57,7 +57,7 @@ export default function TilPost() {
         <aside className="mb-6 lg:absolute lg:left-[calc(100%+40px)] lg:top-0 lg:mb-0 lg:w-60">
           <TableOfContents
             items={tocItems}
-            title={locale === 'en' ? 'On this page' : 'Neste texto'}
+            title={t('blog.tocTitle')}
             className="lg:sticky lg:top-24"
           />
         </aside>

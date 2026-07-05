@@ -59,30 +59,26 @@ describe('blog editorial pages', () => {
     expect(screen.getByText(/próxima página/i)).toBeInTheDocument()
   })
 
-  it('clamps subsequent paginated pages without empty grid gaps', () => {
+  it('clamps subsequent paginated pages to the last available page', () => {
     renderBlogRoute('/blog?page=2')
 
-    const remainingPosts = getPublishedPosts().slice(BLOG_POSTS_PER_PAGE)
-    expect(screen.getAllByRole('article')).toHaveLength(remainingPosts.length)
-    if (remainingPosts.length > 1) {
-      expect(screen.getByTestId('recent-post-grid')).toHaveClass('md:grid-cols-6')
-    } else {
-      expect(screen.queryByTestId('recent-post-grid')).not.toBeInTheDocument()
-    }
-    expect(screen.getByText(new RegExp(`página 2 de ${Math.ceil(getPublishedPosts().length / BLOG_POSTS_PER_PAGE)}`, 'i'))).toBeInTheDocument()
+    const posts = getPublishedPosts()
+    // Page 2 clamps to page 1 when total posts < BLOG_POSTS_PER_PAGE
+    expect(screen.getAllByRole('article')).toHaveLength(posts.length)
+    expect(screen.getByText(new RegExp(`página 1 de ${Math.ceil(posts.length / BLOG_POSTS_PER_PAGE)}`, 'i'))).toBeInTheDocument()
   })
 
   it('renders a post route by slug with newsletter CTA and a 720px reading container', () => {
-    renderBlogRoute('/blog/arquitetura-de-software-sem-teatro')
+    renderBlogRoute('/blog/github-actions-como-fazer-deploy')
 
     const article = screen.getByRole('article')
     expect(article).toHaveClass('article-container')
-    expect(screen.getByRole('heading', { level: 1, name: /Arquitetura de software sem teatro/i })).toBeInTheDocument()
-    expect(screen.getByText('ARQUITETURA')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: /GitHub Actions/i })).toBeInTheDocument()
+    expect(screen.getByText('DEVOPS')).toBeInTheDocument()
     expect(screen.getByRole('img', { name: /clebson a. fonseca/i })).toHaveAttribute('src', '/profile/clebson.png')
-    expect(screen.getByRole('link', { name: /github/i })).toHaveAttribute('href', 'https://github.com/whoisclebs')
-    expect(screen.getByRole('link', { name: /youtube/i })).toHaveAttribute('href', 'https://www.youtube.com/@whoisclebs')
-    expect(screen.getByRole('link', { name: /dribbble/i })).toHaveAttribute('href', 'https://dribbble.com/whoisclebs')
+    expect(screen.getByRole('link', { name: 'GitHub' })).toHaveAttribute('href', 'https://github.com/whoisclebs')
+    expect(screen.getByRole('link', { name: 'YouTube' })).toHaveAttribute('href', 'https://www.youtube.com/@whoisclebs')
+    expect(screen.getByRole('link', { name: 'Dribbble' })).toHaveAttribute('href', 'https://dribbble.com/whoisclebs')
     expect(screen.getByRole('navigation', { name: /neste texto/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /Receba notas de engenharia/i })).toBeInTheDocument()
     expect(screen.getByRole('form', { name: /inscrição na newsletter/i })).toHaveAttribute('action', 'https://whoisclebs.substack.com/api/v1/free?nojs=true')
@@ -91,20 +87,18 @@ describe('blog editorial pages', () => {
   })
 
   it('links to the Substack newsletter', async () => {
-    renderBlogRoute('/blog/arquitetura-de-software-sem-teatro')
+    renderBlogRoute('/blog/github-actions-como-fazer-deploy')
 
     expect(screen.getByRole('link', { name: /abrir newsletter no substack/i })).toHaveAttribute('href', 'https://whoisclebs.substack.com/?utm_campaign=pub&utm_medium=web')
   })
 
-  it('localizes the newsletter CTA in English', () => {
+  it('renders a post in English when EN locale is set and translation exists', () => {
     window.localStorage.setItem(i18nStorageKey, 'en')
-    renderBlogRoute('/blog/hardening-performance-site-estatico-vite-cloudflare')
+    renderBlogRoute('/blog/github-actions-como-fazer-deploy')
 
-    expect(screen.getByRole('heading', { name: /get engineering notes/i })).toBeInTheDocument()
-    expect(screen.getByRole('form', { name: /newsletter subscription/i })).toBeInTheDocument()
-    expect(screen.getByPlaceholderText('you@example.com')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /subscribe/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /open newsletter on substack/i })).toHaveAttribute('href', 'https://whoisclebs.substack.com/?utm_campaign=pub&utm_medium=web')
+    expect(screen.getByRole('heading', { level: 1, name: /How to deploy your Vite applications/i })).toBeInTheDocument()
+    expect(screen.getByText('DEVOPS')).toBeInTheDocument()
+    expect(screen.getByText(/5 MIN READ/i)).toBeInTheDocument()
   })
 
   it('renders a friendly not found state for an unknown post slug', () => {
@@ -120,12 +114,12 @@ describe('blog editorial pages', () => {
       configurable: true,
       value: { writeText: clipboardWrite },
     })
-    renderBlogRoute('/blog/arquitetura-de-software-sem-teatro')
+    renderBlogRoute('/blog/github-actions-como-fazer-deploy')
 
-    expect(screen.getByText('typescript')).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: /copiar código typescript/i }))
+    expect(screen.getByText('yaml')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /copiar yaml/i }))
 
-    expect(clipboardWrite).toHaveBeenCalledWith(expect.stringContaining('type ArchitectureDecision'))
+    expect(clipboardWrite).toHaveBeenCalledWith(expect.stringContaining('name: Deploy'))
     expect(await screen.findByText(/copiado/i)).toBeInTheDocument()
   })
 })

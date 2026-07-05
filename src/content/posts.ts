@@ -1,4 +1,4 @@
-const markdownModules = import.meta.glob('./posts/*.md', {
+const markdownModules = import.meta.glob('./posts/*/{pt-BR,en}.md', {
   eager: true,
   query: '?raw',
   import: 'default',

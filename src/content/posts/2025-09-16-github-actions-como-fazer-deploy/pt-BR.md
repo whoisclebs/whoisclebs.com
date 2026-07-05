@@ -1,5 +1,6 @@
 ---
 slug: github-actions-como-fazer-deploy
+translationKey: github-actions-como-fazer-deploy
 title: GitHub Actions: Como fazer deploy de suas aplicações Vite
 kicker: DEVOPS
 date: 2025-09-16
@@ -9,7 +10,9 @@ excerpt: Aprenda como implantar automaticamente uma aplicação criada com Vite 
 cover: https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&w=1200&q=80
 coverAlt: Tela com fluxo de integração e deploy em ambiente de desenvolvimento
 published: true
+locale: pt-BR
 ---
+
 
 Aprenda como implantar automaticamente uma aplicação criada com Vite no GitHub Pages usando GitHub Actions. Este guia passo a passo cobre todo o processo, desde a configuração até a publicação.
 

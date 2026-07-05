@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useTheme } from '@/lib/theme'
+import { useI18n } from '@/lib/i18n'
 
 function getGiscusTheme(theme: 'light' | 'dark') {
   return theme === 'dark' ? 'transparent_dark' : 'light'
@@ -8,6 +9,7 @@ function getGiscusTheme(theme: 'light' | 'dark') {
 export function GiscusComments() {
   const containerRef = useRef<HTMLDivElement>(null)
   const { theme } = useTheme()
+  const { t } = useI18n()
 
   useEffect(() => {
     const container = containerRef.current
@@ -46,8 +48,8 @@ export function GiscusComments() {
   }, [theme])
 
   return (
-    <section className="mt-12 border-t border-[#1a1a1a] pt-8" aria-label="Comentários">
-      <p className="mb-4 font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">COMENTÁRIOS</p>
+    <section className="mt-12 border-t border-[#1a1a1a] pt-8" aria-label={t('blog.commentsLabel')}>
+      <p className="mb-4 font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">{t('blog.comments')}</p>
       <div ref={containerRef} />
     </section>
   )

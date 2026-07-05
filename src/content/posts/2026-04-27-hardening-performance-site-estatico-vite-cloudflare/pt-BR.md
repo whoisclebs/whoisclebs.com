@@ -8,8 +8,11 @@ author: whoisclebs
 excerpt: Um estudo técnico sobre rebranding editorial, conteúdo em Markdown, supply chain seguro, TypeScript 6, CSS crítico, otimização de imagens e Cloudflare em um site estático.
 cover: /cover/d&d.png
 coverAlt: Ilustração pixel art de uma quest concluída em um cenário fantástico
-published: true
+published: false
+locale: pt-BR
+translationKey: hardening-performance-site-estatico-vite-cloudflare
 ---
+
 
 Um site pessoal parece pequeno até virar produto. Ele tem identidade visual, arquitetura de conteúdo, SEO, histórico de decisões, automação de build, pipeline de deploy, dependências, superfície pública e expectativas de performance. O fato de ser estático reduz muita complexidade operacional, mas não elimina engenharia. A atualização recente do whoisclebs.com foi tratada exatamente assim: como um redesign de produto com hardening de plataforma e orçamento de performance.
 
