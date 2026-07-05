@@ -1,0 +1,58 @@
+# whoisclebs.com
+
+> whoisclebs.com is the personal editorial website of Clebson A. Fonseca, a Brazilian fullstack software engineer. The site combines technical writing, short learning notes, portfolio material, open source projects, books, hobbies, and professional background. Primary languages are pt-BR and English.
+
+This file is intended to help LLMs and agents understand the public structure of the site quickly.
+
+Important notes:
+
+- The site is content-first and editorial in tone, not a SaaS product or API platform.
+- Most core pages are available in pt-BR and under `/en/` in English.
+- Blog posts are localized in pt-BR and English when translations exist.
+- TIL content currently exists on the pt-BR route set; `/en/til` is not a published section.
+- There are no public markdown mirrors of pages yet; use the curated links below.
+
+## Primary pages
+
+- [Home](https://whoisclebs.com/): Site entry point with author positioning, recent writing, and open source highlights.
+- [About](https://whoisclebs.com/about): Biography, career timeline, technical background, certifications, and side project context.
+- [Portfolio](https://whoisclebs.com/portfolio): Main areas of work, including payments, frontend systems, and runtime/operations.
+- [Blog](https://whoisclebs.com/blog): Long-form technical writing about software architecture, frontend, operations, payments, and engineering decisions.
+- [TIL](https://whoisclebs.com/til): Short learning notes and technical observations.
+- [Books](https://whoisclebs.com/books): Curated engineering and adjacent reading recommendations.
+- [Hobbies](https://whoisclebs.com/hobbies): Personal interests outside day-to-day engineering work.
+
+## English entry points
+
+- [English home](https://whoisclebs.com/en/): Main English landing page.
+- [English about](https://whoisclebs.com/en/about): English version of the about page.
+- [English portfolio](https://whoisclebs.com/en/portfolio): English version of the portfolio page.
+- [English blog](https://whoisclebs.com/en/blog): English blog index.
+- [English books](https://whoisclebs.com/en/books): English books page.
+- [English hobbies](https://whoisclebs.com/en/hobbies): English hobbies page.
+
+## Content and interpretation guidance
+
+- The author writes in an editorial, direct, anti-corporate tone focused on real-world software engineering.
+- Topics commonly include architecture, frontend systems, APIs, payments, DevOps, operational reliability, and open source.
+- The portfolio is not a project catalog for this website itself; it describes professional areas of expertise and delivery.
+- The site is personal but professionally relevant: useful for understanding the author's background, interests, writing, and technical positioning.
+- For current updates, prefer the homepage, blog index, and about page.
+
+## Feeds and machine-useful resources
+
+- [Blog RSS](https://whoisclebs.com/rss/blog.xml): Syndication feed for blog posts.
+- [TIL RSS](https://whoisclebs.com/rss/til.xml): Syndication feed for short learning notes.
+- [robots.txt](https://whoisclebs.com/robots.txt): Crawl guidance and sitemap reference.
+- [security.txt](https://whoisclebs.com/.well-known/security.txt): Security contact and disclosure channel.
+
+## External profile and source links
+
+- [GitHub profile](https://github.com/whoisclebs): Author profile and open source presence.
+- [Site repository](https://github.com/whoisclebs/whoisclebs.com): Source for this website.
+
+## Optional
+
+- [Privacy policy](https://whoisclebs.com/privacy-policy): Data handling, newsletter, comments, cookies/local storage, and third-party services.
+- [Terms of use](https://whoisclebs.com/terms-of-use): Usage terms, content scope, code example disclaimers, and affiliate/link notes.
+- [Meeple & Decks](https://www.meepledecks.com/): Side project referenced from the about page.
