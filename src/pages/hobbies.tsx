@@ -17,7 +17,7 @@ export default function Hobbies() {
       />
       <section className="border-b border-[#1a1a1a] py-8">
         <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">HOBBIES</p>
-        <h1 className="my-3 max-w-5xl text-6xl font-extrabold leading-none tracking-[-0.055em] md:text-8xl">
+        <h1 className="my-3 max-w-5xl text-4xl font-extrabold leading-none tracking-[-0.055em] sm:text-5xl md:text-8xl">
           {copy.title}
         </h1>
         <p className="max-w-[760px] font-serif text-xl leading-8 text-[#1a1a1a]">
@@ -25,7 +25,7 @@ export default function Hobbies() {
         </p>
       </section>
 
-      <section className="grid border-b border-l border-[#1a1a1a] md:grid-cols-3">
+      <section className="grid grid-cols-1 border-b border-l border-[#1a1a1a] md:grid-cols-3">
         <article className="border-r border-t border-[#1a1a1a] p-6">
           <Users className="mb-4 size-6" aria-hidden="true" />
           <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">{copy.cards[0].kicker}</p>

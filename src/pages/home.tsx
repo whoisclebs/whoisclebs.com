@@ -25,7 +25,7 @@ const Home: React.FC = () => {
           <p className="font-mono text-xs font-bold uppercase tracking-[0.09375em] text-accent">
             ENGENHARIA APLICADA
           </p>
-          <h1 className="max-w-3xl font-display text-[3.5rem] leading-[0.94] md:text-[74px] text-ink">
+          <h1 className="max-w-3xl font-display text-[2.5rem] leading-[0.94] sm:text-[3.5rem] md:text-[74px] text-ink">
             {copy.headline}
           </h1>
           <p className="max-w-[760px] font-serif text-xl leading-[1.22] text-muted md:text-2xl">
@@ -51,7 +51,7 @@ const Home: React.FC = () => {
         {/* "Agora" margin-note */}
         <aside className="flex items-center px-6 py-12 md:px-0 md:pr-6 md:pl-8 md:py-[54px]">
           <div className="w-full border border-line bg-paper p-[22px]">
-            <h2 className="font-display text-[34px] leading-none text-ink">{copy.nowTitle}</h2>
+            <h2 className="font-display text-[28px] leading-none text-ink sm:text-[34px]">{copy.nowTitle}</h2>
             <div className="mt-4 space-y-0">
               {copy.nowItems.map((item, i) => (
                 <div

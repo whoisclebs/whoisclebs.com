@@ -40,11 +40,11 @@ describe('blog content repository', () => {
   })
 
   it('chooses grid columns based on the amount of posts to avoid empty gaps', () => {
-    expect(getResponsiveGridClass(0)).toBe('md:grid-cols-1')
-    expect(getResponsiveGridClass(1)).toBe('md:grid-cols-1')
-    expect(getResponsiveGridClass(2)).toBe('md:grid-cols-2')
-    expect(getResponsiveGridClass(3)).toBe('md:grid-cols-3')
-    expect(getResponsiveGridClass(8)).toBe('md:grid-cols-3')
+    expect(getResponsiveGridClass(0)).toBe('grid-cols-1 md:grid-cols-1')
+    expect(getResponsiveGridClass(1)).toBe('grid-cols-1 md:grid-cols-1')
+    expect(getResponsiveGridClass(2)).toBe('grid-cols-1 md:grid-cols-2')
+    expect(getResponsiveGridClass(3)).toBe('grid-cols-1 md:grid-cols-3')
+    expect(getResponsiveGridClass(8)).toBe('grid-cols-1 md:grid-cols-3')
   })
 
   it('balances editorial grid items by row remainder', () => {

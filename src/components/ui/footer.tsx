@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="border-t border-line bg-graphite px-4 py-12 text-bg md:px-6">
       <div className="mx-auto w-full max-w-[1280px]">
-        <strong className="mb-3 block text-3xl font-extrabold tracking-[-0.04em]">Clebson Augusto</strong>
+        <strong className="mb-3 block text-2xl font-extrabold tracking-[-0.04em] sm:text-3xl">Clebson Augusto</strong>
         <div className="mb-4 flex flex-wrap gap-3 font-mono text-xs uppercase tracking-[0.06em] text-soft">
           <Link className="transition-colors hover:text-accent hover:underline hover:underline-offset-4" to={localizedPath('/privacy-policy')} data-nav-item>{t('footer.privacy')}</Link>
           <span aria-hidden="true">/</span>

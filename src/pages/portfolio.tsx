@@ -11,7 +11,7 @@ export default function Portfolio() {
     <div>
       <section className="border-b border-[#1a1a1a] py-8">
         <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">PORTFOLIO</p>
-        <h1 className="my-3 max-w-5xl text-6xl font-extrabold leading-none tracking-[-0.055em] md:text-8xl">
+        <h1 className="my-3 max-w-5xl text-4xl font-extrabold leading-none tracking-[-0.055em] sm:text-5xl md:text-8xl">
           {copy.title}
         </h1>
         <p className="max-w-[720px] font-serif text-xl leading-8 text-[#1a1a1a]">
@@ -19,7 +19,7 @@ export default function Portfolio() {
         </p>
       </section>
 
-      <section className="grid border-b border-l border-[#1a1a1a] md:grid-cols-3" aria-label={copy.areasLabel}>
+      <section className="grid grid-cols-1 border-b border-l border-[#1a1a1a] md:grid-cols-3" aria-label={copy.areasLabel}>
         {copy.projects.map((project) => (
           <article key={project.name} className="border-r border-t border-[#1a1a1a] bg-white p-6">
             <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">{project.kicker}</p>

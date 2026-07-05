@@ -25,7 +25,7 @@ export default function About() {
           <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">
             {copy.kicker}
           </p>
-          <h1 className="my-3 max-w-5xl text-6xl font-extrabold leading-none tracking-[-0.055em] md:text-8xl">
+          <h1 className="my-3 max-w-5xl text-4xl font-extrabold leading-none tracking-[-0.055em] sm:text-5xl md:text-8xl">
             {copy.title}
           </h1>
           <p className="max-w-[720px] font-serif text-xl leading-8 text-[#1a1a1a]">
@@ -44,7 +44,7 @@ export default function About() {
         {copy.journey}
       </section>
 
-      <div className="grid border-b border-l border-[#1a1a1a] md:grid-cols-3">
+      <div className="grid grid-cols-1 border-b border-l border-[#1a1a1a] md:grid-cols-3">
         {copy.timeline.map((item) => (
           <article key={item.label} className="border-r border-t border-[#1a1a1a] bg-white p-6">
             <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">
@@ -117,13 +117,13 @@ export default function About() {
             ))}
           </div>
           <nav className="mb-6 flex flex-col gap-3 border-t border-[#1a1a1a] pt-4 font-mono text-xs uppercase tracking-[0.095em] md:flex-row md:items-center md:justify-between" aria-label={copy.badgesPagination}>
-            <span className="text-[#757575]">{badgePageStatus}</span>
+            <span className="text-center text-[#757575] md:text-left">{badgePageStatus}</span>
             <div className="flex gap-3">
               <button
                 type="button"
                 disabled={currentBadgePage === 1}
                 onClick={() => setBadgesPage((page) => Math.max(1, page - 1))}
-                className="border-2 border-[#1a1a1a] px-4 py-3 transition-colors hover:bg-[#1a1a1a] hover:text-white disabled:border-[#e2e8f0] disabled:text-[#999999] disabled:hover:bg-white disabled:hover:text-[#999999]"
+                className="flex-1 border-2 border-[#1a1a1a] px-4 py-3 text-center transition-colors hover:bg-[#1a1a1a] hover:text-white disabled:border-[#e2e8f0] disabled:text-[#999999] disabled:hover:bg-white disabled:hover:text-[#999999] md:flex-initial"
               >
                 {copy.previous}
               </button>
@@ -131,7 +131,7 @@ export default function About() {
                 type="button"
                 disabled={currentBadgePage === totalBadgePages}
                 onClick={() => setBadgesPage((page) => Math.min(totalBadgePages, page + 1))}
-                className="border-2 border-[#1a1a1a] px-4 py-3 transition-colors hover:bg-[#1a1a1a] hover:text-white disabled:border-[#e2e8f0] disabled:text-[#999999] disabled:hover:bg-white disabled:hover:text-[#999999]"
+                className="flex-1 border-2 border-[#1a1a1a] px-4 py-3 text-center transition-colors hover:bg-[#1a1a1a] hover:text-white disabled:border-[#e2e8f0] disabled:text-[#999999] disabled:hover:bg-white disabled:hover:text-[#999999] md:flex-initial"
               >
                 {copy.next}
               </button>

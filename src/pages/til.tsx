@@ -17,7 +17,7 @@ export default function Til() {
       <SEO title="Today I Learned" description={t('til.seoDescription')} path={localizedPath('/til')} />
       <section className="border-b border-[#1a1a1a] py-8">
         <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">{t('til.kicker')}</p>
-        <h1 className="my-3 max-w-5xl text-6xl font-extrabold leading-none tracking-[-0.055em] md:text-8xl">{t('til.title')}</h1>
+        <h1 className="my-3 max-w-5xl text-4xl font-extrabold leading-none tracking-[-0.055em] sm:text-5xl md:text-8xl">{t('til.title')}</h1>
         <p className="max-w-[720px] font-serif text-xl leading-8 text-[#1a1a1a]">
           {t('til.description')}
         </p>
@@ -37,17 +37,17 @@ export default function Til() {
         </div>
       </div>
       <nav className="mt-8 flex flex-col gap-4 border-t border-[#1a1a1a] pt-5 font-mono text-xs uppercase tracking-[0.095em] text-[#1a1a1a] md:flex-row md:items-center md:justify-between" aria-label={t('til.paginationLabel')}>
-        <span className="text-[#757575]">{format('blog.pageStatus', { current: pagination.currentPage, total: pagination.totalPages })}</span>
+        <span className="text-center text-[#757575] md:text-left">{format('blog.pageStatus', { current: pagination.currentPage, total: pagination.totalPages })}</span>
         <div className="flex gap-3">
           {pagination.hasPreviousPage ? (
-            <Link className="border-2 border-[#1a1a1a] px-4 py-3 transition-colors hover:bg-[#1a1a1a] hover:text-white" to={localizedPath(`/til?page=${pagination.currentPage - 1}`)}>{t('blog.previousPage')}</Link>
+            <Link className="flex-1 border-2 border-[#1a1a1a] px-4 py-3 text-center transition-colors hover:bg-[#1a1a1a] hover:text-white md:flex-initial" to={localizedPath(`/til?page=${pagination.currentPage - 1}`)}>{t('blog.previousPage')}</Link>
           ) : (
-            <span className="border-2 border-[#e2e8f0] px-4 py-3 text-[#999999]">{t('blog.previousPage')}</span>
+            <span className="flex-1 border-2 border-[#e2e8f0] px-4 py-3 text-center text-[#999999] md:flex-initial">{t('blog.previousPage')}</span>
           )}
           {pagination.hasNextPage ? (
-            <Link className="border-2 border-[#1a1a1a] px-4 py-3 transition-colors hover:bg-[#1a1a1a] hover:text-white" to={localizedPath(`/til?page=${pagination.currentPage + 1}`)}>{t('blog.nextPage')}</Link>
+            <Link className="flex-1 border-2 border-[#1a1a1a] px-4 py-3 text-center transition-colors hover:bg-[#1a1a1a] hover:text-white md:flex-initial" to={localizedPath(`/til?page=${pagination.currentPage + 1}`)}>{t('blog.nextPage')}</Link>
           ) : (
-            <span className="border-2 border-[#e2e8f0] px-4 py-3 text-[#999999]">{t('blog.nextPage')}</span>
+            <span className="flex-1 border-2 border-[#e2e8f0] px-4 py-3 text-center text-[#999999] md:flex-initial">{t('blog.nextPage')}</span>
           )}
         </div>
       </nav>

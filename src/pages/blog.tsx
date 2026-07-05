@@ -16,7 +16,7 @@ export default function Blog() {
     <div>
       <section className="border-b border-[#1a1a1a] py-8">
         <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">{t('blog.kicker')}</p>
-        <h1 className="my-3 max-w-5xl text-6xl font-extrabold leading-none tracking-[-0.055em] md:text-8xl">{t('blog.title')}</h1>
+        <h1 className="my-3 max-w-5xl text-4xl font-extrabold leading-none tracking-[-0.055em] sm:text-5xl md:text-8xl">{t('blog.title')}</h1>
         <p className="max-w-[720px] font-serif text-xl leading-8 text-[#1a1a1a]">
           {t('blog.description')}
         </p>
@@ -28,7 +28,7 @@ export default function Blog() {
         {rest.length > 0 && (
           <>
             <section className="mt-12 bg-black px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.12em] text-white" aria-label={t('blog.recentArticles')}>{t('blog.recentArticles')}</section>
-            <div className="grid border-b border-l border-[#1a1a1a] md:grid-cols-6" data-testid="recent-post-grid">
+            <div className="grid grid-cols-1 border-b border-l border-[#1a1a1a] md:grid-cols-6" data-testid="recent-post-grid">
               {rest.map((post, index) => (
                 <PostCard key={post.slug} post={post} className={getBalancedEditorialGridItemClass(index, rest.length)} />
               ))}
@@ -38,21 +38,21 @@ export default function Blog() {
       </div>
 
       <nav className="mt-8 flex flex-col gap-4 border-t border-[#1a1a1a] pt-5 font-mono text-xs uppercase tracking-[0.095em] text-[#1a1a1a] md:flex-row md:items-center md:justify-between" aria-label={t('blog.paginationLabel')}>
-        <span className="text-[#757575]">{format('blog.pageStatus', { current: pagination.currentPage, total: pagination.totalPages })}</span>
+        <span className="text-center text-[#757575] md:text-left">{format('blog.pageStatus', { current: pagination.currentPage, total: pagination.totalPages })}</span>
         <div className="flex gap-3">
           {pagination.hasPreviousPage ? (
-            <Link className="border-2 border-[#1a1a1a] px-4 py-3 transition-colors hover:bg-[#1a1a1a] hover:text-white" to={localizedPath(`/blog?page=${pagination.currentPage - 1}`)}>
+            <Link className="flex-1 border-2 border-[#1a1a1a] px-4 py-3 text-center transition-colors hover:bg-[#1a1a1a] hover:text-white md:flex-initial" to={localizedPath(`/blog?page=${pagination.currentPage - 1}`)}>
               {t('blog.previousPage')}
             </Link>
           ) : (
-            <span className="border-2 border-[#e2e8f0] px-4 py-3 text-[#999999]">{t('blog.previousPage')}</span>
+            <span className="flex-1 border-2 border-[#e2e8f0] px-4 py-3 text-center text-[#999999] md:flex-initial">{t('blog.previousPage')}</span>
           )}
           {pagination.hasNextPage ? (
-            <Link className="border-2 border-[#1a1a1a] px-4 py-3 transition-colors hover:bg-[#1a1a1a] hover:text-white" to={localizedPath(`/blog?page=${pagination.currentPage + 1}`)}>
+            <Link className="flex-1 border-2 border-[#1a1a1a] px-4 py-3 text-center transition-colors hover:bg-[#1a1a1a] hover:text-white md:flex-initial" to={localizedPath(`/blog?page=${pagination.currentPage + 1}`)}>
               {t('blog.nextPage')}
             </Link>
           ) : (
-            <span className="border-2 border-[#e2e8f0] px-4 py-3 text-[#999999]">{t('blog.nextPage')}</span>
+            <span className="flex-1 border-2 border-[#e2e8f0] px-4 py-3 text-center text-[#999999] md:flex-initial">{t('blog.nextPage')}</span>
           )}
         </div>
       </nav>

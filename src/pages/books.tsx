@@ -39,7 +39,7 @@ export default function Books() {
         <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">
           {copy.kicker}
         </p>
-        <h1 className="my-3 max-w-5xl text-6xl font-extrabold leading-none tracking-[-0.055em] md:text-8xl">
+        <h1 className="my-3 max-w-5xl text-4xl font-extrabold leading-none tracking-[-0.055em] sm:text-5xl md:text-8xl">
           {copy.title}
         </h1>
         <p className="max-w-[720px] font-serif text-xl leading-8 text-[#1a1a1a]">

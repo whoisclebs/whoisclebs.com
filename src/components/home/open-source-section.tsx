@@ -38,14 +38,14 @@ export function OpenSourceSection() {
       <div className="mx-6 h-px bg-line" />
 
       {/* Project cards grid */}
-      <div className="grid md:grid-cols-2">
+      <div className="grid grid-cols-1 md:grid-cols-2">
         {openSourceProjects.map((project, index) => (
           <article
             key={project.id}
             className={`relative min-h-[190px] border-line bg-paper p-6 ${
               index % 2 === 0 ? 'md:border-r' : ''
-            } ${index < openSourceProjects.length - 2 ? 'md:border-b' : ''} ${
-              index < 2 ? 'border-b' : ''
+            } ${index < openSourceProjects.length - 1 ? 'border-b' : ''} ${
+              index < 2 ? 'md:border-b' : 'md:border-b-0'
             }`}
           >
             <div className="flex h-full items-start gap-5">
@@ -88,12 +88,10 @@ export function OpenSourceSection() {
             </div>
 
             {/* Repo link */}
-            <a
-              href={project.repo}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to={localizedPath(`/projects/${project.id}`)}
               className="absolute inset-0 project-card-link"
-              aria-label={`${project.name} — ${copy.repository}`}
+              aria-label={`${project.name} — ${copy.title}`}
               data-nav-item
             />
           </article>

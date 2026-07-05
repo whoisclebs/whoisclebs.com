@@ -58,7 +58,7 @@ function LanguageSelect() {
   )
 }
 
-function NavigationLinks({ onClick }: { onClick?: () => void }) {
+function NavigationLinks({ onClick, mobile }: { onClick?: () => void; mobile?: boolean }) {
   const { t } = useI18n()
   const localizedPath = useLocalizedPath()
 
@@ -70,8 +70,8 @@ function NavigationLinks({ onClick }: { onClick?: () => void }) {
       data-nav-item
       className={({ isActive }) =>
         isActive
-          ? 'relative font-mono text-[11px] font-bold uppercase tracking-[1.15px] text-accent after:absolute after:-bottom-[6px] after:left-0 after:h-0.5 after:w-full after:bg-accent'
-          : 'font-mono text-[11px] font-bold uppercase tracking-[1.15px] text-muted transition-colors hover:text-ink'
+          ? `${mobile ? 'block w-full py-3' : ''} relative font-mono text-[11px] font-bold uppercase tracking-[1.15px] text-accent after:absolute after:-bottom-[6px] after:left-0 after:h-0.5 after:w-full after:bg-accent`
+          : `${mobile ? 'block w-full py-3' : ''} font-mono text-[11px] font-bold uppercase tracking-[1.15px] text-muted transition-colors hover:text-ink`
       }
     >
       {t(item.labelKey)}
@@ -91,7 +91,7 @@ const Navbar: React.FC = () => {
 
       <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-6 px-4 py-[10px] md:px-6">
         {/* Brand area */}
-        <div className="flex shrink-0 flex-col">
+        <div className="flex min-w-0 shrink flex-col">
           <Link
             to={localizedPath('/')}
             data-nav-item
@@ -99,24 +99,24 @@ const Navbar: React.FC = () => {
           >
             Clebson Augusto
           </Link>
-          <p className="mt-0.5 font-mono text-[10px] font-normal uppercase tracking-[1.1px] text-muted">
+          <p className="mt-0.5 max-w-[160px] truncate font-mono text-[10px] font-normal uppercase tracking-[1.1px] text-muted sm:max-w-none sm:overflow-visible sm:whitespace-normal">
             WHOISCLEBS / SOFTWARE ENGINEER / João Pessoa
           </p>
         </div>
 
         {/* Mobile controls */}
-        <div className="flex items-center gap-3 md:hidden">
+        <div className="flex items-center gap-2 md:hidden">
           <ThemeToggle />
           <LanguageSelect />
           <button
             type="button"
             data-nav-item
-            className="inline-flex size-[38px] cursor-pointer items-center justify-center border border-line transition-colors hover:bg-graphite hover:text-bg"
+            className="inline-flex size-[40px] cursor-pointer items-center justify-center border border-line transition-colors hover:bg-graphite hover:text-bg"
             aria-label={open ? t('nav.closeMenu') : t('nav.openMenu')}
             aria-expanded={open}
             onClick={() => setOpen((current) => !current)}
           >
-            {open ? <X size={15} aria-hidden="true" /> : <Menu size={15} aria-hidden="true" />}
+            {open ? <X size={16} aria-hidden="true" /> : <Menu size={16} aria-hidden="true" />}
           </button>
         </div>
 
@@ -135,9 +135,9 @@ const Navbar: React.FC = () => {
 
       {/* Mobile menu */}
       {open && (
-        <nav className="border-t border-line bg-paper px-4 py-4 font-mono text-xs uppercase tracking-[0.1em] md:hidden" aria-label={t('nav.primaryMobile')}>
-          <div className="mx-auto grid w-full max-w-[1280px] gap-4">
-            <NavigationLinks onClick={() => setOpen(false)} />
+        <nav className="border-t border-line bg-paper px-4 py-5 font-mono text-xs uppercase tracking-[0.1em] md:hidden" aria-label={t('nav.primaryMobile')}>
+          <div className="mx-auto grid w-full max-w-[1280px] gap-1">
+            <NavigationLinks onClick={() => setOpen(false)} mobile />
           </div>
         </nav>
       )}

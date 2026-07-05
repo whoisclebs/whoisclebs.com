@@ -41,9 +41,9 @@ export function getPostBySlug(slug: string, locale: Locale = 'pt-BR'): BlogPost 
 // ── Grid helpers ───────────────────────────────────────────────────────
 
 export function getResponsiveGridClass(count: number): string {
-  if (count <= 1) return 'md:grid-cols-1'
-  if (count === 2) return 'md:grid-cols-2'
-  return 'md:grid-cols-3'
+  if (count <= 1) return 'grid-cols-1 md:grid-cols-1'
+  if (count === 2) return 'grid-cols-1 md:grid-cols-2'
+  return 'grid-cols-1 md:grid-cols-3'
 }
 
 export function getBalancedEditorialGridItemClass(index: number, count: number): string {
