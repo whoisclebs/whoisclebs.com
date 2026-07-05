@@ -4,7 +4,6 @@ import { formatPostDate, getResponsiveGridClass, paginatePosts } from '@/lib/pos
 import { getPublishedTilEntries } from '@/lib/til'
 import { useI18n } from '@/lib/i18n'
 import { useLocalizedPath } from '@/lib/use-localized-path'
-
 export default function Til() {
   const [searchParams] = useSearchParams()
   const { locale, t, format } = useI18n()
@@ -23,17 +22,19 @@ export default function Til() {
           {t('til.description')}
         </p>
       </section>
-      <div className={`mt-8 grid border-b border-l border-[#1a1a1a] ${getResponsiveGridClass(pagination.items.length)}`} data-testid="til-grid">
-        {pagination.items.map((entry) => (
-          <article key={entry.slug} className="border-r border-t border-[#1a1a1a] bg-white p-5">
-            <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">{entry.kicker}</p>
-            <h2 className="my-2 text-3xl font-extrabold leading-tight tracking-[-0.04em]">
-              <Link className="transition-colors hover:text-[#057dbc] hover:underline hover:underline-offset-4" to={localizedPath(`/til/${entry.slug}`)}>{entry.title}</Link>
-            </h2>
-            <p className="mb-4 font-serif leading-7 text-[#1a1a1a]">{entry.excerpt}</p>
-            <p className="font-mono text-xs uppercase tracking-[0.095em] text-[#757575]">{formatPostDate(entry.date, locale)}</p>
-          </article>
-        ))}
+      <div>
+        <div className={`mt-8 grid border-b border-l border-[#1a1a1a] ${getResponsiveGridClass(pagination.items.length)}`} data-testid="til-grid">
+          {pagination.items.map((entry) => (
+            <article key={entry.slug} className="border-r border-t border-[#1a1a1a] bg-white p-5">
+              <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">{entry.kicker}</p>
+              <h2 className="my-2 text-3xl font-extrabold leading-tight tracking-[-0.04em]">
+                <Link data-nav-item className="transition-colors hover:text-[#057dbc] hover:underline hover:underline-offset-4" to={localizedPath(`/til/${entry.slug}`)}>{entry.title}</Link>
+              </h2>
+              <p className="mb-4 font-serif leading-7 text-[#1a1a1a]">{entry.excerpt}</p>
+              <p className="font-mono text-xs uppercase tracking-[0.095em] text-[#757575]">{formatPostDate(entry.date, locale)}</p>
+            </article>
+          ))}
+        </div>
       </div>
       <nav className="mt-8 flex flex-col gap-4 border-t border-[#1a1a1a] pt-5 font-mono text-xs uppercase tracking-[0.095em] text-[#1a1a1a] md:flex-row md:items-center md:justify-between" aria-label={t('til.paginationLabel')}>
         <span className="text-[#757575]">{format('blog.pageStatus', { current: pagination.currentPage, total: pagination.totalPages })}</span>

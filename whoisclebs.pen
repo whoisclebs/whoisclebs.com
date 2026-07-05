@@ -1,0 +1,2161 @@
+{
+  "version": "2.14",
+  "children": [
+    {
+      "type": "frame",
+      "id": "bi8Au",
+      "x": -697,
+      "y": 550,
+      "name": "Frame",
+      "clip": true,
+      "width": 800,
+      "height": 600,
+      "fill": "#FFFFFF",
+      "layout": "none"
+    },
+    {
+      "type": "frame",
+      "id": "b4XSSC",
+      "x": 4273,
+      "y": -183,
+      "name": "Clebson Augusto / Home Editorial Variation",
+      "clip": true,
+      "width": 1440,
+      "height": 2280,
+      "fill": "$cb-bg",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "INAMI",
+          "x": 72,
+          "y": 72,
+          "name": "Top Rule",
+          "fill": "$cb-line",
+          "width": 1296,
+          "height": 1
+        },
+        {
+          "type": "rectangle",
+          "id": "Dqw20",
+          "x": 72,
+          "y": 134,
+          "name": "Header Bottom Rule",
+          "fill": "$cb-line",
+          "width": 1296,
+          "height": 1
+        },
+        {
+          "type": "text",
+          "id": "Ic4zE",
+          "x": 88,
+          "y": 88,
+          "name": "Brand Name",
+          "fill": "$cb-ink",
+          "content": "Clebson Augusto",
+          "fontFamily": "$cb-serif",
+          "fontSize": 25,
+          "fontWeight": "800"
+        },
+        {
+          "type": "text",
+          "id": "eo56P",
+          "x": 88,
+          "y": 116,
+          "name": "Brand Meta",
+          "fill": "$cb-muted",
+          "content": "WHOISCLEBS / SOFTWARE ENGINEER / João Pessoa",
+          "fontFamily": "$cb-mono",
+          "fontSize": 10,
+          "fontWeight": "normal",
+          "letterSpacing": 1.1
+        },
+        {
+          "type": "text",
+          "id": "cdUG6",
+          "x": 783,
+          "y": 101,
+          "name": "Nav INICIO",
+          "fill": "$cb-accent",
+          "content": "INICIO",
+          "fontFamily": "$cb-mono",
+          "fontSize": 11,
+          "fontWeight": "700",
+          "letterSpacing": 1.15
+        },
+        {
+          "type": "rectangle",
+          "id": "oZ3dA",
+          "x": 783,
+          "y": 119,
+          "name": "Active Nav Mark",
+          "fill": "$cb-accent",
+          "width": 42,
+          "height": 2
+        },
+        {
+          "type": "text",
+          "id": "EUDww",
+          "x": 853,
+          "y": 101,
+          "name": "Nav ARTIGOS",
+          "fill": "$cb-muted",
+          "content": "ARTIGOS",
+          "fontFamily": "$cb-mono",
+          "fontSize": 11,
+          "fontWeight": "700",
+          "letterSpacing": 1.15
+        },
+        {
+          "type": "text",
+          "id": "hhm4a",
+          "x": 931,
+          "y": 101,
+          "name": "Nav TIL",
+          "fill": "$cb-muted",
+          "content": "TIL",
+          "fontFamily": "$cb-mono",
+          "fontSize": 11,
+          "fontWeight": "700",
+          "letterSpacing": 1.15
+        },
+        {
+          "type": "text",
+          "id": "kIHum",
+          "x": 984,
+          "y": 101,
+          "name": "Nav SOBRE",
+          "fill": "$cb-muted",
+          "content": "SOBRE",
+          "fontFamily": "$cb-mono",
+          "fontSize": 11,
+          "fontWeight": "700",
+          "letterSpacing": 1.15
+        },
+        {
+          "type": "text",
+          "id": "g5FnXH",
+          "x": 1046,
+          "y": 101,
+          "name": "Nav ARQUIVO",
+          "fill": "$cb-muted",
+          "content": "ARQUIVO",
+          "fontFamily": "$cb-mono",
+          "fontSize": 11,
+          "fontWeight": "700",
+          "letterSpacing": 1.15
+        },
+        {
+          "type": "frame",
+          "id": "CgFe1",
+          "x": 1183,
+          "y": 88,
+          "name": "Header Controls",
+          "gap": 10,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "R5JWW",
+              "name": "Search Control",
+              "width": 38,
+              "height": 36,
+              "stroke": "$cb-line",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "fHIDa",
+                  "name": "Search Icon",
+                  "width": 15,
+                  "height": 15,
+                  "icon": "search",
+                  "library": "lucide",
+                  "fill": "$cb-ink"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "F59Nr7",
+              "name": "Theme Control",
+              "width": 38,
+              "height": 36,
+              "stroke": "$cb-line",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "t4A7N",
+                  "name": "Theme Icon",
+                  "width": 15,
+                  "height": 15,
+                  "icon": "moon",
+                  "library": "lucide",
+                  "fill": "$cb-ink"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Y46EqH",
+              "name": "Language Control",
+              "stroke": "$cb-line",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
+              "gap": 8,
+              "padding": [
+                10,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "z41y8",
+                  "name": "Language Text",
+                  "fill": "$cb-ink",
+                  "content": "PT-BR",
+                  "fontFamily": "$cb-mono",
+                  "fontSize": 11,
+                  "fontWeight": "700",
+                  "letterSpacing": 1.1
+                },
+                {
+                  "type": "icon",
+                  "id": "QInPG",
+                  "name": "Language Icon",
+                  "width": 12,
+                  "height": 12,
+                  "icon": "chevron-down",
+                  "library": "lucide",
+                  "fill": "$cb-ink"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "hMrco",
+          "x": 0,
+          "y": 135,
+          "name": "Hero Cover",
+          "width": 1440,
+          "height": 496,
+          "fill": "$cb-bg",
+          "stroke": "$cb-line",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "strokeAlignment": "inner",
+          "padding": [
+            0,
+            88
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "m3pO6",
+              "name": "Hero Main Column",
+              "width": "fill_container",
+              "height": "fill_container",
+              "stroke": "$cb-line",
+              "strokeWidth": {
+                "right": 1
+              },
+              "strokeAlignment": "inner",
+              "layout": "vertical",
+              "gap": 22,
+              "padding": [
+                54,
+                44,
+                54,
+                0
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "VBWJ3",
+                  "name": "Hero Kicker",
+                  "fill": "$cb-accent",
+                  "content": "ENGENHARIA APLICADA",
+                  "fontFamily": "$cb-mono",
+                  "fontSize": 12,
+                  "fontWeight": "700",
+                  "letterSpacing": 1.5
+                },
+                {
+                  "type": "text",
+                  "id": "Grfxe",
+                  "name": "Hero Title",
+                  "fill": "$cb-ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Software, arquitetura e produto sem teatro.",
+                  "lineHeight": 0.94,
+                  "fontFamily": "$cb-display",
+                  "fontSize": 74,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "FG4qt",
+                  "name": "Hero Description",
+                  "fill": "$cb-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 760,
+                  "content": "Escrevo sobre decisões técnicas, interfaces, pagamentos, operação e projetos que precisam sobreviver ao uso real.",
+                  "lineHeight": 1.22,
+                  "fontFamily": "$cb-serif",
+                  "fontSize": 24,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "Qa4vj",
+                  "name": "Hero Actions",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "RWt4R",
+                      "name": "Primary Button",
+                      "fill": "$cb-graphite",
+                      "stroke": "$cb-graphite",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "gap": 8,
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "XxH3q",
+                          "name": "Primary Button Text",
+                          "fill": "#F7F3EA",
+                          "content": "LER ARTIGOS",
+                          "fontFamily": "$cb-mono",
+                          "fontSize": 12,
+                          "fontWeight": "700",
+                          "letterSpacing": 1.1
+                        },
+                        {
+                          "type": "icon",
+                          "id": "c3397",
+                          "name": "Primary Button Arrow",
+                          "width": 14,
+                          "height": 14,
+                          "icon": "arrow-right",
+                          "library": "lucide",
+                          "fill": "#F7F3EA"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "u7pMqW",
+                      "name": "Secondary Button",
+                      "stroke": "$cb-line",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "OqbbG",
+                          "name": "Secondary Button Text",
+                          "fill": "$cb-ink",
+                          "content": "VER PROJETOS",
+                          "fontFamily": "$cb-mono",
+                          "fontSize": 12,
+                          "fontWeight": "700",
+                          "letterSpacing": 1.1
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "id8Ws",
+              "name": "Now Margin Note",
+              "width": 360,
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "padding": [
+                54,
+                0,
+                54,
+                32
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "V3mKhT",
+                  "name": "Agora Block",
+                  "width": "fill_container",
+                  "fill": "$cb-paper",
+                  "stroke": "$cb-line",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 22,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "K7yxmz",
+                      "name": "Agora Title",
+                      "fill": "$cb-ink",
+                      "content": "AGORA",
+                      "fontFamily": "$cb-display",
+                      "fontSize": 34,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "UlZO6",
+                      "name": "Agora CONSTRUINDO",
+                      "width": "fill_container",
+                      "stroke": "$cb-hairline",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "padding": [
+                        0,
+                        0,
+                        12,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ZgOUJ",
+                          "name": "Agora Label",
+                          "fill": "$cb-accent",
+                          "content": "CONSTRUINDO",
+                          "fontFamily": "$cb-mono",
+                          "fontSize": 10,
+                          "fontWeight": "700",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "XeMPQ",
+                          "name": "Agora Text",
+                          "fill": "$cb-ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Um orquestrador de agentes em Go.",
+                          "lineHeight": 1.25,
+                          "fontFamily": "$cb-serif",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fXlRD",
+                      "name": "Agora ESTUDANDO",
+                      "width": "fill_container",
+                      "stroke": "$cb-hairline",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "padding": [
+                        0,
+                        0,
+                        12,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "mk4oJ",
+                          "name": "Agora Label",
+                          "fill": "$cb-accent",
+                          "content": "ESTUDANDO",
+                          "fontFamily": "$cb-mono",
+                          "fontSize": 10,
+                          "fontWeight": "700",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "RpjWg",
+                          "name": "Agora Text",
+                          "fill": "$cb-ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Runtimes, WASM e sistemas distribuídos.",
+                          "lineHeight": 1.25,
+                          "fontFamily": "$cb-serif",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "i5GUf",
+                      "name": "Agora LENDO",
+                      "width": "fill_container",
+                      "stroke": "$cb-hairline",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "padding": [
+                        0,
+                        0,
+                        12,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "sjINk",
+                          "name": "Agora Label",
+                          "fill": "$cb-accent",
+                          "content": "LENDO",
+                          "fontFamily": "$cb-mono",
+                          "fontSize": 10,
+                          "fontWeight": "700",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "aDQuL",
+                          "name": "Agora Text",
+                          "fill": "$cb-ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Uma pilha de notas que ainda precisa virar texto.",
+                          "lineHeight": 1.25,
+                          "fontFamily": "$cb-serif",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "OzikB",
+                      "name": "Agora Updated",
+                      "fill": "$cb-soft",
+                      "content": "ATUALIZADO EM 02 JUL. 2026",
+                      "fontFamily": "$cb-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.1
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "DTIZd",
+          "x": 0,
+          "y": 671,
+          "name": "Recent Writing",
+          "width": 1440,
+          "height": 590,
+          "fill": "$cb-bg",
+          "layout": "vertical",
+          "padding": [
+            0,
+            88,
+            58,
+            88
+          ],
+          "justifyContent": "space_between",
+          "children": [
+            {
+              "type": "frame",
+              "id": "HtMgl",
+              "name": "Recent Bar",
+              "width": "fill_container",
+              "height": 72,
+              "fill": "$cb-graphite",
+              "padding": [
+                0,
+                18
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "s1X9f",
+                  "name": "Recent Title",
+                  "fill": "#F7F3EA",
+                  "content": "ESCRITA RECENTE",
+                  "fontFamily": "$cb-display",
+                  "fontSize": 40,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "C0zil",
+                  "name": "Recent Actions",
+                  "gap": 18,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "YhDJL",
+                      "name": "Recent Meta",
+                      "fill": "#C8C2B8",
+                      "content": "ARTIGOS / ENSAIOS / DECISOES",
+                      "fontFamily": "$cb-mono",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "k8R7F4",
+              "name": "Recent Layout",
+              "width": 1264,
+              "height": "fill_container",
+              "stroke": [
+                "#00000033",
+                "$cb-line"
+              ],
+              "strokeWidth": {
+                "right": 1,
+                "bottom": 1,
+                "left": 1
+              },
+              "strokeAlignment": "inner",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "h7Tyw",
+                  "name": "Featured Article",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "stroke": "$cb-line",
+                  "strokeWidth": {
+                    "right": 1
+                  },
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 26,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "o5DZoo",
+                      "name": "Featured Meta",
+                      "fill": "$cb-accent",
+                      "content": "ARQUITETURA / SERIE 02 / 12 MIN",
+                      "fontFamily": "$cb-mono",
+                      "fontSize": 11,
+                      "fontWeight": "700",
+                      "letterSpacing": 1.3
+                    },
+                    {
+                      "type": "text",
+                      "id": "O0wJBP",
+                      "name": "Featured Title",
+                      "fill": "$cb-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Contratos que sobrevivem depois do diagrama",
+                      "lineHeight": 0.98,
+                      "fontFamily": "$cb-display",
+                      "fontSize": 58,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "h19nqX",
+                      "name": "Featured Summary",
+                      "fill": "$cb-muted",
+                      "textGrowth": "fixed-width",
+                      "width": 690,
+                      "content": "O que muda quando a arquitetura para de ser desenho e começa a ser responsabilidade compartilhada em produção.",
+                      "lineHeight": 1.24,
+                      "fontFamily": "$cb-serif",
+                      "fontSize": 22,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "C2fTk",
+                      "name": "Featured Date",
+                      "fill": "$cb-soft",
+                      "content": "02 JUL. 2026 / EDICAO 014",
+                      "fontFamily": "$cb-mono",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1.2
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "rqxzv",
+                  "name": "Secondary Articles",
+                  "width": 420,
+                  "height": "fill_container",
+                  "stroke": "#000000ff",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "X4lpd",
+                      "name": "Idempotencia antes da cobrança",
+                      "width": "fill_container",
+                      "height": 153,
+                      "fill": "#F7F3EA",
+                      "stroke": "#2A2A2A",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "layout": "vertical",
+                      "gap": 8,
+                      "padding": [
+                        18,
+                        22
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "hOO4C",
+                          "name": "Idempotencia antes da cobrança Meta",
+                          "fill": "#263CFF",
+                          "content": "PAGAMENTOS / 8 MIN",
+                          "fontFamily": "Geist Mono",
+                          "fontSize": 10,
+                          "fontWeight": "700",
+                          "letterSpacing": 1.1
+                        },
+                        {
+                          "type": "text",
+                          "id": "Mm52E",
+                          "name": "Idempotencia antes da cobrança Title",
+                          "fill": "#171717",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Idempotencia antes da cobrança",
+                          "lineHeight": 0.95,
+                          "fontFamily": "Anton",
+                          "fontSize": 30,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "rmoYf",
+                          "name": "Idempotencia antes da cobrança Summary",
+                          "fill": "#4D4D4D",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "O que precisa existir antes de chamar o gateway.",
+                          "lineHeight": 1.12,
+                          "fontFamily": "Newsreader",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "C8b9X",
+                          "name": "Idempotencia antes da cobrança Date",
+                          "fill": "#8B8B83",
+                          "content": "JUN. 2026",
+                          "fontFamily": "Geist Mono",
+                          "fontSize": 10,
+                          "fontWeight": "normal",
+                          "letterSpacing": 1
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "QQqZf",
+                      "name": "Logs que contam historia",
+                      "width": "fill_container",
+                      "height": 153,
+                      "fill": "#F7F3EA",
+                      "stroke": "#2A2A2A",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "strokeAlignment": "outer",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "padding": [
+                        18,
+                        22
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "XAnYn",
+                          "name": "Logs que contam historia Meta",
+                          "fill": "#263CFF",
+                          "content": "OPERACAO / 6 MIN",
+                          "fontFamily": "Geist Mono",
+                          "fontSize": 10,
+                          "fontWeight": "700",
+                          "letterSpacing": 1.1
+                        },
+                        {
+                          "type": "text",
+                          "id": "uejTb",
+                          "name": "Logs que contam historia Title",
+                          "fill": "#171717",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Logs que contam historia",
+                          "lineHeight": 0.95,
+                          "fontFamily": "Anton",
+                          "fontSize": 30,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "C2YUPC",
+                          "name": "Logs que contam historia Summary",
+                          "fill": "#4D4D4D",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Como escrever eventos que ajudam depois do incidente.",
+                          "lineHeight": 1.12,
+                          "fontFamily": "Newsreader",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "n9l9k",
+                          "name": "Logs que contam historia Date",
+                          "fill": "#8B8B83",
+                          "content": "MAI. 2026",
+                          "fontFamily": "Geist Mono",
+                          "fontSize": 10,
+                          "fontWeight": "normal",
+                          "letterSpacing": 1
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "tOo1H",
+                      "name": "Todos os artigos",
+                      "width": "fill_container",
+                      "height": 154,
+                      "fill": "#1B1B1F",
+                      "stroke": "#2A2A2A",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "layout": "vertical",
+                      "gap": 8,
+                      "padding": [
+                        18,
+                        22
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "RMET5",
+                          "name": "Todos os artigos Meta",
+                          "fill": "#8EA0FF",
+                          "content": "ARQUIVO",
+                          "fontFamily": "Geist Mono",
+                          "fontSize": 10,
+                          "fontWeight": "700",
+                          "letterSpacing": 1.1
+                        },
+                        {
+                          "type": "text",
+                          "id": "h3Uxz",
+                          "name": "Todos os artigos Title",
+                          "fill": "#FFFDF7",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Todos os artigos",
+                          "lineHeight": 0.95,
+                          "fontFamily": "Anton",
+                          "fontSize": 30,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "YemLS",
+                          "name": "Todos os artigos Summary",
+                          "fill": "#C8C2B8",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "A pagina completa com posts, ensaios e notas tecnicas.",
+                          "lineHeight": 1.12,
+                          "fontFamily": "Newsreader",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "MjQlk",
+                          "name": "Todos os artigos Date",
+                          "fill": "#F7F3EA",
+                          "content": "VER TODOS OS ARTIGOS ->",
+                          "fontFamily": "Geist Mono",
+                          "fontSize": 10,
+                          "fontWeight": "normal",
+                          "letterSpacing": 1
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Cy5aD",
+          "x": 72,
+          "y": 1310,
+          "name": "Projetos - Home Selection",
+          "width": 1296,
+          "height": 690,
+          "fill": "#F7F3EA",
+          "stroke": "#2A2A2A",
+          "strokeWidth": 1,
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "X1avS",
+              "x": 24,
+              "y": 24,
+              "name": "Projects Number",
+              "fill": "#263CFF",
+              "content": "03",
+              "fontFamily": "Geist Mono",
+              "fontSize": 12,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "OY1Bw",
+              "x": 64,
+              "y": 24,
+              "name": "Projects Label",
+              "fill": "#171717",
+              "content": "PROJETOS",
+              "fontFamily": "Geist Mono",
+              "fontSize": 12,
+              "fontWeight": "700",
+              "letterSpacing": 1.4
+            },
+            {
+              "type": "text",
+              "id": "g1CM8c",
+              "x": 1120,
+              "y": 25,
+              "name": "Projects Meta",
+              "fill": "#8B8B83",
+              "content": "5 PROJETOS / 1 ACAO",
+              "fontFamily": "Geist Mono",
+              "fontSize": 10,
+              "fontWeight": "700",
+              "letterSpacing": 1.2
+            },
+            {
+              "type": "rectangle",
+              "id": "B9xQA",
+              "x": 24,
+              "y": 54,
+              "name": "Projects Top Rule",
+              "fill": "#2A2A2A",
+              "width": 1248,
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "OO8tt",
+              "x": 24,
+              "y": 82,
+              "name": "Home Project Cards",
+              "width": 1248,
+              "height": 570,
+              "fill": "#FFFDF7",
+              "stroke": "#2A2A2A",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Pc3fJ",
+                  "name": "Projects Row 1",
+                  "width": "fill_container",
+                  "height": 190,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "a4XCrl",
+                      "name": "Paco Project Card",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "#FFFDF7",
+                      "stroke": "#2A2A2A",
+                      "strokeWidth": {
+                        "right": 1,
+                        "bottom": 1
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "wi6LX",
+                          "x": 24,
+                          "y": 24,
+                          "name": "Paco Mark",
+                          "width": 46,
+                          "height": 46,
+                          "fill": "#F7F3EA",
+                          "stroke": "#2A2A2A",
+                          "strokeWidth": 1,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "J159W",
+                              "x": 9,
+                              "y": 9,
+                              "name": "Paco Shape",
+                              "fill": "#263CFF",
+                              "width": 28,
+                              "height": 28
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "VqNUs",
+                          "x": 90,
+                          "y": 26,
+                          "name": "Paco Title",
+                          "fill": "#171717",
+                          "content": "Paco",
+                          "lineHeight": 0.92,
+                          "fontFamily": "Anton",
+                          "fontSize": 29,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "GRmQH",
+                          "x": 90,
+                          "y": 62,
+                          "name": "Paco Description",
+                          "fill": "#4D4D4D",
+                          "textGrowth": "fixed-width",
+                          "width": 354,
+                          "content": "Compilador experimental e runtime em Rust.",
+                          "lineHeight": 1.12,
+                          "fontFamily": "Newsreader",
+                          "fontSize": 17,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "kmuxH",
+                          "x": 145,
+                          "y": 139,
+                          "name": "Paco Tags",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "p8JHG",
+                              "name": "Rust Chip",
+                              "fill": "#F7F3EA",
+                              "stroke": "#C9C3B8",
+                              "strokeWidth": 1,
+                              "padding": [
+                                3,
+                                7
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "U7JAaz",
+                                  "name": "Rust Chip Text",
+                                  "fill": "#4D4D4D",
+                                  "content": "Rust",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 9,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "r0eNkj",
+                              "name": "Compiler Chip",
+                              "fill": "#F7F3EA",
+                              "stroke": "#C9C3B8",
+                              "strokeWidth": 1,
+                              "padding": [
+                                3,
+                                7
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "XYd9o",
+                                  "name": "Compiler Chip Text",
+                                  "fill": "#4D4D4D",
+                                  "content": "Compiler",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 9,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "UwEc6",
+                          "x": 90,
+                          "y": 145,
+                          "name": "Paco Year",
+                          "fill": "#263CFF",
+                          "content": "2026",
+                          "fontFamily": "Geist Mono",
+                          "fontSize": 10,
+                          "fontWeight": "700",
+                          "letterSpacing": 1
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "W3uxH",
+                          "x": 90,
+                          "y": 128,
+                          "name": "Paco Metadata Rule",
+                          "fill": "#C9C3B8",
+                          "width": 392,
+                          "height": 1
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "m8n4j",
+                      "name": "Seishin Project Card",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "#FFFDF7",
+                      "stroke": "#2A2A2A",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "BBi8J",
+                          "x": 24,
+                          "y": 24,
+                          "name": "Seishin Mark",
+                          "width": 46,
+                          "height": 46,
+                          "fill": "#F7F3EA",
+                          "stroke": "#2A2A2A",
+                          "strokeWidth": 1,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "XO0Li",
+                              "x": 9,
+                              "y": 9,
+                              "name": "Seishin Tile 0",
+                              "fill": "#263CFF",
+                              "width": 12,
+                              "height": 12
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "uMv3o",
+                              "x": 27,
+                              "y": 9,
+                              "name": "Seishin Tile 1",
+                              "fill": "#1B1B1F",
+                              "width": 12,
+                              "height": 12
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "O7CxRA",
+                              "x": 9,
+                              "y": 27,
+                              "name": "Seishin Tile 2",
+                              "fill": "#1B1B1F",
+                              "width": 12,
+                              "height": 12
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "Tg43I",
+                              "x": 27,
+                              "y": 27,
+                              "name": "Seishin Tile 3",
+                              "fill": "#1B1B1F",
+                              "width": 12,
+                              "height": 12
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "EfsbC",
+                          "x": 90,
+                          "y": 26,
+                          "name": "Seishin Title",
+                          "fill": "#171717",
+                          "content": "Seishin",
+                          "lineHeight": 0.92,
+                          "fontFamily": "Anton",
+                          "fontSize": 29,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "fc7Xe",
+                          "x": 90,
+                          "y": 62,
+                          "name": "Seishin Description",
+                          "fill": "#4D4D4D",
+                          "textGrowth": "fixed-width",
+                          "width": 354,
+                          "content": "Runtime 2D com cenas, prefabs e assets.",
+                          "lineHeight": 1.12,
+                          "fontFamily": "Newsreader",
+                          "fontSize": 17,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "at7Y5",
+                          "x": 145,
+                          "y": 139,
+                          "name": "Seishin Tags",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "l7oHop",
+                              "name": "Rust Chip",
+                              "fill": "#F7F3EA",
+                              "stroke": "#C9C3B8",
+                              "strokeWidth": 1,
+                              "padding": [
+                                3,
+                                7
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "QlAxr",
+                                  "name": "Rust Chip Text",
+                                  "fill": "#4D4D4D",
+                                  "content": "Rust",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 9,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "K4D2Eu",
+                              "name": "WASM Chip",
+                              "fill": "#F7F3EA",
+                              "stroke": "#C9C3B8",
+                              "strokeWidth": 1,
+                              "padding": [
+                                3,
+                                7
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "AOAqm",
+                                  "name": "WASM Chip Text",
+                                  "fill": "#4D4D4D",
+                                  "content": "WASM",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 9,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "J2zZdn",
+                          "x": 90,
+                          "y": 145,
+                          "name": "Seishin Year",
+                          "fill": "#263CFF",
+                          "content": "2026",
+                          "fontFamily": "Geist Mono",
+                          "fontSize": 10,
+                          "fontWeight": "700",
+                          "letterSpacing": 1
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "di5UG",
+                          "x": 90,
+                          "y": 128,
+                          "name": "Seishin Metadata Rule",
+                          "fill": "#C9C3B8",
+                          "width": 392,
+                          "height": 1
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "zgLYO",
+                  "name": "Projects Row 2",
+                  "width": "fill_container",
+                  "height": 190,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "kKuMx",
+                      "name": "Dbadger Project Card",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "#FFFDF7",
+                      "stroke": "#2A2A2A",
+                      "strokeWidth": {
+                        "right": 1,
+                        "bottom": 1
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "RJc28",
+                          "x": 24,
+                          "y": 24,
+                          "name": "Dbadger Mark",
+                          "width": 46,
+                          "height": 46,
+                          "fill": "#F7F3EA",
+                          "stroke": "#2A2A2A",
+                          "strokeWidth": 1,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "rnQWd",
+                              "x": 10,
+                              "y": 10,
+                              "name": "Dbadger Shape",
+                              "fill": "#263CFF",
+                              "width": 26,
+                              "height": 26
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "m3N0T6",
+                          "x": 90,
+                          "y": 26,
+                          "name": "Dbadger Title",
+                          "fill": "#171717",
+                          "content": "Dbadger",
+                          "lineHeight": 0.92,
+                          "fontFamily": "Anton",
+                          "fontSize": 29,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "n09rzU",
+                          "x": 90,
+                          "y": 62,
+                          "name": "Dbadger Description",
+                          "fill": "#4D4D4D",
+                          "textGrowth": "fixed-width",
+                          "width": 354,
+                          "content": "Workbench desktop para PostgreSQL.",
+                          "lineHeight": 1.12,
+                          "fontFamily": "Newsreader",
+                          "fontSize": 17,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "t6cZ0s",
+                          "x": 145,
+                          "y": 139,
+                          "name": "Dbadger Tags",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "Gx3Cl",
+                              "name": "GPUI Chip",
+                              "fill": "#F7F3EA",
+                              "stroke": "#C9C3B8",
+                              "strokeWidth": 1,
+                              "padding": [
+                                3,
+                                7
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "AMqNN",
+                                  "name": "GPUI Chip Text",
+                                  "fill": "#4D4D4D",
+                                  "content": "GPUI",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 9,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "QNAGH",
+                              "name": "Postgres Chip",
+                              "fill": "#F7F3EA",
+                              "stroke": "#C9C3B8",
+                              "strokeWidth": 1,
+                              "padding": [
+                                3,
+                                7
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "g7PyZ",
+                                  "name": "Postgres Chip Text",
+                                  "fill": "#4D4D4D",
+                                  "content": "Postgres",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 9,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "n7dpZM",
+                          "x": 90,
+                          "y": 145,
+                          "name": "Dbadger Year",
+                          "fill": "#263CFF",
+                          "content": "2026",
+                          "fontFamily": "Geist Mono",
+                          "fontSize": 10,
+                          "fontWeight": "700",
+                          "letterSpacing": 1
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "qTEmW",
+                          "x": 90,
+                          "y": 128,
+                          "name": "Dbadger Metadata Rule",
+                          "fill": "#C9C3B8",
+                          "width": 392,
+                          "height": 1
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "lpqCO",
+                      "name": "Golpher Project Card",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "#FFFDF7",
+                      "stroke": "#2A2A2A",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "FcN8E",
+                          "x": 24,
+                          "y": 24,
+                          "name": "Golpher Mark",
+                          "width": 46,
+                          "height": 46,
+                          "fill": "#F7F3EA",
+                          "stroke": "#2A2A2A",
+                          "strokeWidth": 1,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "Ev6KB",
+                              "x": 8,
+                              "y": 12,
+                              "name": "Golpher Bar 0",
+                              "fill": "#171717",
+                              "width": 7,
+                              "height": 22
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "RNPqY",
+                              "x": 19,
+                              "y": 16,
+                              "name": "Golpher Bar 1",
+                              "fill": "#263CFF",
+                              "width": 7,
+                              "height": 19
+                            },
+                            {
+                              "type": "rectangle",
+                              "id": "MoVjO",
+                              "x": 30,
+                              "y": 12,
+                              "name": "Golpher Bar 2",
+                              "fill": "#171717",
+                              "width": 7,
+                              "height": 16
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "k1tgp",
+                          "x": 90,
+                          "y": 26,
+                          "name": "Golpher Title",
+                          "fill": "#171717",
+                          "content": "Golpher",
+                          "lineHeight": 0.92,
+                          "fontFamily": "Anton",
+                          "fontSize": 29,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "zAoSi",
+                          "x": 90,
+                          "y": 62,
+                          "name": "Golpher Description",
+                          "fill": "#4D4D4D",
+                          "textGrowth": "fixed-width",
+                          "width": 354,
+                          "content": "Servicos Go com foco em DX e performance.",
+                          "lineHeight": 1.12,
+                          "fontFamily": "Newsreader",
+                          "fontSize": 17,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "m3VKe",
+                          "x": 145,
+                          "y": 139,
+                          "name": "Golpher Tags",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "JgESi",
+                              "name": "Go Chip",
+                              "fill": "#F7F3EA",
+                              "stroke": "#C9C3B8",
+                              "strokeWidth": 1,
+                              "padding": [
+                                3,
+                                7
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "Lp8PV",
+                                  "name": "Go Chip Text",
+                                  "fill": "#4D4D4D",
+                                  "content": "Go",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 9,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "iGMob",
+                              "name": "HTTP Chip",
+                              "fill": "#F7F3EA",
+                              "stroke": "#C9C3B8",
+                              "strokeWidth": 1,
+                              "padding": [
+                                3,
+                                7
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "m24jGd",
+                                  "name": "HTTP Chip Text",
+                                  "fill": "#4D4D4D",
+                                  "content": "HTTP",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 9,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "zSfDU",
+                          "x": 90,
+                          "y": 145,
+                          "name": "Golpher Year",
+                          "fill": "#263CFF",
+                          "content": "2025",
+                          "fontFamily": "Geist Mono",
+                          "fontSize": 10,
+                          "fontWeight": "700",
+                          "letterSpacing": 1
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "x9AtQK",
+                          "x": 90,
+                          "y": 128,
+                          "name": "Golpher Metadata Rule",
+                          "fill": "#C9C3B8",
+                          "width": 392,
+                          "height": 1
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "D2NQ0",
+                  "name": "Projects Row 3",
+                  "width": "fill_container",
+                  "height": 190,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Q00Pn",
+                      "name": "Clebson.dev Project Card",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "#FFFDF7",
+                      "stroke": "#2A2A2A",
+                      "strokeWidth": {
+                        "right": 1
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "z4pUA",
+                          "x": 24,
+                          "y": 24,
+                          "name": "Clebson.dev Mark",
+                          "width": 46,
+                          "height": 46,
+                          "fill": "#F7F3EA",
+                          "stroke": "#2A2A2A",
+                          "strokeWidth": 1,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "WRkM2",
+                              "x": 8,
+                              "y": 8,
+                              "name": "Clebson.dev Frame Shape",
+                              "fill": "#FFFDF7",
+                              "width": 30,
+                              "height": 30,
+                              "stroke": "#263CFF",
+                              "strokeWidth": 5
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "N46Nx",
+                          "x": 90,
+                          "y": 26,
+                          "name": "Clebson.dev Title",
+                          "fill": "#171717",
+                          "content": "Clebson.dev",
+                          "lineHeight": 0.92,
+                          "fontFamily": "Anton",
+                          "fontSize": 29,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "nrKhc",
+                          "x": 90,
+                          "y": 62,
+                          "name": "Clebson.dev Description",
+                          "fill": "#4D4D4D",
+                          "textGrowth": "fixed-width",
+                          "width": 354,
+                          "content": "Home editorial, arquivo e portfolio pessoal.",
+                          "lineHeight": 1.12,
+                          "fontFamily": "Newsreader",
+                          "fontSize": 17,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "T45jvK",
+                          "x": 145,
+                          "y": 139,
+                          "name": "Clebson.dev Tags",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "XBU1l",
+                              "name": "Site Chip",
+                              "fill": "#F7F3EA",
+                              "stroke": "#C9C3B8",
+                              "strokeWidth": 1,
+                              "padding": [
+                                3,
+                                7
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "lTzRj",
+                                  "name": "Site Chip Text",
+                                  "fill": "#4D4D4D",
+                                  "content": "Site",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 9,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "B71ep9",
+                              "name": "Portfolio Chip",
+                              "fill": "#F7F3EA",
+                              "stroke": "#C9C3B8",
+                              "strokeWidth": 1,
+                              "padding": [
+                                3,
+                                7
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "NTNXP",
+                                  "name": "Portfolio Chip Text",
+                                  "fill": "#4D4D4D",
+                                  "content": "Portfolio",
+                                  "fontFamily": "Geist Mono",
+                                  "fontSize": 9,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "o6jH7V",
+                          "x": 90,
+                          "y": 145,
+                          "name": "Clebson.dev Year",
+                          "fill": "#263CFF",
+                          "content": "2026",
+                          "fontFamily": "Geist Mono",
+                          "fontSize": 10,
+                          "fontWeight": "700",
+                          "letterSpacing": 1
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "r55AX",
+                          "x": 90,
+                          "y": 128,
+                          "name": "Clebson.dev Metadata Rule",
+                          "fill": "#C9C3B8",
+                          "width": 392,
+                          "height": 1
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "wSmWb",
+                      "name": "All Projects Button Card",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "#1B1B1F",
+                      "stroke": "#2A2A2A",
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "NxF1R",
+                          "x": 38,
+                          "y": 36,
+                          "name": "All Projects Button Icon",
+                          "width": 34,
+                          "height": 34,
+                          "icon": "arrow-up-right",
+                          "library": "lucide",
+                          "fill": "#FFFDF7"
+                        },
+                        {
+                          "type": "text",
+                          "id": "D86KmV",
+                          "x": 92,
+                          "y": 38,
+                          "name": "All Projects Button Label",
+                          "fill": "#8EA0FF",
+                          "content": "VER TODOS OS PROJETOS",
+                          "fontFamily": "Geist Mono",
+                          "fontSize": 13,
+                          "fontWeight": "700",
+                          "letterSpacing": 1.3
+                        },
+                        {
+                          "type": "text",
+                          "id": "m6MI9D",
+                          "x": 92,
+                          "y": 66,
+                          "name": "All Projects Button Title",
+                          "fill": "#FFFDF7",
+                          "content": "Pagina completa",
+                          "lineHeight": 0.9,
+                          "fontFamily": "Anton",
+                          "fontSize": 36,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "GZfDk",
+                          "x": 92,
+                          "y": 112,
+                          "name": "All Projects Button Hint",
+                          "fill": "#C8C2B8",
+                          "textGrowth": "fixed-width",
+                          "width": 340,
+                          "content": "Arquivo com projetos, experimentos e notas de construcao.",
+                          "lineHeight": 1.12,
+                          "fontFamily": "Newsreader",
+                          "fontSize": 17,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "UCHEi",
+          "x": 51,
+          "y": 2040,
+          "name": "Privacy Policy Notice",
+          "width": 1338,
+          "height": 104,
+          "fill": "#FFFDF700",
+          "stroke": "#2A2A2A",
+          "strokeWidth": 1,
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "ghl2T",
+              "x": 22,
+              "y": 18,
+              "name": "Privacy Label",
+              "fill": "#263CFF",
+              "textGrowth": "fixed-width",
+              "width": 180,
+              "content": "POLITICA DE PRIVACIDADE",
+              "lineHeight": 1.12,
+              "fontFamily": "Geist Mono",
+              "fontSize": 12,
+              "fontWeight": "600",
+              "letterSpacing": 0.4
+            },
+            {
+              "type": "text",
+              "id": "q4yoN9",
+              "x": 228,
+              "y": 18,
+              "name": "Privacy Body",
+              "fill": "#171717",
+              "textGrowth": "fixed-width",
+              "width": 1083,
+              "content": "Uma página simples explicando cookies, analytics, logs e contato. Sem juridiquês desnecessário; só o que o visitante precisa saber.",
+              "lineHeight": 1.14,
+              "fontFamily": "Newsreader",
+              "fontSize": 21,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "xaptW",
+              "x": 1220,
+              "y": 52,
+              "name": "Privacy Action",
+              "fill": "#171717",
+              "content": "LER POLITICA ->",
+              "fontFamily": "Geist Mono",
+              "fontSize": 11,
+              "fontWeight": "600",
+              "letterSpacing": 0.4
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "mU49U",
+          "x": 0,
+          "y": 2170,
+          "name": "Global Footer",
+          "width": 1440,
+          "height": 110,
+          "fill": "#111114",
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "x4XH8",
+              "x": 22,
+              "y": 14,
+              "name": "Footer Name",
+              "fill": "#F7F3EA",
+              "content": "CLEBSON AUGUSTO",
+              "fontFamily": "$cb-display",
+              "fontSize": 42,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "zRVaw",
+              "x": 22,
+              "y": 70,
+              "name": "Footer Meta",
+              "fill": "#C8C2B8",
+              "content": "whoisclebs.com / engenharia aplicada / arquivo independente",
+              "fontFamily": "$cb-mono",
+              "fontSize": 10,
+              "fontWeight": "normal",
+              "letterSpacing": 1.1
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "surface-primary": {
+      "type": "color",
+      "value": "#FFFFFF"
+    },
+    "surface-inverse": {
+      "type": "color",
+      "value": "#000000"
+    },
+    "foreground-primary": {
+      "type": "color",
+      "value": "#000000"
+    },
+    "foreground-secondary": {
+      "type": "color",
+      "value": "#333333"
+    },
+    "foreground-muted": {
+      "type": "color",
+      "value": "#666666"
+    },
+    "foreground-inverse": {
+      "type": "color",
+      "value": "#FFFFFF"
+    },
+    "border-subtle": {
+      "type": "color",
+      "value": "#CCCCCC"
+    },
+    "accent-primary": {
+      "type": "color",
+      "value": "#00FF00"
+    },
+    "font-heading": {
+      "type": "string",
+      "value": "Anton"
+    },
+    "font-body": {
+      "type": "string",
+      "value": "Inter"
+    },
+    "font-caption": {
+      "type": "string",
+      "value": "Geist"
+    },
+    "radius-none": {
+      "type": "number",
+      "value": 0
+    },
+    "radius-xl": {
+      "type": "number",
+      "value": 12
+    },
+    "radius-2xl": {
+      "type": "number",
+      "value": 16
+    },
+    "space-2": {
+      "type": "number",
+      "value": 8
+    },
+    "space-3": {
+      "type": "number",
+      "value": 12
+    },
+    "space-4": {
+      "type": "number",
+      "value": 16
+    },
+    "space-6": {
+      "type": "number",
+      "value": 24
+    },
+    "space-8": {
+      "type": "number",
+      "value": 32
+    },
+    "cb-bg": {
+      "type": "color",
+      "value": "#F7F3EA"
+    },
+    "cb-paper": {
+      "type": "color",
+      "value": "#FFFDF7"
+    },
+    "cb-ink": {
+      "type": "color",
+      "value": "#171717"
+    },
+    "cb-muted": {
+      "type": "color",
+      "value": "#4D4D4D"
+    },
+    "cb-soft": {
+      "type": "color",
+      "value": "#8B8B83"
+    },
+    "cb-line": {
+      "type": "color",
+      "value": "#2A2A2A"
+    },
+    "cb-hairline": {
+      "type": "color",
+      "value": "#C9C3B8"
+    },
+    "cb-graphite": {
+      "type": "color",
+      "value": "#1B1B1F"
+    },
+    "cb-accent": {
+      "type": "color",
+      "value": "#263CFF"
+    },
+    "cb-display": {
+      "type": "string",
+      "value": "Anton"
+    },
+    "cb-serif": {
+      "type": "string",
+      "value": "Newsreader"
+    },
+    "cb-mono": {
+      "type": "string",
+      "value": "Geist Mono"
+    }
+  },
+  "fileToken": "87ba3f7e-8ddd-4e1f-b2ac-46aee92e8acb"
+}

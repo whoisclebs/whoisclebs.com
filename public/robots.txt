@@ -1,3 +1,5 @@
 User-agent: *
-Disallow:
+Allow: /
+
+Sitemap: https://whoisclebs.com/sitemap.xml
 

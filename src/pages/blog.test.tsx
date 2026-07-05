@@ -50,7 +50,7 @@ describe('blog editorial pages', () => {
     for (const post of getPublishedPosts().slice(0, BLOG_POSTS_PER_PAGE)) {
       const tile = screen.getByTestId(`post-card-${post.slug}`)
       expect(within(tile).getByText(post.kicker)).toBeInTheDocument()
-      expect(within(tile).getByRole('link', { name: post.title })).toHaveAttribute('href', `/pt/blog/${post.slug}`)
+      expect(within(tile).getByRole('link', { name: post.title })).toHaveAttribute('href', `/blog/${post.slug}`)
       expect(within(tile).getByText(post.excerpt)).toBeInTheDocument()
       expect(within(tile).getByText((content) => content.includes(post.readingTime))).toBeInTheDocument()
     }
@@ -98,7 +98,7 @@ describe('blog editorial pages', () => {
 
   it('localizes the newsletter CTA in English', () => {
     window.localStorage.setItem(i18nStorageKey, 'en')
-    renderBlogRoute('/blog/arquitetura-de-software-sem-teatro')
+    renderBlogRoute('/blog/hardening-performance-site-estatico-vite-cloudflare')
 
     expect(screen.getByRole('heading', { name: /get engineering notes/i })).toBeInTheDocument()
     expect(screen.getByRole('form', { name: /newsletter subscription/i })).toBeInTheDocument()
@@ -111,7 +111,7 @@ describe('blog editorial pages', () => {
     renderBlogRoute('/blog/slug-inexistente')
 
     expect(screen.getByRole('heading', { name: /artigo não encontrado/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /voltar para o blog/i })).toHaveAttribute('href', '/pt/blog')
+    expect(screen.getByRole('link', { name: /voltar para o blog/i })).toHaveAttribute('href', '/blog')
   })
 
   it('shows language metadata and copies code block content', async () => {

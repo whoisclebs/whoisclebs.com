@@ -22,23 +22,27 @@ function escapeXml(value = '') {
     .replaceAll("'", '&apos;')
 }
 
-function readEntries(directory, pathPrefix) {
+function readEntries(directory, urlPrefix, locale) {
+  const isEn = locale === 'en'
   return readdirSync(directory)
-    .filter((file) => file.endsWith('.md'))
+    .filter((file) => {
+      if (isEn) return file.endsWith('.en.md')
+      return file.endsWith('.md') && !file.endsWith('.en.md')
+    })
     .map((file) => parseFrontmatter(readFileSync(join(directory, file), 'utf8')))
     .filter((entry) => entry.published !== 'false')
     .sort((a, b) => b.date.localeCompare(a.date))
-    .map((entry) => ({ ...entry, url: `${siteUrl}/${pathPrefix}/${entry.slug}` }))
+    .map((entry) => ({ ...entry, url: `${siteUrl}${urlPrefix}/${entry.slug}/` }))
 }
 
-function generateFeed({ title, description, sitePath, feedPath, entries }) {
+function generateFeed({ title, description, sitePath, feedPath, entries, language }) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>${escapeXml(title)}</title>
     <link>${siteUrl}${sitePath}</link>
     <description>${escapeXml(description)}</description>
-    <language>pt-BR</language>
+    <language>${language}</language>
     <atom:link href="${siteUrl}${feedPath}" rel="self" type="application/rss+xml" />
 ${entries.map((entry) => `    <item>
       <title>${escapeXml(entry.title)}</title>
@@ -63,7 +67,20 @@ writeFileSync(
     description: 'Artigos sobre engenharia de software, arquitetura, frontend, operação e produto.',
     sitePath: '/blog',
     feedPath: '/rss/blog.xml',
-    entries: readEntries('src/content/posts', 'blog'),
+    language: 'pt-BR',
+    entries: readEntries('src/content/posts', '/blog', 'pt'),
+  }),
+)
+
+writeFileSync(
+  join(rssDir, 'blog-en.xml'),
+  generateFeed({
+    title: 'whoisclebs.com Blog EN',
+    description: 'Articles about software engineering, architecture, frontend, operations, and product.',
+    sitePath: '/en/blog',
+    feedPath: '/rss/blog-en.xml',
+    language: 'en',
+    entries: readEntries('src/content/posts', '/en/blog', 'en'),
   }),
 )
 
@@ -74,6 +91,7 @@ writeFileSync(
     description: 'Notas curtas sobre aprendizados técnicos do dia a dia.',
     sitePath: '/til',
     feedPath: '/rss/til.xml',
-    entries: readEntries('src/content/til', 'til'),
+    language: 'pt-BR',
+    entries: readEntries('src/content/til', '/til', 'pt'),
   }),
 )

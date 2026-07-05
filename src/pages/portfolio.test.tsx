@@ -28,8 +28,15 @@ describe('editorial secondary pages', () => {
     expect(screen.getByRole('heading', { name: /tuxedo/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /seishin engine/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /rsgit/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /apoiar no github sponsors/i })).toHaveAttribute('href', 'https://github.com/sponsors/whoisclebs')
-    expect(screen.getByRole('link', { name: /docker healthcheck para/i })).toHaveAttribute('href', '/pt/til/docker-healthcheck-para-servicos')
+    expect(screen.getByRole('link', { name: /ler artigos/i })).toHaveAttribute('href', '/blog')
+    expect(screen.getByRole('link', { name: /ver projetos/i })).toHaveAttribute('href', '/portfolio')
+    expect(screen.getByText(/um orquestrador de agentes em go/i)).toBeInTheDocument()
+    expect(screen.getByText(/runtimes, wasm e sistemas distribuídos/i)).toBeInTheDocument()
+    expect(screen.getByText(/uma pilha de notas que ainda precisa virar texto/i)).toBeInTheDocument()
+    expect(screen.getByText(/atualizado em 02 jul\. 2026/i)).toBeInTheDocument()
+    expect(screen.getByText(/CONSTRUINDO/)).toBeInTheDocument()
+    expect(screen.getByText(/ESTUDANDO/)).toBeInTheDocument()
+    expect(screen.getByText(/LENDO/)).toBeInTheDocument()
   })
 
   it('renders the portfolio page in editorial sections', () => {

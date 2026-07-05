@@ -15,17 +15,17 @@ export function PostCard({ post, featured = false, className = '' }: PostCardPro
   return (
     <article
       className={featured
-        ? `min-w-0 overflow-hidden border border-[#1a1a1a] bg-white ${className}`
-        : `min-w-0 overflow-hidden border-r border-t border-[#1a1a1a] bg-white ${className}`}
+        ? `h-full min-w-0 overflow-hidden border border-line bg-paper ${className}`
+        : `min-w-0 overflow-hidden border-r border-t border-line bg-paper ${className}`}
       data-testid={`post-card-${post.slug}`}
     >
       <div className={featured ? 'min-w-0 p-5 md:p-7' : 'min-w-0 p-5'}>
-        <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-[#1a1a1a]">{post.kicker}</p>
-        <h2 className={featured ? 'my-2 break-words text-3xl font-extrabold leading-none tracking-[-0.05em] md:text-6xl' : 'my-2 break-words text-2xl font-extrabold leading-tight tracking-[-0.04em] md:text-3xl'}>
-          <Link to={localizedPath(`/blog/${post.slug}`)} className="transition-colors hover:text-[#057dbc] hover:underline hover:underline-offset-4">{post.title}</Link>
+        <p className="font-mono text-xs font-bold uppercase tracking-[0.095em] text-accent">{post.kicker}</p>
+        <h2 className={featured ? 'my-2 break-words font-display text-3xl leading-none tracking-[-0.02em] md:text-[58px] md:leading-[0.98]' : 'my-2 break-words font-display text-[30px] leading-[0.95] tracking-[-0.02em]'}>
+          <Link to={localizedPath(`/blog/${post.slug}`)} data-nav-item className="transition-colors hover:text-accent hover:underline hover:underline-offset-4">{post.title}</Link>
         </h2>
-        <p className="mb-4 line-clamp-3 break-words font-serif leading-7 text-[#1a1a1a]">{post.excerpt}</p>
-        <p className="break-words font-mono text-xs uppercase tracking-[0.095em] text-[#757575]">{formatPostDate(post.date)} · {post.readingTime}</p>
+        <p className={featured ? 'mb-4 line-clamp-3 break-words font-serif text-[22px] leading-[1.24] text-muted' : 'mb-4 line-clamp-3 break-words font-serif text-base leading-[1.12] text-muted'}>{post.excerpt}</p>
+        <p className="break-words font-mono text-xs uppercase tracking-[0.095em] text-soft">{formatPostDate(post.date)} · {post.readingTime}</p>
       </div>
     </article>
   )
