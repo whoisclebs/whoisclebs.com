@@ -34,14 +34,14 @@ const Home: React.FC = () => {
           <nav className="flex flex-wrap items-center gap-3" aria-label="Home actions">
             <Link
               to={localizedPath('/blog')}
-              className="inline-flex items-center gap-2 bg-graphite px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.06875em] text-bg transition-colors hover:bg-ink"
+              className="inline-flex items-center gap-2 bg-graphite px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.06875em] text-white transition-colors hover:bg-white hover:text-ink dark:bg-[var(--dark-surface-strong)] dark:text-[var(--dark-text)] dark:hover:bg-[var(--dark-text)] dark:hover:text-[var(--dark-bg)]"
             >
               LER ARTIGOS
               <ArrowRight className="size-3.5" />
             </Link>
             <Link
               to={localizedPath('/portfolio')}
-              className="inline-flex items-center border border-line px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.06875em] text-ink transition-colors hover:bg-line hover:text-bg"
+              className="inline-flex items-center border border-line px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.06875em] text-ink transition-colors hover:bg-line hover:text-bg dark:hover:bg-[var(--dark-text)] dark:hover:text-[var(--dark-bg)]"
             >
               VER PROJETOS
             </Link>
@@ -78,7 +78,7 @@ const Home: React.FC = () => {
       <section className="mt-0" aria-label={copy.latest}>
         {/* Graphite bar */}
         <div className="flex items-center justify-between bg-graphite px-6 py-4 md:px-[18px] md:h-[72px]">
-          <h2 className="font-display text-4xl leading-none text-bg md:text-[40px]">
+          <h2 className="font-display text-4xl leading-none text-white md:text-[40px]">
             {copy.latest}
           </h2>
           <p className="hidden font-mono text-[11px] tracking-[0.075em] text-[#C8C2B8] md:block">
@@ -108,7 +108,7 @@ const Home: React.FC = () => {
                 <p className="font-mono text-[10px] font-bold uppercase tracking-[0.06875em] text-[#8EA0FF]">
                   ARQUIVO
                 </p>
-                <h3 className="font-display text-[30px] leading-[0.95] text-paper">
+                <h3 className="font-display text-[30px] leading-[0.95] text-white">
                   {copy.moreWriting}
                 </h3>
                 <p className="font-serif text-base leading-[1.12] text-[#C8C2B8]">

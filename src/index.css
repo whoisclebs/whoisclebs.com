@@ -71,6 +71,11 @@
 }
 
 @layer utilities {
+  .dark .bg-black,
+  .dark .bg-\[\#1a1a1a\] {
+    background-color: var(--dark-surface-strong);
+  }
+
   .dark .bg-white,
   .dark .bg-white\/90 {
     background-color: rgb(25 23 21 / var(--tw-bg-opacity, 1));
@@ -88,15 +93,36 @@
     color: var(--dark-text);
   }
 
+  .dark .text-black,
+  .dark .text-\[\#1a1a1a\] {
+    color: var(--dark-text);
+  }
+
   .dark .text-\[\#757575\],
   .dark .text-\[\#6b7280\],
   .dark .text-\[\#5f5f5f\],
+  .dark .text-\[\#999999\],
   .dark .text-zinc-300 {
     color: var(--dark-muted);
   }
 
+  .dark .text-\[\#057dbc\],
+  .dark .hover\:text-\[\#057dbc\]:hover {
+    color: var(--dark-accent);
+  }
+
+  .dark .border-black,
+  .dark .border-\[\#1a1a1a\],
+  .dark .border-\[\#e5e0d8\] {
+    border-color: var(--dark-border);
+  }
+
   .dark .border-\[\#e2e8f0\] {
     border-color: #332f2a;
+  }
+
+  .dark .focus\:border-\[\#057dbc\]:focus {
+    border-color: var(--dark-accent);
   }
 
   .dark .border-white {
@@ -107,7 +133,17 @@
     background-color: var(--dark-bg);
   }
 
+  .dark .hover\:bg-\[\#1a1a1a\]:hover,
+  .dark .hover\:bg-black:hover {
+    background-color: var(--dark-text);
+  }
+
   .dark .hover\:text-white:hover {
+    color: var(--dark-bg);
+  }
+
+  .dark .hover\:text-\[\#1a1a1a\]:hover,
+  .dark .hover\:text-black:hover {
     color: var(--dark-bg);
   }
 

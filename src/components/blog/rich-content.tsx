@@ -10,7 +10,7 @@ export function RichContent({ blocks }: RichContentProps) {
   let headingIndex = 0
 
   return (
-    <div className="min-w-0 max-w-full break-words font-serif text-lg leading-8 text-[#1a1a1a]">
+    <div className="min-w-0 max-w-full break-words font-serif text-lg leading-8 text-ink">
       {blocks.map((block, index) => {
         if (block.type === 'paragraph') return <p key={index} className="mb-6 break-words">{block.text}</p>
         if (block.type === 'heading') {

@@ -106,7 +106,7 @@ export function OpenSourceSection() {
           data-nav-item
         >
           <div className="size-[46px] shrink-0 border border-line bg-bg/10 flex items-center justify-center">
-            <svg viewBox="0 0 24 24" fill="none" className="size-[22px] text-paper">
+            <svg viewBox="0 0 24 24" fill="none" className="size-[22px] text-white">
               <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
@@ -114,7 +114,7 @@ export function OpenSourceSection() {
             <p className="font-mono text-xs font-bold tracking-[0.08em] text-[#8EA0FF] uppercase">
               {copy.repository}
             </p>
-            <h3 className="font-display text-[29px] leading-[0.92] text-paper mt-1">
+            <h3 className="mt-1 font-display text-[29px] leading-[0.92] text-white">
               {copy.title}
             </h3>
             <p className="mt-1 font-serif text-[17px] leading-[1.12] text-[#C8C2B8]">

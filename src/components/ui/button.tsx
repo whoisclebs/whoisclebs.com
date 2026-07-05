@@ -5,20 +5,20 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap border-2 border-black bg-white text-sm font-bold uppercase tracking-[0.08em] text-[#1a1a1a] transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap border-2 border-line bg-paper text-sm font-bold uppercase tracking-[0.08em] text-ink transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)] aria-invalid:border-destructive",
   {
     variants: {
       variant: {
         default:
-          "bg-[#1a1a1a] text-white hover:bg-white hover:text-[#1a1a1a]",
+          "bg-ink text-bg hover:bg-paper hover:text-ink",
         destructive:
           "bg-destructive text-white hover:bg-white hover:text-destructive",
         outline:
-          "hover:bg-[#1a1a1a] hover:text-white",
+          "hover:bg-ink hover:text-bg",
         secondary:
-          "bg-white text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-white",
-        ghost: "border-transparent hover:text-[#057dbc]",
-        link: "border-transparent p-0 text-[#1a1a1a] underline-offset-4 hover:text-[#057dbc] hover:underline",
+          "bg-paper text-ink hover:bg-ink hover:text-bg",
+        ghost: "border-transparent hover:text-accent",
+        link: "border-transparent p-0 text-ink underline-offset-4 hover:text-accent hover:underline",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
