@@ -17,7 +17,8 @@
     "check:contrast": "node scripts/check-contrast.mjs",
     "prepare": "svelte-kit sync || echo ''; husky",
     "test:integration": "vitest run --config vitest.integration.config.ts",
-    "db:migrate:local": "wrangler d1 migrations apply DB --local"
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "check:island": "node scripts/check-island-budget.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

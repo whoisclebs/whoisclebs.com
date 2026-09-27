@@ -14,6 +14,8 @@ import { format, getMessages, type Locale } from '$lib/i18n'
 import { absoluteUrl, notePath, pagePath, pages, projectPath, topicPath, type PageKey } from '$lib/routing/paths'
 import { pageTitle, person, SITE_NAME, type Seo } from '$lib/seo'
 import { highlightCode, renderInline, renderMarkdown } from './markdown'
+import { describeSummary } from '$lib/sim/labels'
+import { DEFAULT_CONFIG, runToEnd, summarize } from '$lib/sim/simulator'
 
 function alternatesFor(key: PageKey) {
   return { ...pages[key] }
@@ -58,6 +60,11 @@ export async function renderCaseStudy(study: CaseStudy) {
       })),
     ),
   }
+}
+
+function precomputedScenario() {
+  const result = runToEnd(DEFAULT_CONFIG)
+  return { seed: DEFAULT_CONFIG.seed, failurePercent: Math.round(DEFAULT_CONFIG.failureRate * 100), latencyMs: DEFAULT_CONFIG.latencyMs, events: result.events, summary: describeSummary(summarize(result)) }
 }
 
 function otherCaseFor(slug: string) {
@@ -179,6 +186,8 @@ export async function projectData(slug: string, locale: Locale) {
     project: { ...project, description },
     caseStudy,
     otherCase: caseStudy ? otherCaseFor(project.slug) : undefined,
+    /** Passo 08: o simulador vive no case tuxedo (o cliente não tem nova tentativa). Cenário padrão pré-calculado no build. */
+    simulation: caseStudy && project.slug === 'tuxedo' ? precomputedScenario() : undefined,
     /** No inglês: o case existe só em português. */
     caseHref: study && locale === 'en' ? projectPath(project.slug, 'pt-BR') : undefined,
     seo: {

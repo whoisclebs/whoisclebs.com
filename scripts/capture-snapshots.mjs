@@ -13,7 +13,9 @@
  *   npm run snapshots -- <pasta-de-saida>           ex.: npm run snapshots -- 02-sveltekit
  *   node scripts/capture-snapshots.mjs 00-baseline dist
  *
- * Variáveis opcionais: SNAPSHOT_ROUTES (JSON [{ name, path, scheme? }]) substitui as rotas padrão;
+ * Variáveis opcionais: SNAPSHOT_ROUTES (JSON [{ name, path, scheme?, click?, element? }]) substitui as rotas
+ * padrão; `click: { selector, count }` clica N vezes antes da captura (estados do simulador) e `element`
+ * captura só aquele elemento em vez da página inteira; SNAPSHOT_WIDTHS ("390,1440") limita as larguras;
  * SNAPSHOT_LOCALE troca o locale do navegador (padrão en-US: o site novo não pode depender dele).
  */
 
@@ -62,11 +64,14 @@ const siteRoutes = [
 ]
 const defaultRoutes = buildDir ? legacyRoutes : siteRoutes
 const routes = process.env.SNAPSHOT_ROUTES ? JSON.parse(process.env.SNAPSHOT_ROUTES) : defaultRoutes
-const widths = [
+const allWidths = [
   { width: 390, height: 844 },
   { width: 768, height: 1024 },
   { width: 1440, height: 900 },
 ]
+// SNAPSHOT_WIDTHS="390,1440" limita as larguras (ex.: estados do simulador no passo 08).
+const onlyWidths = process.env.SNAPSHOT_WIDTHS?.split(',').map(Number)
+const widths = onlyWidths ? allWidths.filter((viewport) => onlyWidths.includes(viewport.width)) : allWidths
 const maxHeight = 16000 // limite do WebP é 16383 px
 const types = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css',
@@ -151,9 +156,14 @@ try {
         }
         window.scrollTo(0, 0)
       })
+      if (route.click) {
+        const target = page.locator(route.click.selector)
+        await target.waitFor()
+        for (let i = 0; i < route.click.count; i += 1) await target.click()
+      }
       await page.waitForTimeout(300)
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
-      const png = await page.screenshot({ fullPage: true })
+      const png = route.element ? await page.locator(route.element).screenshot() : await page.screenshot({ fullPage: true })
       let image = sharp(png)
       const { height } = await image.metadata()
       if (height > maxHeight) image = image.extract({ left: 0, top: 0, width: viewport.width, height: maxHeight })
