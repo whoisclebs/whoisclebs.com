@@ -1,3 +1,4 @@
+import { agentProjects } from '$lib/content/agents'
 import { describe, expect, it } from 'vitest'
 import { DECISION_ROUTES, GRID, expandRoute, nextIndex, routeCells } from './decision-map'
 
@@ -43,9 +44,15 @@ describe('expandRoute', () => {
 })
 
 describe('rotas do mapa (verdade editorial codificada na forma)', () => {
-  it('o primeiro caminho é o único com código público', () => {
+  it('o primeiro caminho tem código público e pagamentos continua sem case público', () => {
     expect(DECISION_ROUTES[0]?.evidence).toBe('public-code')
-    expect(DECISION_ROUTES.filter((route) => route.evidence === 'public-code')).toHaveLength(1)
+    expect(DECISION_ROUTES.find((route) => route.id === 'payments')?.evidence).toBe('no-public-case')
+  })
+
+  it('agentes só aparece como código público se o capítulo lista um protótipo com código público', () => {
+    const agents = DECISION_ROUTES.find((route) => route.id === 'agents')
+    const hasPublicPrototype = agentProjects.some((project) => ['producao', 'prototipo'].includes(project.status) && project.code)
+    expect(agents?.evidence === 'public-code').toBe(hasPublicPrototype)
   })
 
   it('cada caminho é contínuo, cabe na grade e não cruza outro', () => {

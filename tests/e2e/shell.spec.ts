@@ -17,6 +17,7 @@ const keyRoutes = [
   '/notas/docker-healthcheck-para-servicos/',
   '/sobre/',
   '/contato/',
+  '/agentes/',
   '/livros/',
   '/hobbies/',
   '/rota-inexistente/',
@@ -122,9 +123,8 @@ test.describe('Mapa de Decisões', () => {
 
     await page.keyboard.press('End')
     await expect(tabs.nth(2)).toBeFocused()
-    await expect(panel).toContainText('orquestrador de agentes')
-    await expect(panel).toContainText('Sem link por enquanto')
-    await expect(panel.getByRole('link')).toHaveCount(0)
+    await expect(panel).toContainText('contexto pequeno e verificável')
+    await expect(panel.getByRole('link', { name: 'Ler o capítulo sobre agentes' })).toHaveAttribute('href', '/agentes/')
 
     await page.keyboard.press('ArrowRight')
     await expect(first).toBeFocused()
@@ -148,7 +148,7 @@ test.describe('Mapa de Decisões', () => {
     const tabs = page.getByRole('tablist', { name: 'Caminhos do mapa' }).getByRole('tab')
     await expect(tabs.nth(0)).toContainText('Código público')
     await expect(tabs.nth(1)).toContainText('Sem case público')
-    await expect(tabs.nth(2)).toContainText('Em construção')
+    await expect(tabs.nth(2)).toContainText('Protótipos públicos')
   })
 })
 

@@ -9,6 +9,7 @@ import { getNote, getPublishedNotes, toNoteSummary } from '$lib/content/notes'
 import { getPost, getPublishedPosts, getTranslation, toSummary, type Post } from '$lib/content/posts'
 import { getProject, projects } from '$lib/content/projects'
 import { caseStudies, getCaseStudy } from '$lib/content/cases/index'
+import { AGENT_STATUS, AGENTS_CHECKED_AT, agentProjects, EVALUATION_CRITERIA, loopSteps, techTopics } from '$lib/content/agents'
 import { CASE_SECTION_TITLES, type CaseStudy } from '$lib/content/case-schema'
 import { format, getMessages, type Locale } from '$lib/i18n'
 import { absoluteUrl, notePath, pagePath, pages, projectPath, topicPath, type PageKey } from '$lib/routing/paths'
@@ -368,6 +369,23 @@ export function contactData() {
     socialLinks,
     seo: staticSeo('contact', 'pt-BR', t.contact.title, t.contact.description, {
       jsonLd: { '@type': 'ContactPage', inLanguage: 'pt-BR', mainEntity: person },
+    }),
+  }
+}
+
+/** Capítulo de IA agêntica (só pt-BR). Texto com crases vira `code` escapado no build. */
+export function agentsData() {
+  const t = getMessages('pt-BR')
+  return {
+    locale: 'pt-BR' as const,
+    checkedAt: AGENTS_CHECKED_AT,
+    statuses: AGENT_STATUS,
+    projects: agentProjects.map((project) => ({ ...project, statusLabel: AGENT_STATUS[project.status].label, hasCode: Boolean(project.code) })),
+    steps: loopSteps,
+    criteria: EVALUATION_CRITERIA,
+    topics: techTopics.map((topic) => ({ ...topic, approachHtml: topic.approach.map(renderInline), inCodeHtml: topic.inCode.map(renderInline) })),
+    seo: staticSeo('agents', 'pt-BR', t.agents.title, t.agents.description, {
+      jsonLd: { '@type': 'WebPage', inLanguage: 'pt-BR', about: 'Sistemas agênticos', author: person },
     }),
   }
 }

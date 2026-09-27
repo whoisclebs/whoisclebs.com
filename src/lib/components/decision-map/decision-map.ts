@@ -34,7 +34,7 @@ export const GRID = { cols: 16, rows: 10, origin: [1, 5] as Cell } as const
 export const DECISION_ROUTES: readonly DecisionRoute[] = [
   { id: 'http', evidence: 'public-code', waypoints: [[1, 4], [1, 2], [6, 2], [6, 1], [14, 1]] },
   { id: 'payments', evidence: 'no-public-case', waypoints: [[2, 5], [14, 5]] },
-  { id: 'agents', evidence: 'in-progress', waypoints: [[1, 6], [1, 8], [14, 8]] },
+  { id: 'agents', evidence: 'public-code', waypoints: [[1, 6], [1, 8], [14, 8]] },
 ]
 
 /** Expande pontos de virada em células vizinhas (sem repetir a esquina). */

@@ -9,6 +9,7 @@
   const secondary = $derived(
     (
       [
+        ['agents', t['nav.agents']],
         ['notes', t['nav.notes']],
         ['books', t['nav.books']],
         ['hobbies', t['nav.hobbies']],

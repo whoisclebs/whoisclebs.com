@@ -25,7 +25,13 @@
   const studies = $derived(data.projects.filter((project) => project.caseStudy))
   const others = $derived(data.projects.filter((project) => !project.caseStudy))
 
-  const mapLinks = $derived({ http: { href: caseHref }, payments: { href: pages.about[data.locale] } })
+  // Agentes só existe em pt-BR: no inglês o link leva hreflang.
+  const agentsHreflang = $derived(data.locale === 'en' ? ('pt-BR' as const) : undefined)
+  const mapLinks = $derived({
+    http: { href: caseHref },
+    payments: { href: pages.about[data.locale] },
+    agents: { href: pages.agents['pt-BR'], hreflang: agentsHreflang },
+  })
 </script>
 
 <section class="hero" aria-labelledby="hero-title">
@@ -106,6 +112,15 @@
     {/each}
   </ul>
   <p><a href={pages.projects[data.locale]}>{copy.cases.all}</a></p>
+</section>
+
+<!-- Capítulo 4 (spec §2): IA agêntica em página própria; aqui só a chamada, com o status em texto. -->
+<section class="chapter agents-call" aria-labelledby="agents-title" data-slot="agents">
+  <h2 id="agents-title">{copy.agents.title}</h2>
+  <div class="agents-call__body">
+    <p>{copy.agents.intro}</p>
+    <p><a href={pages.agents['pt-BR']} hreflang={agentsHreflang}>{copy.agents.link}</a></p>
+  </div>
 </section>
 
 <div class="chapter writing-now">
@@ -238,6 +253,46 @@
     .chapter-head:not(.chapter-head--stacked) .chapter-head__intro {
       grid-column: 8 / span 5;
     }
+  }
+
+  /* Capítulo 4, IA agêntica: só a chamada, entre um fio e outro; o capítulo vive em /agentes/. */
+  .agents-call {
+    display: grid;
+    gap: var(--space-4);
+    padding-block: var(--space-7);
+    border-block-start: var(--border-hairline) solid var(--color-text);
+  }
+
+  .agents-call__body {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 60ch;
+  }
+
+  .agents-call__body a {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    line-height: var(--leading-heading);
+  }
+
+  @media (min-width: 960px) {
+    .agents-call {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+    }
+
+    .agents-call h2 {
+      grid-column: 1 / span 5;
+    }
+
+    .agents-call__body {
+      grid-column: 7 / span 6;
+    }
+  }
+
+  /* A chamada já fecha com fio; a escrita não precisa do respiro inteiro de capítulo depois dela. */
+  .agents-call + .writing-now {
+    padding-block-start: var(--space-8);
   }
 
   /* Manifesto: faixa de página inteira sem sair da grade (border-image pinta até as bordas da janela

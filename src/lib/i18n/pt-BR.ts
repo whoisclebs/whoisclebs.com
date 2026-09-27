@@ -9,6 +9,7 @@ export const ptBR = {
   'nav.writing': 'Escrita',
   'nav.notes': 'Notas',
   'nav.contact': 'Contato',
+  'nav.agents': 'Agentes',
   'nav.skip': 'Pular para o conteúdo',
   'nav.secondary': 'Mais',
   'footer.rss': 'RSS',
@@ -95,6 +96,10 @@ export const ptBR = {
     loading: 'Carregando comentários do GitHub…',
     open: 'Procurar a discussão no GitHub',
   },
+  agents: {
+    title: 'Agentes de IA',
+    description: 'Como Clebson Augusto aborda sistemas agênticos: contexto, ações, avaliação e observabilidade, com o status verdadeiro de cada projeto e nenhum benchmark sem reprodução.',
+  },
   contact: {
     title: 'Contato',
     description: 'Como falar com Clebson Augusto: e-mail, GitHub, LinkedIn e newsletter.',
@@ -165,6 +170,11 @@ export const ptBR = {
       lastCommit: 'Último commit',
       others: 'Outros projetos',
     },
+    agents: {
+      title: 'Agentes de IA',
+      intro: 'Dois protótipos com código público, YandeCode e SENTINEL, e um orquestrador em Go ainda sem código. O capítulo separa o que roda do que é intenção, explica o laço em linguagem simples e em detalhe técnico, e não cita benchmark que não dá para reproduzir.',
+      link: 'Ler o capítulo sobre agentes',
+    },
     writing: {
       title: 'Escrita e notas',
       intro: 'Textos longos e notas curtas, do mais recente para o mais antigo.',
@@ -202,10 +212,10 @@ export const ptBR = {
         },
         {
           label: 'Agentes de IA',
-          evidence: 'Em construção',
-          decision: 'Um orquestrador de agentes em Go, ainda em construção.',
-          tradeoff: 'Sem código público nem avaliação reproduzível por enquanto; nenhuma promessa de autonomia antes de existir prova.',
-          link: '',
+          evidence: 'Protótipos públicos',
+          decision: 'Dar ao agente contexto pequeno e verificável, permissões explícitas e uma checagem fora do modelo que diga se deu certo.',
+          tradeoff: 'Mais peças para manter em volta do modelo, e ainda sem avaliação reproduzível publicada: não afirmo quanto isso ajuda.',
+          link: 'Ler o capítulo sobre agentes',
         },
       ],
     },

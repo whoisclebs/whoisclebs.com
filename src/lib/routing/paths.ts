@@ -11,6 +11,7 @@ const pageTable = {
   notes: { 'pt-BR': '/notas/' },
   about: { 'pt-BR': '/sobre/', en: '/en/about/' },
   contact: { 'pt-BR': '/contato/' },
+  agents: { 'pt-BR': '/agentes/' },
   books: { 'pt-BR': '/livros/', en: '/en/books/' },
   hobbies: { 'pt-BR': '/hobbies/', en: '/en/hobbies/' },
   privacy: { 'pt-BR': '/privacy-policy/', en: '/en/privacy-policy/' },

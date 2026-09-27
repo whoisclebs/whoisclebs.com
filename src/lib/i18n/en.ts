@@ -11,6 +11,7 @@ export const en: typeof ptBR = {
   'nav.writing': 'Writing',
   'nav.notes': 'Notes',
   'nav.contact': 'Contact',
+  'nav.agents': 'AI agents',
   'nav.skip': 'Skip to content',
   'nav.secondary': 'More',
   'footer.rss': 'RSS',
@@ -97,6 +98,10 @@ export const en: typeof ptBR = {
     loading: 'Loading comments from GitHub…',
     open: 'Find the discussion on GitHub',
   },
+  agents: {
+    title: 'AI agents',
+    description: 'How Clebson Augusto approaches agentic systems, with the real status of each project. Written in Portuguese.',
+  },
   contact: {
     title: 'Contact',
     description: 'How to reach Clebson Augusto: email, GitHub, LinkedIn, and newsletter.',
@@ -167,6 +172,11 @@ export const en: typeof ptBR = {
       lastCommit: 'Last commit',
       others: 'Other projects',
     },
+    agents: {
+      title: 'AI agents',
+      intro: 'Two prototypes with public code, YandeCode and SENTINEL, and an orchestrator in Go with no public code yet. The chapter separates what runs from what is intent, explains the loop in plain words and in technical detail, and cites no benchmark that cannot be reproduced.',
+      link: 'Read the agents chapter (in Portuguese)',
+    },
     writing: {
       title: 'Writing',
       intro: 'Long-form articles, newest first.',
@@ -204,10 +214,10 @@ export const en: typeof ptBR = {
         },
         {
           label: 'AI agents',
-          evidence: 'In progress',
-          decision: 'An agent orchestrator in Go, still being built.',
-          tradeoff: 'No public code or reproducible evaluation yet; no promise of autonomy before there is proof.',
-          link: '',
+          evidence: 'Public prototypes',
+          decision: 'Give the agent small, verifiable context, explicit permissions, and a check outside the model that says whether it worked.',
+          tradeoff: 'More moving parts around the model, and no published reproducible evaluation yet: I do not claim how much it helps.',
+          link: 'Read the agents chapter (in Portuguese)',
         },
       ],
     },
