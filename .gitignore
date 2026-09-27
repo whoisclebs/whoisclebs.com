@@ -154,3 +154,8 @@ static/og/
 
 # Perfis temporários do Chrome criados pelo Lighthouse no WSL
 C:*
+
+# Fontes PNG da exploração v3 (versionadas como .src.webp) e fotos de referência de terceiros
+design/explorations/v3/**/*.png
+design/explorations/v3/refs/
+design/explorations/v3/sky/ref-*
