@@ -4,7 +4,7 @@
  *   JSON-LD que parseia, tem os campos obrigatórios e bate com o texto visível (H1, nomes, datas);
  * - /resume.json valida no schema oficial do JSON Resume (`@jsonresume/schema`);
  * - /llms.txt no formato llmstxt.org; todo link interno de /llms.txt e /llms-full.txt resolve para um
- *   arquivo prerenderizado;
+ *   arquivo prerenderizado ou, se for um endpoint dinâmico declarado (`/mcp`), para uma rota do build;
  * - /sitemap.xml só lista URLs com página prerenderizada (nada de redirect ou 404) e /robots.txt aponta para ele.
  * Uso: node scripts/verify-publishing.mjs [diretório-do-build]   (Node ≥ 22.18, type stripping)
  */
@@ -14,11 +14,13 @@ import { join, relative } from 'node:path'
 import {
   builtFileFor,
   canonicalIssue,
+  dynamicEndpointFor,
   extractJsonLd,
   extractPageFacts,
   internalLinks,
   jsonLdIssues,
   llmsIndexIssues,
+  manifestHasRoute,
   SITE_ORIGIN,
   sitemapLocs,
 } from '../src/lib/publishing/checks.ts'
@@ -40,6 +42,8 @@ function htmlFiles(directory) {
 }
 
 const read = (path) => readFileSync(join(dir, path), 'utf8')
+// Manifesto do servidor SvelteKit (irmão da saída do adapter): lista as rotas dinâmicas do build.
+const serverManifest = () => readFileSync(join(dir, '..', 'output', 'server', 'manifest.js'), 'utf8')
 const exists = (url) => {
   const file = builtFileFor(url)
   return Boolean(file) && existsSync(join(dir, file))
@@ -75,7 +79,12 @@ validate(JSON.parse(read('resume.json')), (errors) => {
 // /llms.txt e /llms-full.txt
 for (const issue of llmsIndexIssues(read('llms.txt'))) fail('llms.txt', issue)
 for (const file of ['llms.txt', 'llms-full.txt']) {
-  for (const url of internalLinks(read(file))) if (!exists(url)) fail(file, `link sem página prerenderizada: ${url}`)
+  for (const url of internalLinks(read(file))) {
+    const endpoint = dynamicEndpointFor(url)
+    if (endpoint) {
+      if (!manifestHasRoute(serverManifest(), endpoint)) fail(file, `endpoint citado sem rota no build: ${endpoint}`)
+    } else if (!exists(url)) fail(file, `link sem página prerenderizada: ${url}`)
+  }
 }
 if (!read('llms-full.txt').includes('\n## Limites\n')) fail('llms-full.txt', 'sem a seção "Limites"')
 

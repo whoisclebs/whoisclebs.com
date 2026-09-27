@@ -8,9 +8,11 @@ import { author, badges, contactEmail, socialLinks } from '$lib/content/library'
 import { getPublishedNotes, type Note } from '$lib/content/notes'
 import { getPublishedPosts, getTranslation, type Post } from '$lib/content/posts'
 import { getProject, projects } from '$lib/content/projects'
+import type { Project } from '$lib/content/schema'
 import { caseStudies } from '$lib/content/cases/index'
 import { CASE_SECTION_TITLES, type CaseStudy } from '$lib/content/case-schema'
 import { AGENT_STATUS, AGENTS_CHECKED_AT, agentProjects, EVALUATION_CRITERIA, loopSteps, techTopics } from '$lib/content/agents'
+import { MCP_PATH } from '$lib/publishing/checks'
 import { absoluteUrl, pages, projectPath, SITE_URL } from '$lib/routing/paths'
 import { RESUME_PATH } from './resume'
 import { JOB_TITLE } from './structured-data'
@@ -29,6 +31,9 @@ function linkText(value: string): string {
 function item(name: string, url: string, note?: string): string {
   return `- [${linkText(name)}](${url})${note ? `: ${note.replace(/\s+/g, ' ').trim()}` : ''}`
 }
+
+const MCP_NOTE =
+  'Model Context Protocol 2025-11-25 por POST JSON-RPC, sem sessão e sem escrita: recursos whoisclebs://profile, whoisclebs://projects/{slug}, whoisclebs://articles/{slug}, whoisclebs://en/articles/{slug} e whoisclebs://notes/{slug} (o mesmo texto deste arquivo) e a tool search_content(query, type?, limit?).'
 
 const LANGUAGE_LABEL: Record<Locale, string> = { 'pt-BR': 'pt-BR', en: 'en' }
 
@@ -76,6 +81,7 @@ export function llmsIndex(): string {
     '## Optional',
     '',
     item('Conteúdo completo (Markdown)', absoluteUrl(LLMS_FULL_PATH)),
+    item('Servidor MCP somente leitura (Streamable HTTP)', absoluteUrl(MCP_PATH), MCP_NOTE),
     item('Sitemap', absoluteUrl('/sitemap.xml')),
     item('RSS de Escrita (pt-BR)', absoluteUrl('/rss/blog.xml')),
     item('RSS de Writing (en)', absoluteUrl('/rss/blog-en.xml')),
@@ -121,7 +127,7 @@ function sourcesList(sources: ReadonlyArray<{ label: string; url: string }>): st
   return sources.map((source) => item(source.label, source.url)).join('\n')
 }
 
-function profileSection(): string {
+export function profileSection(): string {
   const t = getMessages('pt-BR')
   const about = t.about
   return [
@@ -163,7 +169,7 @@ function profileSection(): string {
   ].join('\n')
 }
 
-function caseSection(study: CaseStudy): string {
+export function caseSection(study: CaseStudy): string {
   const project = getProject(study.slug)
   const lines = [
     `### ${study.title}`,
@@ -199,8 +205,16 @@ function caseSection(study: CaseStudy): string {
   return lines.join('\n')
 }
 
-function casesSection(): string {
+/** Projeto sem estudo de caso (ficha): uma linha com stack e resumo, outra com página, código e datas. */
+export function projectSummary(project: Project): string {
   const t = getMessages('pt-BR')
+  return [
+    `- ${project.name} (${project.technologies.join(', ')}, desde ${project.year}): ${t.openSource.projects[project.slug as keyof typeof t.openSource.projects]}`,
+    `  Página: ${absoluteUrl(projectPath(project.slug, 'pt-BR'))} · Código: ${project.repo} · Status conferido em ${project.statusCheckedAt} · Último commit: ${project.lastCommit.date}`,
+  ].join('\n')
+}
+
+function casesSection(): string {
   const others = projects.filter((project) => !caseStudies.some((study) => study.slug === project.slug))
   return [
     '## Estudos de caso e projetos',
@@ -210,12 +224,7 @@ function casesSection(): string {
     ...caseStudies.map(caseSection),
     '### Outros projetos open source',
     '',
-    ...others.map((project) =>
-      [
-        `- ${project.name} (${project.technologies.join(', ')}, desde ${project.year}): ${t.openSource.projects[project.slug as keyof typeof t.openSource.projects]}`,
-        `  Página: ${absoluteUrl(projectPath(project.slug, 'pt-BR'))} · Código: ${project.repo} · Status conferido em ${project.statusCheckedAt} · Último commit: ${project.lastCommit.date}`,
-      ].join('\n'),
-    ),
+    ...others.map(projectSummary),
     '',
   ].join('\n')
 }
@@ -248,7 +257,9 @@ function agentsSection(): string {
   return lines.join('\n')
 }
 
-function entrySection(entry: Post | Note, kind: 'Artigo' | 'Nota' | 'Article'): string {
+export type EntryKind = 'Artigo' | 'Nota' | 'Article'
+
+export function entrySection(entry: Post | Note, kind: EntryKind): string {
   const translation = 'translationKey' in entry ? getTranslation(entry, entry.locale === 'en' ? 'pt-BR' : 'en') : undefined
   return [
     `### ${entry.title}`,
@@ -297,6 +308,8 @@ export function llmsFull(): string {
     `> ${SUMMARY}`,
     '',
     `Gerado no build a partir da mesma camada de conteúdo das páginas. Índice curto: ${absoluteUrl(LLMS_PATH)}. Cada item traz canonical, idioma e datas (AAAA-MM-DD).`,
+    '',
+    `Servidor MCP somente leitura em ${absoluteUrl(MCP_PATH)}: ${MCP_NOTE}`,
     '',
     profileSection(),
     casesSection(),

@@ -2,13 +2,14 @@ import { describe, expect, it } from 'vitest'
 import { getPublishedNotes } from '$lib/content/notes'
 import { getPublishedPosts } from '$lib/content/posts'
 import { caseStudies } from '$lib/content/cases/index'
-import { internalLinks, llmsIndexIssues } from '$lib/publishing/checks'
+import { DYNAMIC_ENDPOINTS, internalLinks, llmsIndexIssues, MCP_PATH } from '$lib/publishing/checks'
 import { absoluteUrl } from '$lib/routing/paths'
 import { sitemapEntries } from '../feeds'
 import { embedMarkdown, llmsFull, llmsIndex } from './llms'
 
-/** URLs que existem no build: páginas do sitemap + arquivos gerados/estáticos citados. */
+/** URLs que existem no build: páginas do sitemap + arquivos gerados/estáticos + endpoints dinâmicos (o portão confere a rota). */
 const known = new Set([
+  ...DYNAMIC_ENDPOINTS.map(absoluteUrl),
   ...sitemapEntries().map((entry) => absoluteUrl(entry.path)),
   ...['/resume.json', '/llms.txt', '/llms-full.txt', '/sitemap.xml', '/rss/blog.xml', '/rss/blog-en.xml', '/rss/til.xml', '/.well-known/security.txt'].map(absoluteUrl),
 ])
@@ -34,6 +35,11 @@ describe('/llms.txt', () => {
     for (const note of getPublishedNotes()) expect(index).toContain(`(${note.canonical})`)
   })
 
+  it('cita o servidor MCP somente leitura em Optional', () => {
+    const optional = index.slice(index.indexOf('\n## Optional\n'))
+    expect(optional).toMatch(new RegExp(`- \\[[^\\]]*MCP[^\\]]*\\]\\(${absoluteUrl(MCP_PATH)}\\): .*search_content`))
+  })
+
   it('o verificador reprova um arquivo fora do formato', () => {
     expect(llmsIndexIssues('Sem H1\n\n## Seção\n\ntexto solto')).not.toEqual([])
   })
@@ -56,6 +62,12 @@ describe('/llms-full.txt', () => {
   it('inclui perfil, cases e agentes', () => {
     for (const heading of ['## Perfil', '## Estudos de caso e projetos', '## Agentes de IA', '## Artigos', '## Notas']) expect(full).toContain(`\n${heading}\n`)
     for (const study of caseStudies) expect(full).toContain(`### ${study.title}`)
+  })
+
+  it('explica o servidor MCP na abertura, com os mesmos recursos', () => {
+    const intro = full.slice(0, full.indexOf('\n## Perfil\n'))
+    expect(intro).toContain(absoluteUrl(MCP_PATH))
+    expect(intro).toContain('search_content')
   })
 
   it('todo link interno existe', () => {

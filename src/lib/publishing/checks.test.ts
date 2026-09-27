@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { builtFileFor, canonicalIssue, extractJsonLd, extractPageFacts, internalLinks, jsonLdIssues } from './checks'
+import { builtFileFor, canonicalIssue, DYNAMIC_ENDPOINTS, dynamicEndpointFor, extractJsonLd, extractPageFacts, internalLinks, jsonLdIssues, manifestHasRoute } from './checks'
 
 const page = (jsonLd: unknown, body = '') => `<!doctype html><html lang="pt-BR"><head>
 <link rel="canonical" href="https://whoisclebs.com/escrita/x/">
@@ -66,5 +66,20 @@ describe('checks do JSON-LD contra a página', () => {
     expect(builtFileFor('https://whoisclebs.com/sobre/')).toBe('sobre/index.html')
     expect(builtFileFor('https://whoisclebs.com/')).toBe('index.html')
     expect(builtFileFor('https://whoisclebs.com/resume.json')).toBe('resume.json')
+  })
+})
+
+describe('endpoints dinâmicos citados em /llms*.txt', () => {
+  it('reconhece só os endpoints declarados, pela URL absoluta', () => {
+    expect(DYNAMIC_ENDPOINTS).toEqual(['/mcp'])
+    expect(dynamicEndpointFor('https://whoisclebs.com/mcp')).toBe('/mcp')
+    expect(dynamicEndpointFor('https://whoisclebs.com/mcp/')).toBeUndefined()
+    expect(dynamicEndpointFor('https://whoisclebs.com/sobre/')).toBeUndefined()
+  })
+
+  it('confere a rota no manifesto do servidor gerado pelo SvelteKit', () => {
+    const manifest = 'routes: [{ id: "/api/activity", pattern: /x/ }, { id: "/mcp", pattern: /y/ }]'
+    expect(manifestHasRoute(manifest, '/mcp')).toBe(true)
+    expect(manifestHasRoute(manifest.replace('"/mcp"', '"/outra"'), '/mcp')).toBe(false)
   })
 })

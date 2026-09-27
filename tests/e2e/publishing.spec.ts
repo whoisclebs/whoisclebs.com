@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module'
 import { expect, test } from '@playwright/test'
-import { canonicalIssue, extractJsonLd, extractPageFacts, graphNodes, internalLinks, jsonLdIssues, llmsIndexIssues, SITE_ORIGIN, sitemapLocs } from '../../src/lib/publishing/checks'
+import { canonicalIssue, dynamicEndpointFor, extractJsonLd, extractPageFacts, graphNodes, internalLinks, jsonLdIssues, llmsIndexIssues, SITE_ORIGIN, sitemapLocs } from '../../src/lib/publishing/checks'
 
 /**
  * Camada legível por agentes (spec §5, passo 12) contra o build servido pelo Worker local:
@@ -123,8 +123,9 @@ test('/llms.txt no formato llmstxt.org e todo link de /llms.txt e /llms-full.txt
   const links = new Set([...internalLinks(index), ...internalLinks(full)])
   expect(links.size).toBeGreaterThan(10)
   for (const url of links) {
-    const response = await request.get(local(url), { maxRedirects: 0 })
-    expect(response.status(), url).toBe(200)
+    // Endpoint dinâmico (MCP): só POST/OPTIONS; o protocolo é coberto em mcp.spec.ts.
+    const response = dynamicEndpointFor(url) ? await request.fetch(local(url), { method: 'OPTIONS', maxRedirects: 0 }) : await request.get(local(url), { maxRedirects: 0 })
+    expect(response.status(), url).toBe(dynamicEndpointFor(url) ? 204 : 200)
   }
 })
 

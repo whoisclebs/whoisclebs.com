@@ -6,6 +6,24 @@
 
 export const SITE_ORIGIN = 'https://whoisclebs.com'
 
+/** Endpoint MCP somente leitura (Streamable HTTP; `src/routes/mcp/+server.ts`). */
+export const MCP_PATH = '/mcp'
+
+/**
+ * Endpoints dinâmicos (sem página prerenderizada) que `/llms*.txt` podem citar. O portão do build exige que
+ * cada um exista como rota no manifesto do servidor; o e2e confere que responde.
+ */
+export const DYNAMIC_ENDPOINTS: readonly string[] = [MCP_PATH]
+
+export function dynamicEndpointFor(url: string): string | undefined {
+  return DYNAMIC_ENDPOINTS.find((path) => url === `${SITE_ORIGIN}${path}`)
+}
+
+/** A rota existe no manifesto gerado pelo SvelteKit (`.svelte-kit/output/server/manifest.js`)? */
+export function manifestHasRoute(manifestSource: string, path: string): boolean {
+  return manifestSource.includes(`id: ${JSON.stringify(path)}`)
+}
+
 export type JsonLdNode = Record<string, unknown> & { '@type'?: string | string[] }
 
 /** Página extraída do HTML: o que uma pessoa vê e contra o que o JSON-LD é comparado. */
