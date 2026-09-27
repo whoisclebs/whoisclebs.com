@@ -1,0 +1,188 @@
+/*
+ * WHOISCLEBS — tokens do design system "Caderno quadriculado" (passo 01, rascunho).
+ * Framework-agnóstico: só custom properties. Decisões e motivos em docs/redesign/decisions.md.
+ * Contraste dos pares de texto verificado por scripts/check-contrast.mjs (AA).
+ *
+ * Camadas: primitivos (--p-*) → semânticos (--color-*, --font-*, --step-*, ...).
+ * Componentes usam só os semânticos. O tema escuro troca apenas os semânticos de cor.
+ */
+@layer tokens {
+  :root {
+    /* ---------- Primitivos de cor ---------- */
+    --p-paper: #f5f2ea;          /* papel do caderno */
+    --p-paper-raised: #fcfaf5;   /* folha solta, campos */
+    --p-paper-deep: #e9e4d8;     /* faixa de capítulo */
+    --p-ink: #16181d;            /* tinta principal */
+    --p-ink-soft: #454951;       /* texto secundário */
+    --p-ink-faint: #5c6069;      /* metadados mono */
+    --p-rule: #b9b3a6;           /* fio de 1 px (não é texto) */
+    --p-grid: #dfd9cc;           /* linhas da quadrícula (não é texto) */
+    --p-blue: #2236d8;           /* tinta azul: links, caminho ativo, foco */
+    --p-blue-deep: #18279f;      /* hover/pressionado */
+    --p-green: #1d6b43;          /* estado "ao vivo": sempre com rótulo */
+    --p-night: #101827;          /* noite: tema escuro e trechos escuros */
+    --p-night-raised: #19233a;
+    --p-night-deep: #0b111d;
+    --p-on-night: #eeeae1;
+    --p-on-night-soft: #b4b9c5;
+    --p-on-night-faint: #9aa0ad;
+    --p-night-rule: #34405a;
+    --p-night-grid: #1f2a42;
+    --p-blue-night: #9aa9ff;     /* tinta azul sobre a noite */
+    --p-green-night: #6fd39a;
+    --p-dawn: #e9a74f;           /* primeira luz: só decorativo ou texto grande sobre a noite */
+    --p-white: #ffffff;
+
+    /* ---------- Semânticos de cor (tema claro) ---------- */
+    color-scheme: light;
+    --color-bg: var(--p-paper);
+    --color-surface: var(--p-paper-raised);
+    --color-band: var(--p-paper-deep);
+    --color-text: var(--p-ink);
+    --color-text-soft: var(--p-ink-soft);
+    --color-text-faint: var(--p-ink-faint);
+    --color-rule: var(--p-rule);
+    --color-grid: var(--p-grid);
+    --color-link: var(--p-blue);
+    --color-link-hover: var(--p-blue-deep);
+    --color-accent: var(--p-blue);
+    --color-on-accent: var(--p-white);
+    --color-focus: var(--p-blue);
+    --color-status-live: var(--p-green);
+    --color-mark: var(--p-ink);          /* símbolo */
+    /* Trecho escuro dentro do tema claro (footer, demo): sempre noite */
+    --color-night-bg: var(--p-night);
+    --color-night-surface: var(--p-night-raised);
+    --color-night-text: var(--p-on-night);
+    --color-night-text-soft: var(--p-on-night-soft);
+    --color-night-link: var(--p-blue-night);
+    --color-night-rule: var(--p-night-rule);
+    --color-dawn: var(--p-dawn);
+
+    /* ---------- Tipografia ---------- */
+    /* Licença SIL OFL 1.1; WOFF2 local, subset latin (+ latin-ext só se preciso). */
+    --font-display: 'Anton', 'Anton Fallback', Impact, 'Arial Narrow', sans-serif;
+    --font-text: 'Newsreader', 'Newsreader Fallback', Georgia, 'Times New Roman', serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+    /* Escala: texto base 18 px; razão ~1.25 no corpo, títulos fluidos. */
+    --step--2: 0.75rem;                                        /* 12 px — mínimo absoluto (mono) */
+    --step--1: 0.875rem;                                       /* 14 px — mono de dados, legendas */
+    --step-0: 1rem;                                            /* 16 px — UI, botões, nav */
+    --step-1: 1.125rem;                                        /* 18 px — corpo */
+    --step-2: clamp(1.25rem, 1.05rem + 0.8vw, 1.5rem);         /* 20–24 — deck, lead */
+    --step-3: clamp(1.625rem, 1.2rem + 1.8vw, 2.375rem);       /* 26–38 — H2 */
+    --step-4: clamp(2.25rem, 1.4rem + 3.4vw, 3.75rem);         /* 36–60 — H1 de página */
+    --step-5: clamp(2.75rem, 1.2rem + 6.2vw, 6.25rem);         /* 44–100 — H1 da home */
+
+    --leading-display: 1;
+    --leading-heading: 1.08;
+    --leading-text: 1.6;
+    --leading-article: 1.7;
+    --leading-ui: 1.35;
+    --tracking-display: -0.01em;
+    --tracking-mono: 0.01em;
+    --measure: 66ch;
+    --measure-narrow: 44ch;
+
+    /* ---------- Espaço e grade (quadrícula de 8 px) ---------- */
+    --cell: 8px;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+    --space-8: 64px;
+    --space-9: 96px;
+    --space-10: 128px;
+    --space-chapter: clamp(64px, 5rem + 5vw, 160px);
+    --page-max: 1360px;
+    --page-gutter: clamp(16px, 4vw, 64px);
+    --grid-columns: 4;                 /* < 640 px */
+    --grid-gap: 16px;
+    --grid-pattern-size: 24px;         /* quadrícula visível só em aparatos */
+
+    /* ---------- Forma ---------- */
+    --border-hairline: 1px;
+    --radius-0: 0;
+    --radius-control: 2px;
+    --shadow-press: 0 2px 0 var(--color-text);
+    --focus-width: 2px;
+    --focus-offset: 3px;
+
+    /* ---------- Movimento ---------- */
+    --dur-press: 120ms;
+    --dur-ui: 180ms;
+    --dur-scene: 320ms;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --press-scale: 0.97;
+  }
+
+  @media (min-width: 640px) {
+    :root {
+      --grid-columns: 6;
+      --grid-gap: 24px;
+    }
+  }
+
+  @media (min-width: 960px) {
+    :root {
+      --grid-columns: 12;
+      --grid-gap: 24px;
+    }
+  }
+
+  /* ---------- Tema escuro: noite ---------- */
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+    --color-bg: var(--p-night);
+    --color-surface: var(--p-night-raised);
+    --color-band: var(--p-night-deep);
+    --color-text: var(--p-on-night);
+    --color-text-soft: var(--p-on-night-soft);
+    --color-text-faint: var(--p-on-night-faint);
+    --color-rule: var(--p-night-rule);
+    --color-grid: var(--p-night-grid);
+    --color-link: var(--p-blue-night);
+    --color-link-hover: var(--p-on-night);
+    --color-accent: var(--p-blue-night);
+    --color-on-accent: var(--p-night);
+    --color-focus: var(--p-blue-night);
+    --color-status-live: var(--p-green-night);
+    --color-mark: var(--p-on-night);
+    --color-night-bg: var(--p-night-deep);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      color-scheme: dark;
+      --color-bg: var(--p-night);
+      --color-surface: var(--p-night-raised);
+      --color-band: var(--p-night-deep);
+      --color-text: var(--p-on-night);
+      --color-text-soft: var(--p-on-night-soft);
+      --color-text-faint: var(--p-on-night-faint);
+      --color-rule: var(--p-night-rule);
+      --color-grid: var(--p-night-grid);
+      --color-link: var(--p-blue-night);
+      --color-link-hover: var(--p-on-night);
+      --color-accent: var(--p-blue-night);
+      --color-on-accent: var(--p-night);
+      --color-focus: var(--p-blue-night);
+      --color-status-live: var(--p-green-night);
+      --color-mark: var(--p-on-night);
+      --color-night-bg: var(--p-night-deep);
+    }
+  }
+
+  /* Movimento reduzido: sem deslocamento; opacidade e cor continuam. */
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --dur-scene: 0ms;
+      --press-scale: 1;
+    }
+  }
+}
