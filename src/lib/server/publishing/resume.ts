@@ -4,7 +4,7 @@
  * (Projetos), projetos open source (`projects.ts`) e badges verificáveis no Credly.
  *
  * `work` e `education` saem vazios de propósito: o site não publica empregadores, cargos com datas nem
- * formação, e o trabalho com pagamentos é de clientes e privado (hero). Nada aqui inventa esses dados.
+ * formação. Nada aqui inventa esses dados.
  * Validado contra o schema oficial (`@jsonresume/schema`) nos testes e no portão do build.
  */
 import { getMessages } from '$lib/i18n'

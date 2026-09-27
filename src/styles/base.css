@@ -1,6 +1,6 @@
 /*
- * Base mínima do passo 02 (migração). Visual final nos passos 05–07.
- * Só tokens semânticos de src/styles/tokens.css.
+ * Base do site. Só tokens semânticos de src/styles/tokens.css; as faixas (.band-night, .band-aurora)
+ * redefinem esses tokens, então as regras daqui valem em qualquer faixa.
  */
 @layer reset, base, layout, components;
 
@@ -104,6 +104,34 @@
     outline-offset: var(--focus-offset);
   }
 
+  /*
+   * Foco de "unidade selecionada" (estudo de microinterações): além do anel de 2 px, quatro cantos a 8 px do
+   * controle. Vale para todo controle em bloco (botões, navegação, idioma, marca, HUD). Links dentro de
+   * texto corrido ficam só com o anel: cantos numa linha quebrada ficariam soltos. Sem animação no foco.
+   */
+  :is(.button, .site-nav a, .lang a, .brand, .hud__label, a.hud__value) {
+    position: relative;
+  }
+
+  :is(.button, .site-nav a, .lang a, .brand, .hud__label, a.hud__value, .skip-link):focus-visible::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    pointer-events: none;
+    --corner: 8px;
+    --stroke: 2px;
+    background:
+      linear-gradient(var(--color-focus) 0 0) 0 0 / var(--corner) var(--stroke),
+      linear-gradient(var(--color-focus) 0 0) 0 0 / var(--stroke) var(--corner),
+      linear-gradient(var(--color-focus) 0 0) 100% 0 / var(--corner) var(--stroke),
+      linear-gradient(var(--color-focus) 0 0) 100% 0 / var(--stroke) var(--corner),
+      linear-gradient(var(--color-focus) 0 0) 0 100% / var(--corner) var(--stroke),
+      linear-gradient(var(--color-focus) 0 0) 0 100% / var(--stroke) var(--corner),
+      linear-gradient(var(--color-focus) 0 0) 100% 100% / var(--corner) var(--stroke),
+      linear-gradient(var(--color-focus) 0 0) 100% 100% / var(--stroke) var(--corner);
+    background-repeat: no-repeat;
+  }
+
   code,
   pre,
   kbd {
@@ -123,6 +151,11 @@
   main {
     flex: 1;
     padding-block: var(--space-7) var(--space-9);
+  }
+
+  /* Home: as faixas (noite, aurora, dia) vão de borda a borda; cada uma traz o próprio `.page`. */
+  main.main--bleed {
+    padding-block: 0;
   }
 
   .stack > * + * {
@@ -209,7 +242,7 @@
   .button {
     display: inline-flex;
     align-items: center;
-    min-height: 44px;
+    min-height: 48px;
     padding: var(--space-2) var(--space-5);
     border: var(--border-hairline) solid var(--color-text);
     border-radius: var(--radius-control);
@@ -219,6 +252,11 @@
     color: var(--color-text);
     text-decoration: none;
     background: transparent;
+    transition: transform var(--dur-press) var(--ease-out);
+  }
+
+  .button:active {
+    transform: scale(var(--press-scale));
   }
 
   .button--primary {

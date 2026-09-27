@@ -28,7 +28,7 @@ test('home → case tuxedo → código no GitHub', async ({ page }) => {
   const cases = page.locator('[data-slot="cases"]')
   await expect(cases.getByRole('heading', { level: 3, name: 'tuxedo' })).toBeVisible()
   await expect(cases.getByRole('heading', { level: 3, name: 'golpher' })).toBeVisible()
-  await cases.getByRole('link', { name: /^Ler o case\s*:\s*tuxedo$/ }).click()
+  await cases.getByRole('link', { name: /^Ler o estudo de caso\s*:\s*tuxedo$/ }).click()
 
   await expect(page).toHaveURL(/\/projetos\/tuxedo\/$/)
   await expect(page.getByRole('heading', { level: 1 })).toContainText('tuxedo')
@@ -84,9 +84,12 @@ test('análise do autor aparece rotulada no case', async ({ page }) => {
 
 test('/projetos/ é um índice com status, linguagem, último commit datado e link do código', async ({ page }) => {
   await page.goto('/projetos/')
-  await expect(page.getByRole('heading', { level: 2, name: 'Estudos de caso' })).toBeVisible()
-  const entries = page.locator('.case-entry, .other')
+  // Uma lista só, do commit mais recente ao mais antigo (passo 15); os dois cases levam o link do estudo.
+  const entries = page.locator('.case-entry')
   expect(await entries.count()).toBe(4)
+  const dates = await entries.evaluateAll((els) => els.map((el) => el.querySelector('dd time')?.getAttribute('datetime') ?? ''))
+  expect(dates).toEqual([...dates].sort().reverse())
+  await expect(page.locator('.case-entry[data-case]')).toHaveCount(2)
   for (const entry of await entries.all()) {
     await expect(entry.locator('time[datetime]').first()).toHaveAttribute('datetime', /^\d{4}-\d{2}-\d{2}$/)
     await expect(entry.getByText('Linguagem')).toBeVisible()

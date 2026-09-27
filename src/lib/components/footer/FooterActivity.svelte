@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { formatDateTime, formatDay, loadActivity, relativeTime, type ActivityResult } from '$lib/activity/activity-client'
+  import { formatDateTime, formatDay, relativeTime, type ActivityResult } from '$lib/activity/activity-client'
+  import { requestActivity } from '$lib/activity/activity-store'
   import { getMessages, type Locale } from '$lib/i18n'
 
   let { locale, profileUrl }: { locale: Locale; profileUrl: string } = $props()
@@ -10,6 +11,8 @@
   /**
    * `nojs` é o HTML prerenderizado (link para o perfil). Com JS, o estado passa a `idle` na montagem e
    * a busca só começa quando o rodapé se aproxima da viewport: nunca compete com o conteúdo crítico.
+   * Na home, o HUD do hero já terá pedido a mesma busca depois do `load`; aqui só se reaproveita a resposta
+   * (`activity-store.ts`). O rodapé lista todos os eventos do cache (no máximo 10), a mesma contagem do HUD.
    */
   let view = $state<{ state: 'nojs' | 'idle' | 'loading' } | ActivityResult>({ state: 'nojs' })
   const loaded = $derived(view.state === 'fresh' || view.state === 'stale' ? view : null)
@@ -18,22 +21,24 @@
 
   onMount(() => {
     view = { state: 'idle' }
-    const controller = new AbortController()
+    let cancelled = false
     let started = false
 
     const start = async () => {
       if (started) return
       started = true
       view = { state: 'loading' }
-      const result = await loadActivity({ fetch: (url, init) => fetch(url, init), signal: controller.signal })
-      if (result.state === 'unavailable' && result.reason === 'aborted') return
+      const { result } = await requestActivity()
+      if (cancelled) return
       now = new Date()
       view = result
     }
 
     if (!('IntersectionObserver' in window)) {
       void start()
-      return () => controller.abort()
+      return () => {
+        cancelled = true
+      }
     }
     const observer = new IntersectionObserver(
       (entries) => {
@@ -47,7 +52,7 @@
     observer.observe(root)
     return () => {
       observer.disconnect()
-      controller.abort()
+      cancelled = true
     }
   })
 </script>

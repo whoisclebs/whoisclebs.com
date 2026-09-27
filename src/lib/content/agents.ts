@@ -97,7 +97,7 @@ export const loopSteps: readonly LoopStep[] = [
   {
     id: 'objetivo',
     title: 'Objetivo',
-    text: 'Tudo começa numa tarefa com um critério de pronto que dá para checar: um teste que passa, um relatório com citação. Sem isso, o agente não sabe quando parar, e você também não.',
+    text: 'Tudo começa numa tarefa com um critério de pronto que dá para checar: um teste que passa, um relatório com citação. Sem esse critério, nem o agente nem quem o acompanha sabe quando parar.',
     example: { text: 'No SENTINEL, pronto é um veredito por achado: documentado, faltando ou inconclusivo.', label: 'README, "How it works"', url: sn('README.md') },
   },
   {
@@ -115,13 +115,13 @@ export const loopSteps: readonly LoopStep[] = [
   {
     id: 'avaliacao',
     title: 'Avaliação',
-    text: 'Quem diz se deu certo é uma checagem fora do modelo: testes, typecheck, um schema. Quando a evidência não basta, a resposta certa é "inconclusivo", não um palpite.',
+    text: 'Quem diz se deu certo é uma checagem fora do modelo: testes, typecheck, um schema. Quando a evidência não basta, a resposta é "inconclusivo".',
     example: { text: 'Sem contexto recuperado, o juiz do SENTINEL devolve inconclusivo sem chamar o modelo.', label: 'documentation-judge.ts, linhas 38–59', url: `${sn('packages/core/src/services/documentation-judge.ts')}#L38-L59` },
   },
   {
     id: 'observabilidade',
     title: 'Observabilidade',
-    text: 'Cada passo deixa rastro: o comando, a saída completa, a regra que bloqueou. É o que transforma um erro do agente em algo que se investiga, e o que se aprende vira o próximo objetivo.',
+    text: 'Cada passo deixa rastro: o comando, a saída completa, a regra que bloqueou. Com esse rastro dá para investigar um erro do agente, e o que se aprende vira o próximo objetivo.',
     example: { text: 'A saída inteira de cada comando fica guardada e pode ser buscada linha a linha depois.', label: 'ADR-019', url: yc('docs/adr/ADR-019-context-sandbox.md') },
   },
 ]
@@ -149,7 +149,7 @@ export const techTopics: readonly TechTopic[] = [
     id: 'limites-de-contexto',
     title: 'Limites de contexto',
     approach: [
-      'Janela de contexto é orçamento, não depósito. Três regras: responder "onde está X" com linhas `caminho:linha`, não com arquivos; toda resposta tem teto de tamanho e diz o que cortou; saída longa (log de teste, `git log`) fica fora da janela, com um resumo e um identificador para buscar qualquer linha depois.',
+      'Trato a janela de contexto como orçamento, com três regras: responder "onde está X" com linhas `caminho:linha` em vez de arquivos inteiros; toda resposta tem teto de tamanho e diz o que cortou; saída longa (log de teste, `git log`) fica fora da janela, com um resumo e um identificador para buscar qualquer linha depois.',
     ],
     inCode: [
       'O YandeCode implementa as três. A versão 0.1 apostava em busca vetorial sobre o código; a 0.2 trocou por navegação estrutural (símbolos, BM25 e grafo de imports) porque a relevância medida em tarefas reais saiu baixa, segundo o próprio ADR.',
@@ -163,7 +163,7 @@ export const techTopics: readonly TechTopic[] = [
     id: 'memoria',
     title: 'Memória',
     approach: [
-      'Memória é dado com dono e prazo de validade. Uma memória errada é pior que nenhuma: ela volta em toda sessão. Por isso o agente escreve de forma explícita, cada memória cita a fonte, uma nova pode substituir a antiga e as temporárias expiram.',
+      'Uma memória errada volta em toda sessão. Por isso o agente escreve memórias de forma explícita, cada memória cita a fonte, uma nova pode substituir a antiga e as temporárias expiram.',
     ],
     inCode: [
       'No YandeCode, memórias são arquivos Markdown com tipo (decisão, padrão, fato, falha), fontes e expiração; uma memória cuja fonte sumiu aparece marcada como velha. Resumir cada chamada com um modelo foi recusado: custa tokens o tempo todo.',
@@ -190,7 +190,7 @@ export const techTopics: readonly TechTopic[] = [
     title: 'Avaliação',
     approach: ['Só publico um resultado de agente se ele tiver:'],
     inCode: [
-      'Por isso não há número nesta página. O YandeCode publica resultados em `benchmarks/results/`, mas o resumo foi medido nos commits `f963e38` e `73046d7`, que não existem no histórico público; a comparação de busca usa 12 consultas numa fixture pequena e mede recuperação, não tarefa resolvida; e o A/B com o Claude Code tem uma execução por braço e tarefa. É material de trabalho honesto, mas não sustenta uma afirmação de ganho. Quando existir uma rodada que cumpra a lista, ela entra aqui com o link.',
+      'Por isso não há número nesta página. O YandeCode publica resultados em `benchmarks/results/`, mas o resumo foi medido nos commits `f963e38` e `73046d7`, que não existem no histórico público; a comparação de busca usa 12 consultas numa fixture pequena e mede recuperação, não tarefa resolvida; e o A/B com o Claude Code tem uma execução por braço e tarefa. Esses resultados servem para o desenvolvimento, mas não sustentam uma afirmação de ganho. Quando existir uma rodada que cumpra a lista, ela entra aqui com o link.',
     ],
     sources: [
       { label: 'benchmarks/results/SUMMARY.md', url: yc('benchmarks/results/SUMMARY.md') },

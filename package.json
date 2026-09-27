@@ -19,7 +19,10 @@
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "db:migrate:local": "wrangler d1 migrations apply DB --local",
     "check:island": "node scripts/check-island-budget.mjs",
-    "verify:publishing": "node scripts/verify-publishing.mjs .svelte-kit/cloudflare"
+    "verify:publishing": "node scripts/verify-publishing.mjs .svelte-kit/cloudflare",
+    "check:budgets": "node scripts/check-budgets.mjs",
+    "lhci": "node scripts/run-lhci.mjs",
+    "verify": "npm run check && npm run lint && npm test && npm run test:integration && npm run build && npm run test:e2e && npm run check:contrast && npm run check:island && npm run check:budgets && npm run lhci"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
@@ -29,6 +32,7 @@
     "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^9.39.4",
     "@jsonresume/schema": "1.3.1",
+    "@lhci/cli": "^0.15.1",
     "@modelcontextprotocol/sdk": "1.30.1",
     "@playwright/test": "^1.59.1",
     "@sveltejs/adapter-cloudflare": "^7.2.9",

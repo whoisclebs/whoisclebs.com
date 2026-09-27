@@ -21,7 +21,7 @@ export const LLMS_PATH = '/llms.txt'
 export const LLMS_FULL_PATH = '/llms-full.txt'
 
 const SITE_TITLE = 'whoisclebs.com'
-const SUMMARY = `Site pessoal e editorial de ${author.name} (Clebson Augusto), ${JOB_TITLE['pt-BR'].toLocaleLowerCase('pt-BR')}. Tem estudos de caso de projetos open source em Go com a fonte de cada afirmação, um capítulo sobre agentes de IA com o status verdadeiro de cada projeto, artigos e notas técnicas. Idioma principal: pt-BR; parte do conteúdo tem versão em inglês sob /en/.`
+const SUMMARY = `Site pessoal e editorial de ${author.name} (Clebson Augusto), ${JOB_TITLE['pt-BR'].toLocaleLowerCase('pt-BR')}. Tem estudos de caso de projetos open source em Go com a fonte de cada afirmação, um capítulo sobre agentes de IA com o status e o código de cada projeto, artigos e notas técnicas. Idioma principal: pt-BR; parte do conteúdo tem versão em inglês sob /en/.`
 
 /** Texto de link sem colchetes (o formato usa `[nome](url)`). */
 function linkText(value: string): string {
@@ -287,7 +287,7 @@ function limitsSection(): string {
     '',
     'O que este site não afirma, e como ler este arquivo:',
     '',
-    '- Não publica empregadores, cargos com datas, clientes nem números de negócio, e não informa instituição nem curso de formação (um artigo de 2019 só menciona a faculdade). O trabalho com pagamentos é de clientes e fica privado; por isso `work` e `education` saem vazios em /resume.json.',
+    '- Não publica empregadores, cargos com datas, clientes nem números de negócio, e não informa instituição nem curso de formação (um artigo de 2019 só menciona a faculdade). Por isso `work` e `education` saem vazios em /resume.json.',
     `- Os status de projetos foram conferidos nas datas indicadas (a mais recente: ${AGENTS_CHECKED_AT}) e podem ter mudado desde então. O código público é a fonte; este texto é uma leitura dele.`,
     '- Nenhum projeto de agentes tem uso em produção demonstrado, e o site não publica números de benchmark: os resultados existentes não cumprem os critérios de reprodução listados acima.',
     '- A simulação do case tuxedo usa dados sintéticos e está rotulada como simulação; não é medição de produção.',

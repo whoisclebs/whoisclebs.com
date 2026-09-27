@@ -36,7 +36,19 @@ function block(selectorRe) {
 const light = block(/(^|\n)\s*:root\s*\{/)
 const darkAttr = block(/:root\[data-theme='dark'\]\s*\{/)
 const darkMedia = block(/:root:not\(\[data-theme='light'\]\)\s*\{/)
-const themes = { claro: light, escuro: { ...light, ...darkAttr } }
+const night = block(/\.band-night\s*\{/)
+const aurora = block(/\.band-aurora\s*\{/)
+/**
+ * Faixas do amanhecer (passo 15). A aurora é um degradê: mede-se contra o ponto mais claro (`--p-aurora`,
+ * que é o fundo sólido declarado) e contra a ponta escura (`--p-aurora-top`), que só importa para o foco.
+ */
+const themes = {
+  'dia (claro)': light,
+  'dia (escuro)': { ...light, ...darkAttr },
+  noite: { ...light, ...night },
+  aurora: { ...light, ...aurora },
+  'aurora (ponta escura)': { ...light, ...aurora, '--color-bg': 'var(--p-aurora-top)' },
+}
 
 function resolve(vars, name, seen = new Set()) {
   if (seen.has(name)) throw new Error(`Referência circular em ${name}`)
@@ -79,25 +91,22 @@ const pairs = [
   ['--color-link', '--color-band', TEXT, 'link em faixa'],
   ['--color-link-hover', '--color-bg', TEXT, 'link hover'],
   ['--color-on-accent', '--color-accent', TEXT, 'botão primário'],
+  ['--color-accent', '--color-bg', LARGE, 'borda do botão primário'],
   ['--color-status-live', '--color-bg', TEXT, 'rótulo de estado'],
   ['--color-status-live', '--color-surface', TEXT, 'rótulo de estado em folha'],
-  ['--color-focus', '--color-bg', LARGE, 'anel de foco'],
+  ['--color-focus', '--color-bg', LARGE, 'anel de foco e cantos'],
   ['--color-focus', '--color-surface', LARGE, 'anel de foco em folha'],
   ['--color-focus', '--color-band', LARGE, 'anel de foco em faixa'],
   ['--color-mark', '--color-bg', LARGE, 'símbolo (componente gráfico)'],
-  ['--color-night-text', '--color-night-bg', TEXT, 'texto em trecho noturno'],
-  ['--color-night-text', '--color-night-surface', TEXT, 'texto em trecho noturno elevado'],
-  ['--color-night-text-soft', '--color-night-bg', TEXT, 'texto secundário noturno'],
-  ['--color-night-text-soft', '--color-night-surface', TEXT, 'texto secundário noturno elevado'],
-  ['--color-night-link', '--color-night-bg', TEXT, 'link noturno'],
-  ['--color-night-link', '--color-night-surface', TEXT, 'link noturno elevado'],
-  ['--color-dawn', '--color-night-bg', LARGE, 'primeira luz (só texto grande/decorativo)'],
+  ['--color-sun', '--color-bg', LARGE, 'fio do horizonte e segmentos cheios do HUD (componente gráfico)'],
+  ['--color-rule', '--color-bg', 1, 'fio decorativo (informativo)'],
 ]
 
 let failures = 0
 for (const [theme, vars] of Object.entries(themes)) {
   console.log(`\nTema ${theme}`)
   for (const [fg, bg, min, use] of pairs) {
+    // Fios de 1 px são decorativos (sem mínimo); o valor fica no relatório.
     const a = resolve(vars, fg)
     const b = resolve(vars, bg)
     const r = ratio(a, b)
@@ -115,5 +124,5 @@ if (mismatched.length) {
   console.log(`\nFALHA tema escuro divergente entre data-theme e prefers-color-scheme: ${mismatched.join(', ')}`)
 }
 
-console.log(failures ? `\n${failures} falha(s) de contraste.` : `\nTodos os ${pairs.length * 2} pares passam em AA.`)
+console.log(failures ? `\n${failures} falha(s) de contraste.` : `\nTodos os ${pairs.length * Object.keys(themes).length} pares passam em AA.`)
 process.exit(failures ? 1 : 0)

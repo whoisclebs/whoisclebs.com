@@ -45,5 +45,5 @@ Strike was a milestone for me because it brought together several things I consi
 
 ## References
 
-- Strike! é projeto vencedor do desafio hackathon da Campus Party Digital Goiás — https://goias.gov.br/turismo/strike-e-projeto-vencedor-do-desafio-hackathon-da-campus-party-digital-goias/
-- Passaporte digital para turistas vence hackathon na Campus Party Digital Goiás — https://goias.gov.br/inovacao/passaporte-digital-para-turistas-vence-hackathon-na-campus-party-digital-goias/
+- Strike! é projeto vencedor do desafio hackathon da Campus Party Digital Goiás — https://web.archive.org/web/2021/https://goias.gov.br/turismo/strike-e-projeto-vencedor-do-desafio-hackathon-da-campus-party-digital-goias/
+- Passaporte digital para turistas vence hackathon na Campus Party Digital Goiás — https://web.archive.org/web/2021/https://goias.gov.br/inovacao/passaporte-digital-para-turistas-vence-hackathon-na-campus-party-digital-goias/

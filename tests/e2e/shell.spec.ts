@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
 
 /**
- * Passo 05 — casca editorial, hero e Mapa de Decisões: teclado, sem JS, reduced motion, overflow e axe.
+ * Passo 05 — casca editorial e hero (o Mapa de Decisões saiu no passo 15): teclado, sem JS, overflow e axe.
  */
 
 const keyRoutes = [
@@ -100,105 +100,19 @@ test.describe('skip link e navegação por teclado', () => {
   })
 })
 
-test.describe('Mapa de Decisões', () => {
-  test('troca decisão, trade-off e link por teclado (setas, Home, End) e por clique', async ({ page }) => {
-    await page.goto('/')
-    const tablist = page.getByRole('tablist', { name: 'Caminhos do mapa' })
-    await expect(tablist).toBeVisible()
-    const tabs = tablist.getByRole('tab')
-    await expect(tabs).toHaveCount(3)
-    const panel = page.getByRole('tabpanel')
-
-    const first = tabs.nth(0)
-    await expect(first).toHaveAttribute('aria-selected', 'true')
-    await expect(panel.getByRole('link', { name: 'Ver o case tuxedo' })).toHaveAttribute('href', '/projetos/tuxedo/')
-
-    await first.focus()
-    await page.keyboard.press('ArrowDown')
-    await expect(tabs.nth(1)).toBeFocused()
-    await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true')
-    await expect(first).toHaveAttribute('aria-selected', 'false')
-    await expect(panel).toContainText('Integrações de pagamento')
-    await expect(panel.getByRole('link', { name: 'Ler a trajetória no Sobre' })).toHaveAttribute('href', '/sobre/')
-
-    await page.keyboard.press('End')
-    await expect(tabs.nth(2)).toBeFocused()
-    await expect(panel).toContainText('contexto pequeno e verificável')
-    await expect(panel.getByRole('link', { name: 'Ler o capítulo sobre agentes' })).toHaveAttribute('href', '/agentes/')
-
-    await page.keyboard.press('ArrowRight')
-    await expect(first).toBeFocused()
-    await page.keyboard.press('ArrowUp')
-    await expect(tabs.nth(2)).toBeFocused()
-    await page.keyboard.press('Home')
-    await expect(first).toHaveAttribute('aria-selected', 'true')
-
-    // Só a aba selecionada entra na ordem de tabulação; Tab sai da lista para o link do painel.
-    await expect(tabs.nth(1)).toHaveAttribute('tabindex', '-1')
-    await page.keyboard.press('Tab')
-    expect((await focusedInfo(page))?.text).toBe('Ver o case tuxedo')
-
-    await tabs.nth(1).click()
-    await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true')
-    await expect(panel).toHaveAttribute('aria-labelledby', (await tabs.nth(1).getAttribute('id')) ?? '')
-  })
-
-  test('evidência rotulada em texto em cada caminho, não só pela forma', async ({ page }) => {
-    await page.goto('/')
-    const tabs = page.getByRole('tablist', { name: 'Caminhos do mapa' }).getByRole('tab')
-    await expect(tabs.nth(0)).toContainText('Código público')
-    await expect(tabs.nth(1)).toContainText('Sem case público')
-    await expect(tabs.nth(2)).toContainText('Protótipos públicos')
-  })
-})
-
 test.describe('sem JavaScript', () => {
-  test('home mostra H1, texto, navegação e o 1º caminho do mapa', async ({ browser }) => {
+  test('home mostra H1, apoio, CTAs e navegação; o Mapa de Decisões saiu', async ({ browser }) => {
     const context = await browser.newContext({ javaScriptEnabled: false })
     const page = await context.newPage()
     await page.goto('/')
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sistemas que resistem ao mundo real.')
-    await expect(page.getByText(/Sou Clebson Augusto, desenvolvedor fullstack/)).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Construo sistemas distribuídos, backends de alta performance e agentes de IA.')
+    await expect(page.getByText(/Sou Clebson Augusto, engenheiro de software sênior/)).toBeVisible()
     const nav = page.getByRole('navigation', { name: 'Principal' })
     for (const name of ['Projetos', 'Escrita', 'Sobre', 'Contato']) await expect(nav.getByRole('link', { name })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Ver o case tuxedo' }).first()).toBeVisible()
-    // Sem JS a lista é estática (nenhum botão inerte) e o painel mostra o caminho com código público.
-    await expect(page.getByRole('tab')).toHaveCount(0)
-    const list = page.getByRole('list', { name: 'Caminhos do mapa' })
-    await expect(list).toContainText('Clientes HTTP')
-    await expect(list).toContainText('Código público')
-    await expect(page.locator('#mapa-decisoes-painel')).toContainText('API encadeável sobre o net/http')
-    await context.close()
-  })
-})
-
-test.describe('movimento', () => {
-  test('realce de 180 ms só com opacity/transform', async ({ page }) => {
-    await page.goto('/')
-    await expect(page.getByRole('tablist')).toBeVisible()
-    const transition = await page.locator('.route__cell').first().evaluate((el) => {
-      const style = getComputedStyle(el)
-      return { property: style.transitionProperty, duration: style.transitionDuration }
-    })
-    expect(transition.property).toBe('opacity, transform')
-    expect(transition.duration).toBe('0.18s, 0.18s')
-  })
-
-  test('prefers-reduced-motion: nenhuma transição nem animação ao trocar de caminho', async ({ browser }) => {
-    const context = await browser.newContext({ reducedMotion: 'reduce' })
-    const page = await context.newPage()
-    await page.goto('/')
-    const tabs = page.getByRole('tablist').getByRole('tab')
-    await tabs.nth(1).click()
-    const running = await page.evaluate(() => {
-      const cells = [...document.querySelectorAll('.route__cell, .route__end')]
-      return {
-        durations: [...new Set(cells.map((el) => getComputedStyle(el).transitionDuration))],
-        animations: document.getAnimations().length,
-      }
-    })
-    expect(running.durations).toEqual(['0s'])
-    expect(running.animations).toBe(0)
+    await expect(page.getByRole('link', { name: 'Ver projetos' })).toHaveAttribute('href', '/projetos/')
+    await expect(page.getByRole('link', { name: 'Mandar um e-mail' })).toHaveAttribute('href', 'mailto:hello@whoisclebs.com')
+    await expect(page.getByRole('tablist')).toHaveCount(0)
+    await expect(page.getByText('Mapa de decisões')).toHaveCount(0)
     await context.close()
   })
 })
@@ -226,7 +140,8 @@ test.describe('layout', () => {
       const lineHeight = parseFloat(getComputedStyle(h1).lineHeight)
       return Math.round(h1.getBoundingClientRect().height / lineHeight)
     })
-    expect(lines).toBeLessThanOrEqual(2)
+    // H1 de 13 palavras (copy.md §1): até 4 linhas em 768 px, nunca uma palavra por linha.
+    expect(lines).toBeLessThanOrEqual(4)
   })
 })
 
@@ -236,7 +151,7 @@ test.describe('axe-core', () => {
       test(`sem violações critical/serious em ${path} (${scheme})`, async ({ page }) => {
         await page.emulateMedia({ colorScheme: scheme })
         await page.goto(path)
-        await expect(page.getByRole('tablist')).toBeVisible()
+        await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
         const results = await new AxeBuilder({ page }).analyze()
         const blocking = results.violations
           .filter((violation) => violation.impact === 'critical' || violation.impact === 'serious')

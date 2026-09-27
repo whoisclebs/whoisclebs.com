@@ -5,7 +5,7 @@ import { expect, test } from '@playwright/test'
  * (bug da baseline: rotas estáticas herdavam o head da home). O idioma vem só da URL.
  */
 const pages: Array<{ path: string; lang: 'pt-BR' | 'en'; title: RegExp; hreflangEn?: string }> = [
-  { path: '/', lang: 'pt-BR', title: /Engenharia de software sem teatro/, hreflangEn: '/en/' },
+  { path: '/', lang: 'pt-BR', title: /^WHOISCLEBS – Clebson Augusto, engenheiro de software$/, hreflangEn: '/en/' },
   { path: '/projetos/', lang: 'pt-BR', title: /^Projetos – /, hreflangEn: '/en/projects/' },
   // Case (pt-BR) e ficha (en) não são tradução uma da outra: sem hreflang (decisão do passo 12).
   { path: '/projetos/tuxedo/', lang: 'pt-BR', title: /^tuxedo: estudo de caso – / },
@@ -19,7 +19,7 @@ const pages: Array<{ path: string; lang: 'pt-BR' | 'en'; title: RegExp; hreflang
   { path: '/hobbies/', lang: 'pt-BR', title: /^Hobbies – / },
   { path: '/privacy-policy/', lang: 'pt-BR', title: /^Política de Privacidade – / },
   { path: '/terms-of-use/', lang: 'pt-BR', title: /^Termos de Uso – / },
-  { path: '/en/', lang: 'en', title: /Software engineering without theater/ },
+  { path: '/en/', lang: 'en', title: /^WHOISCLEBS – Clebson Augusto, software engineer$/ },
   { path: '/en/projects/', lang: 'en', title: /^Projects – / },
   { path: '/en/writing/strike-campus-party-digital-goias-2021/', lang: 'en', title: /./ },
   { path: '/en/about/', lang: 'en', title: /^About – / },

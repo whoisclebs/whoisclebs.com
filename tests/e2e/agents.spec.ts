@@ -68,13 +68,10 @@ test('teclado: as duas leituras levam aos níveis com foco visível', async ({ p
   await expect(page.getByRole('heading', { level: 2, name: 'Detalhes técnicos' })).toBeInViewport()
 })
 
-test('Mapa de Decisões → capítulo de agentes pelo teclado', async ({ page }) => {
+test('home → capítulo de agentes pelo teclado (o Mapa de Decisões saiu)', async ({ page }) => {
   await page.goto('/')
-  const tabs = page.getByRole('tablist', { name: 'Caminhos do mapa' }).getByRole('tab')
-  await tabs.first().focus()
-  await page.keyboard.press('End')
-  await expect(tabs.nth(2)).toContainText('Protótipos públicos')
-  await page.keyboard.press('Tab')
+  const link = page.locator('[data-slot="agents"] a')
+  await link.focus()
   await page.keyboard.press('Enter')
   await expect(page).toHaveURL(/\/agentes\/$/)
 })

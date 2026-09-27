@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test'
 
 /**
- * Passo 06 — manifesto, Escrita/Notas, RSS, metadados e comentários.
+ * Passo 06 — Escrita/Notas, RSS, metadados e comentários (o manifesto virou "O que eu faço" no passo 15).
  * Tudo contra o build real (wrangler dev), com URLs tiradas do sitemap para não fixar a lista à mão.
  */
 
@@ -230,17 +230,17 @@ test.describe('comentários (Giscus)', () => {
 })
 
 test.describe('home: ritmo editorial', () => {
-  test('manifesto com três afirmações e prova verificável; escrita em índice; Agora datado', async ({ page }) => {
+  test('o que eu faço e a história na aurora; projetos, agentes e escrita no dia; Agora datado', async ({ page }) => {
     await page.goto('/')
-    const manifesto = page.locator('section.manifesto')
-    await expect(manifesto.getByRole('heading', { level: 3 })).toHaveText(['Falha é requisito.', 'Custo é arquitetura.', 'Contexto precisa de limites.'])
-    await expect(manifesto.getByRole('link', { name: 'golpher/error.go' })).toHaveAttribute('href', 'https://github.com/go-golpher/golpher/blob/main/error.go')
-    await expect(manifesto.getByRole('link', { name: 'tuxedo/go.mod' })).toHaveAttribute('href', 'https://github.com/whoisclebs/tuxedo/blob/main/go.mod')
-    await expect(manifesto.getByRole('link', { name: /Docker healthcheck/ })).toHaveAttribute('href', '/notas/docker-healthcheck-para-servicos/')
-    // Ordem dos capítulos: hero → manifesto → casos → escrita.
+    const aurora = page.locator('[data-band="aurora"]')
+    await expect(aurora.getByRole('heading', { level: 3 })).toHaveText(['Sistemas distribuídos', 'Backend de alta performance', 'IA agêntica'])
+    await expect(aurora.getByRole('heading', { level: 2 })).toHaveText(['O que eu faço', 'Como cheguei aqui'])
+    await expect(page.locator('section.manifesto')).toHaveCount(0)
+    // Ordem dos capítulos (passo 15): hero → o que eu faço → história → projetos → agentes → escrita.
     const order = await page.locator('main h2').allTextContents()
-    expect(order.indexOf('Três convicções, cada uma com prova')).toBeLessThan(order.indexOf('Casos e projetos'))
-    expect(order.indexOf('Casos e projetos')).toBeLessThan(order.indexOf('Escrita e notas'))
+    const expected = ['O que eu faço', 'Como cheguei aqui', 'Projetos', 'Agentes de IA', 'Escrita e notas']
+    expect(expected.map((title) => order.indexOf(title))).toEqual([...expected.map((title) => order.indexOf(title))].sort((x, y) => x - y))
+    expect(order.indexOf('O que eu faço')).toBeGreaterThanOrEqual(0)
     const rows = page.locator('.writing .writing-list > li')
     await expect(rows).toHaveCount(5)
     await expect(rows.first().locator('time')).toHaveAttribute('datetime', /^\d{4}-\d{2}-\d{2}$/)

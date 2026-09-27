@@ -49,20 +49,28 @@ const legacyRoutes = [
   { name: '404', path: '/rota-inexistente/' },
   { name: 'en-home', path: '/en/' },
 ]
+// Rotas-chave do portão final (passo 14) + tema escuro das principais. Nas homes, `/api/activity` responde a
+// fixture "fresh" para o HUD do hero e o rodapé aparecerem com dado (passo 15).
 const siteRoutes = [
-  { name: 'home', path: '/' },
-  { name: 'home-escuro', path: '/', scheme: 'dark' },
+  { name: 'home', path: '/', activity: 'fresh' },
+  { name: 'home-escuro', path: '/', scheme: 'dark', activity: 'fresh' },
   { name: 'projetos', path: '/projetos/' },
   { name: 'projeto-tuxedo', path: '/projetos/tuxedo/' },
+  { name: 'projeto-tuxedo-escuro', path: '/projetos/tuxedo/', scheme: 'dark' },
+  { name: 'projeto-golpher', path: '/projetos/golpher/' },
   { name: 'escrita', path: '/escrita/' },
   { name: 'artigo', path: '/escrita/github-actions-como-fazer-deploy/' },
+  { name: 'artigo-escuro', path: '/escrita/github-actions-como-fazer-deploy/', scheme: 'dark' },
   { name: 'notas', path: '/notas/' },
+  { name: 'nota', path: '/notas/docker-healthcheck-para-servicos/' },
+  { name: 'agentes', path: '/agentes/' },
+  { name: 'agentes-escuro', path: '/agentes/', scheme: 'dark' },
   { name: 'sobre', path: '/sobre/' },
   { name: 'contato', path: '/contato/' },
   { name: 'livros', path: '/livros/' },
   { name: 'hobbies', path: '/hobbies/' },
   { name: '404', path: '/rota-inexistente/' },
-  { name: 'en-home', path: '/en/' },
+  { name: 'en-home', path: '/en/', activity: 'fresh' },
 ]
 const defaultRoutes = buildDir ? legacyRoutes : siteRoutes
 const routes = process.env.SNAPSHOT_ROUTES ? JSON.parse(process.env.SNAPSHOT_ROUTES) : defaultRoutes
@@ -160,7 +168,9 @@ try {
       // Rotas com `scheme: 'dark'` emulam prefers-color-scheme (tema "noite"); as demais ficam no claro.
       await page.emulateMedia({ colorScheme: route.scheme ?? 'light' })
       await page.unroute('**/api/activity')
-      if (route.activity) await mockActivity(page, route.activity)
+      // Site novo: sempre com a fixture (padrão "fresh"). Sem ela, o `wrangler dev` sem D1 migrado às vezes
+      // segura `/api/activity` e o networkidle da rota seguinte estoura (visto no 404 do passo 15).
+      if (route.activity || !buildDir) await mockActivity(page, route.activity ?? 'fresh')
       // Página em branco entre rotas: ir de `/` para `/` restauraria a rolagem no rodapé e dispararia a
       // atividade antes da hora (no estado "carregando", a requisição pendurada seguraria o networkidle).
       await page.goto('about:blank')

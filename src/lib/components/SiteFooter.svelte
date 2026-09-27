@@ -32,7 +32,8 @@
   const feed = $derived(locale === 'en' ? '/rss/blog-en.xml' : '/rss/blog.xml')
 </script>
 
-<footer class="site-footer">
+<!-- O rodapé volta à noite e fecha o ciclo do amanhecer (hero → aurora → dia → noite). -->
+<footer class="site-footer band-night">
   <div class="page">
     {#if showInvite}
     <section class="invite" aria-labelledby="footer-invite-title">
@@ -93,7 +94,6 @@
 
 <style>
   .site-footer {
-    border-block-start: var(--border-hairline) solid var(--color-rule);
     background: var(--color-bg);
     color: var(--color-text);
   }

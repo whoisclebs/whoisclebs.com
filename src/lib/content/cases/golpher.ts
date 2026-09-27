@@ -24,7 +24,7 @@ const workflows = { label: '.github/workflows', url: `${REPO}/tree/${SHA}/.githu
 export const golpherCase: CaseStudyInput = {
   slug: 'golpher',
   title: 'golpher: um microframework que não esconde o net/http',
-  dek: 'Roteamento e middleware no estilo Express e Fiber, com uma regra que não se negocia: a aplicação continua sendo um http.Handler. O case segue a v0.1.0 e as decisões que o próprio repositório registra.',
+  dek: 'Roteamento e middleware no estilo Express e Fiber, e a aplicação continua sendo um http.Handler. O case segue a v0.1.0 e as decisões que o próprio repositório registra.',
   question: 'Como dar ergonomia de framework a uma API em Go sem abandonar o http.Handler?',
   checkedAt: '2026-09-27',
   revision: { sha: SHA, date: '2026-07-20', url: `${REPO}/commit/${SHA}` },
@@ -34,7 +34,7 @@ export const golpherCase: CaseStudyInput = {
       voice: 'fonte',
       body: [
         'O golpher existe desde março de 2025 e chegou à v0.1.0 em 20 de julho de 2026. O README avisa que ainda não há versão estável e recomenda Fiber, Gin ou o `net/http` direto para produção hoje.',
-        'O documento de design da v0.1.0 descreve o ponto de partida sem rodeios. No protótipo, o registro de rotas e middleware alterava mapas compartilhados sem sincronização enquanto `ServeHTTP` os lia (uma condição de corrida assim que o servidor subia), o handler de erro padrão devolvia `err.Error()` ao cliente, o body era lido inteiro de uma vez e `Listen` chamava `log.Fatal`.',
+        'O documento de design da v0.1.0 descreve o ponto de partida. No protótipo, o registro de rotas e middleware alterava mapas compartilhados sem sincronização enquanto `ServeHTTP` os lia (uma condição de corrida assim que o servidor subia), o handler de erro padrão devolvia `err.Error()` ao cliente, o body era lido inteiro de uma vez e `Listen` chamava `log.Fatal`.',
       ],
       sources: [readme, release, src('design.md, linhas 1–12', DESIGN, 1, 12)],
     },
@@ -97,9 +97,9 @@ export const golpherCase: CaseStudyInput = {
       voice: 'fonte',
       body: [
         'A v0.1.0 saiu em 20 de julho de 2026 com as quebras de compatibilidade listadas no README (assinatura única de handler, `Listen` devolvendo erro, limite de body por padrão).',
-        'Rodei a suíte na revisão 815b8d7: passa também com o detector de corrida (`-race`), com 92,4% de cobertura de instruções. É medição minha, no ambiente da tabela, não um número publicado pelo projeto.',
+        'Rodei a suíte na revisão 815b8d7: passa também com o detector de corrida (`-race`), com 92,4% de cobertura de instruções. É medição minha, no ambiente da tabela; o projeto não publica esse número.',
         'O repositório tem workflows de CI, lint, cobertura, CodeQL e govulncheck.',
-        'Não há benchmark publicado: o ROADMAP ainda lista benchmarks contra Gin, Fiber, Chi e Zinc como próximo passo, e o `docs/performance.md` descreve decisões de caminho quente, não medições.',
+        'Não há benchmark publicado: o ROADMAP ainda lista benchmarks contra Gin, Fiber, Chi e Zinc como próximo passo, e o `docs/performance.md` descreve decisões de caminho quente, sem medições.',
       ],
       sources: [release, src('README.md, linhas 226–244', 'README.md', 226, 244), tree, workflows, src('ROADMAP.md, linha 34', 'ROADMAP.md', 34), src('performance.md', 'docs/performance.md')],
     },

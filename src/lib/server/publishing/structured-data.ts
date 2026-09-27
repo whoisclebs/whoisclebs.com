@@ -23,8 +23,8 @@ export const ALTERNATE_NAME = 'Clebson Augusto'
 
 /** Cargo como o hero escreve (pt-BR e en). */
 export const JOB_TITLE: Record<Locale, string> = {
-  'pt-BR': 'Desenvolvedor fullstack e líder técnico',
-  en: 'Full-stack developer and tech lead',
+  'pt-BR': 'Engenheiro de software sênior',
+  en: 'Senior software engineer',
 }
 
 /** Pessoa completa: home, Sobre e Contato. `sameAs` = só os perfis listados em `library.ts`. */

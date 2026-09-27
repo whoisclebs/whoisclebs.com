@@ -3,7 +3,7 @@
   import { getMessages, locales, type Locale } from '$lib/i18n'
   import { pagePath, pages, type Alternates } from '$lib/routing/paths'
 
-  let { locale, currentPath, alternates }: { locale: Locale; currentPath: string; alternates?: Alternates } = $props()
+  let { locale, currentPath, alternates, home = false }: { locale: Locale; currentPath: string; alternates?: Alternates; home?: boolean } = $props()
 
   const t = $derived(getMessages(locale))
   const items = $derived(
@@ -33,7 +33,9 @@
 </script>
 
 <a class="skip-link" href="#conteudo">{t['nav.skip']}</a>
-<header class="site-header">
+<!-- Noite em todas as páginas. Na home, o header continua no hero; nas demais, é a "noite curta" que termina
+     no fio âmbar do horizonte, e o corpo começa no dia. -->
+<header class="site-header band-night" class:site-header--home={home}>
   <div class="page site-header__inner">
     <a class="brand" href={pages.home[locale]} aria-label="WHOISCLEBS, Clebson Augusto">
       <svg class="brand__symbol" viewBox={SYMBOL_VIEWBOX} aria-hidden="true" focusable="false" width="24" height="24">
@@ -86,7 +88,29 @@
   }
 
   .site-header {
-    border-block-end: var(--border-hairline) solid var(--color-rule);
+    position: relative;
+    padding-block-end: var(--space-6);
+    border-block-end: var(--border-hairline) solid var(--color-sun);
+  }
+
+  /* Primeira luz a leste, sobre o fio: o mesmo gesto do horizonte do hero, em escala de faixa curta. */
+  .site-header::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 auto;
+    width: min(60%, 44rem);
+    height: 56px;
+    background: radial-gradient(60% 100% at 100% 100%, rgb(232 166 82 / 0.26), rgb(232 166 82 / 0) 72%);
+    pointer-events: none;
+  }
+
+  .site-header--home {
+    padding-block-end: 0;
+    border-block-end: 0;
+  }
+
+  .site-header--home::after {
+    content: none;
   }
 
   /*
@@ -178,7 +202,8 @@
 
   /* Página atual: sublinhado grosso em tinta azul, não só cor. */
   .site-nav a[aria-current='page'] {
-    color: var(--color-link);
+    color: var(--color-text);
+    text-decoration-color: var(--color-sun);
     text-decoration: underline;
     text-decoration-thickness: 2px;
     text-underline-offset: 0.4em;

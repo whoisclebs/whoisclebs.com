@@ -13,8 +13,8 @@ describe('JSON-LD gerado do conteúdo', () => {
     const person = personNode('pt-BR')
     expect(person.sameAs).toEqual(socialLinks.map((link) => link.href))
     expect(person.name).toBe('Clebson A. Fonseca')
-    expect(person.jobTitle).toBe('Desenvolvedor fullstack e líder técnico')
-    expect(personNode('en').jobTitle).toBe('Full-stack developer and tech lead')
+    expect(person.jobTitle).toBe('Engenheiro de software sênior')
+    expect(personNode('en').jobTitle).toBe('Senior software engineer')
   })
 
   it('home tem Person + WebSite; Sobre tem ProfilePage com mainEntity Person', () => {

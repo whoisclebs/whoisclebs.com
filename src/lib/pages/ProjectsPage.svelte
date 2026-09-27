@@ -1,7 +1,7 @@
 <!--
-  Índice editorial de projetos: os cases primeiro, com a pergunta que cada um responde; depois os outros
-  projetos numa lista de ficha (status conferido, linguagem, último commit com data e link, código).
-  Nada de grade de cartões iguais: o peso visual acompanha o quanto há para ler.
+  Índice de projetos numa lista só, do commit mais recente ao mais antigo (a ordem que a introdução promete).
+  Quem tem estudo de caso ganha a pergunta que o case responde e o link; os outros levam à ficha. Cada item
+  tem ficha com status conferido, linguagem e último commit com data e link.
 -->
 <script lang="ts">
   import { formatDate, getMessages } from '$lib/i18n'
@@ -12,8 +12,6 @@
   let { data }: { data: ReturnType<typeof projectsData> } = $props()
 
   const t = $derived(getMessages(data.locale))
-  const cases = $derived(data.projects.filter((project) => project.caseStudy))
-  const others = $derived(data.projects.filter((project) => !project.caseStudy))
 </script>
 
 <header class="page-header">
@@ -21,21 +19,27 @@
   <p class="lead">{t.openSource.intro}</p>
 </header>
 
-<section class="block" aria-labelledby="cases-title">
-  <h2 id="cases-title" class="block__title">{t.openSource.caseStudies}</h2>
+<!-- Uma lista só, do commit mais recente ao mais antigo (ordem de `projectCards`); o case é um link a mais. -->
+<section class="block" aria-labelledby="h-open-source">
+  <h2 id="h-open-source" class="visually-hidden">{t.openSource.title}</h2>
   <ol class="cases list-reset">
-    {#each cases as project (project.slug)}
-      <li class="case-entry">
+    {#each data.projects as project (project.slug)}
+      {@const primary = project.caseStudy?.href ?? project.href}
+      <li class="case-entry" data-case={project.caseStudy ? 'true' : undefined}>
         <h3 class="case-entry__name">
-          <a href={project.caseStudy?.href} hreflang={project.caseStudy?.hreflang}>{project.name}</a>
+          <a href={primary} hreflang={project.caseStudy?.hreflang}>{project.name}</a>
         </h3>
         <div class="case-entry__body">
-          {#if data.locale === 'pt-BR'}
-            <p class="case-entry__question">{project.caseStudy?.question}</p>
+          {#if project.caseStudy && data.locale === 'pt-BR'}
+            <p class="case-entry__question">{project.caseStudy.question}</p>
           {/if}
-          <p class="case-entry__text">{data.locale === 'pt-BR' ? project.caseStudy?.dek : project.description}</p>
+          <p class="case-entry__text">{project.caseStudy && data.locale === 'pt-BR' ? project.caseStudy.dek : project.description}</p>
           <p class="case-entry__links">
-            <a href={project.caseStudy?.href} hreflang={project.caseStudy?.hreflang}>{t.openSource.readCase}<span class="visually-hidden">: {project.name}</span></a>
+            {#if project.caseStudy}
+              <a href={project.caseStudy.href} hreflang={project.caseStudy.hreflang}>{t.openSource.readCase}<span class="visually-hidden">: {project.name}</span></a>
+            {:else}
+              <a href={project.href}>{data.locale === 'en' ? 'Project page' : 'Ficha do projeto'}<span class="visually-hidden">: {project.name}</span></a>
+            {/if}
             <a href={project.repo} rel="noopener noreferrer">{t.openSource.code}<span class="visually-hidden">: {project.name}</span></a>
           </p>
         </div>
@@ -52,31 +56,9 @@
   </ol>
 </section>
 
-<section class="block" aria-labelledby="others-title">
-  <h2 id="others-title" class="block__title">{t.openSource.otherProjects}</h2>
-  <ul class="others list-reset">
-    {#each others as project (project.slug)}
-      <li class="other">
-        <h3 class="other__name"><a href={project.href}>{project.name}</a></h3>
-        <p class="other__description">{project.description}</p>
-        <dl class="ficha ficha--row">
-          <div><dt>{t.openSource.status}</dt><dd><ProjectStatus locale={data.locale} status={project.status} checkedAt={project.statusCheckedAt} prefix={false} /></dd></div>
-          <div><dt>{t.openSource.language}</dt><dd>{project.technologies.join(', ')}</dd></div>
-          <div>
-            <dt>{t.openSource.lastCommit}</dt>
-            <dd><a href={project.lastCommit.url} rel="noopener noreferrer"><time datetime={project.lastCommit.date}>{formatDate(project.lastCommit.date, data.locale)}</time></a></dd>
-          </div>
-          <div><dt>{t.openSource.code}</dt><dd><a href={project.repo} rel="noopener noreferrer">{project.repo.replace('https://github.com/', '')}</a></dd></div>
-        </dl>
-      </li>
-    {/each}
-  </ul>
-</section>
-
 <section class="block areas" aria-labelledby="areas-title">
   <h2 id="areas-title" class="block__title">{t.portfolio.title}</h2>
   <div class="areas__body">
-    <p class="areas__lead">{t.portfolio.description}</p>
     <p class="areas__note">{t.openSource.areasNote}</p>
     <ul class="areas__list list-reset" aria-label={t.portfolio.areasLabel}>
       {#each t.portfolio.projects as area (area.name)}
@@ -118,11 +100,15 @@
     display: grid;
     gap: var(--space-4);
     padding-block: var(--space-6);
+    border-block-start: var(--border-hairline) solid var(--color-rule);
+  }
+
+  .case-entry:first-child {
     border-block-start: 2px solid var(--color-text);
   }
 
   .case-entry__name {
-    font-size: var(--step-5);
+    font-size: var(--step-4);
     line-height: var(--leading-display);
   }
 
@@ -185,29 +171,10 @@
     color: var(--color-text);
   }
 
-  .ficha--row {
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
-  }
 
-  .others {
-    display: grid;
-  }
 
-  .other {
-    display: grid;
-    gap: var(--space-3);
-    padding-block: var(--space-5);
-    border-block-start: var(--border-hairline) solid var(--color-rule);
-  }
 
-  .other__name {
-    font-size: var(--step-3);
-  }
 
-  .other__description {
-    max-width: 60ch;
-    color: var(--color-text-soft);
-  }
 
   .areas__body {
     display: grid;
@@ -215,9 +182,6 @@
     max-width: 44em;
   }
 
-  .areas__lead {
-    font-size: var(--step-1);
-  }
 
   .areas__note {
     justify-self: start;
@@ -263,8 +227,10 @@
       grid-column: 1 / span 3;
     }
 
-    .cases,
-    .others,
+    .cases {
+      grid-column: 1 / -1;
+    }
+
     .areas__body {
       grid-column: 4 / -1;
     }
@@ -275,20 +241,21 @@
     }
 
     .case-entry {
-      grid-template-columns: repeat(9, minmax(0, 1fr));
+      grid-template-columns: repeat(12, minmax(0, 1fr));
       column-gap: var(--grid-gap);
+      align-items: start;
     }
 
     .case-entry__name {
-      grid-column: 1 / -1;
+      grid-column: 1 / span 3;
     }
 
     .case-entry__body {
-      grid-column: 1 / span 6;
+      grid-column: 4 / span 6;
     }
 
-    .ficha:not(.ficha--row) {
-      grid-column: 8 / span 2;
+    .ficha {
+      grid-column: 10 / span 3;
     }
   }
 </style>

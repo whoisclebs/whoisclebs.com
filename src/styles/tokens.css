@@ -1,39 +1,58 @@
 /*
- * WHOISCLEBS — tokens do design system "Caderno quadriculado" (passo 01, rascunho).
+ * WHOISCLEBS — tokens do design system "Amanhecer por rolagem" (passo 15, direção C).
  * Framework-agnóstico: só custom properties. Decisões e motivos em docs/redesign/decisions.md.
- * Contraste dos pares de texto verificado por scripts/check-contrast.mjs (AA).
+ * Contraste de cada par real (dia, escuro, noite, aurora e o hero sobre o vídeo) verificado por
+ * scripts/check-contrast.mjs (AA).
+ *
+ * A página segue o nascer do sol visto do ponto mais oriental das Américas, em faixas fixas:
+ *   noite  → hero, topo das páginas internas e rodapé (`.band-night`);
+ *   aurora → capítulos curtos da home (`.band-aurora`), só texto curto;
+ *   dia    → leitura longa (projetos, escrita, artigos): o tema padrão, sem classe.
+ * As faixas redefinem os mesmos tokens semânticos, então um componente muda de faixa sem variante própria.
  *
  * Camadas: primitivos (--p-*) → semânticos (--color-*, --font-*, --step-*, ...).
- * Componentes usam só os semânticos. O tema escuro troca apenas os semânticos de cor.
  */
 @layer tokens {
   :root {
-    /* ---------- Primitivos de cor ---------- */
-    --p-paper: #f5f2ea;          /* papel do caderno */
-    --p-paper-raised: #fcfaf5;   /* folha solta, campos */
-    --p-paper-deep: #e9e4d8;     /* faixa de capítulo */
-    --p-ink: #16181d;            /* tinta principal */
-    --p-ink-soft: #454951;       /* texto secundário */
-    --p-ink-faint: #5c6069;      /* metadados mono */
-    --p-rule: #b9b3a6;           /* fio de 1 px (não é texto) */
-    --p-grid: #dfd9cc;           /* linhas da quadrícula (não é texto) */
-    --p-blue: #2236d8;           /* tinta azul: links, caminho ativo, foco */
-    --p-blue-deep: #18279f;      /* hover/pressionado */
+    /* ---------- Primitivos: dia (papel frio, não creme) ---------- */
+    --p-paper: #eeece6;
+    --p-paper-raised: #f7f6f2;
+    --p-paper-deep: #e2dfd7;
+    --p-ink: #16181d;
+    --p-ink-soft: #454951;
+    --p-ink-faint: #585c66;
+    --p-rule: #b8b4ab;           /* fio de 1 px (não é texto) */
+    --p-grid: #d9d6ce;           /* linhas de apoio (não é texto) */
+    --p-blue: #2236d8;           /* tinta azul: links no papel */
+    --p-blue-deep: #18279f;
     --p-green: #1d6b43;          /* estado "ao vivo": sempre com rótulo */
-    --p-night: #101827;          /* noite: tema escuro e trechos escuros */
-    --p-night-raised: #19233a;
-    --p-night-deep: #0b111d;
-    --p-on-night: #eeeae1;
-    --p-on-night-soft: #b4b9c5;
-    --p-on-night-faint: #9aa0ad;
-    --p-night-rule: #34405a;
-    --p-night-grid: #1f2a42;
-    --p-blue-night: #9aa9ff;     /* tinta azul sobre a noite */
+    --p-sun-deep: #9a5310;       /* âmbar escuro: foco e fios no papel, nunca texto pequeno */
+
+    /* ---------- Primitivos: noite ---------- */
+    --p-night: #0e141d;
+    --p-night-raised: #172030;
+    --p-night-deep: #0a0f16;
+    --p-on-night: #efeae0;
+    --p-on-night-soft: #b9bdc6;
+    --p-on-night-faint: #a3a8b3;
+    --p-night-rule: #313c50;
+    --p-night-grid: #1d2636;
+    --p-blue-night: #a3b0ff;
     --p-green-night: #6fd39a;
-    --p-dawn: #e9a74f;           /* primeira luz: só decorativo ou texto grande sobre a noite */
+    --p-sun: #e8a652;            /* primeira luz: texto e foco só sobre a noite/aurora */
+
+    /* ---------- Primitivos: aurora (ameixa → rosa, com brilho a leste) ---------- */
+    --p-aurora-top: #2c2336;     /* encosta na noite */
+    --p-aurora: #6b3f4a;         /* parte mais clara: é o fundo de referência do contraste */
+    --p-aurora-raised: #5a3542;
+    --p-on-aurora: #f6eee6;
+    --p-on-aurora-soft: #ead6d2;
+    --p-aurora-rule: #9a6b72;
+    --p-sun-light: #f7c98a;      /* âmbar claro: links e foco na aurora */
+
     --p-white: #ffffff;
 
-    /* ---------- Semânticos de cor (tema claro) ---------- */
+    /* ---------- Semânticos de cor (dia, tema claro) ---------- */
     color-scheme: light;
     --color-bg: var(--p-paper);
     --color-surface: var(--p-paper-raised);
@@ -45,22 +64,15 @@
     --color-grid: var(--p-grid);
     --color-link: var(--p-blue);
     --color-link-hover: var(--p-blue-deep);
-    --color-accent: var(--p-blue);
-    --color-on-accent: var(--p-white);
-    --color-focus: var(--p-blue);
+    --color-accent: var(--p-ink);
+    --color-on-accent: var(--p-paper);
+    --color-focus: var(--p-sun-deep);
     --color-status-live: var(--p-green);
     --color-mark: var(--p-ink);          /* símbolo */
-    /* Trecho escuro dentro do tema claro (footer, demo): sempre noite */
-    --color-night-bg: var(--p-night);
-    --color-night-surface: var(--p-night-raised);
-    --color-night-text: var(--p-on-night);
-    --color-night-text-soft: var(--p-on-night-soft);
-    --color-night-link: var(--p-blue-night);
-    --color-night-rule: var(--p-night-rule);
-    --color-dawn: var(--p-dawn);
+    --color-sun: var(--p-sun-deep);      /* fio do horizonte, sol das células (decorativo) */
 
     /* ---------- Tipografia ---------- */
-    /* Licença SIL OFL 1.1; WOFF2 local, subset latin (+ latin-ext só se preciso). */
+    /* Licença SIL OFL 1.1; WOFF2 local, subset latin. Uma família display só: Anton (condensada). */
     --font-display: 'Anton', 'Anton Fallback', Impact, 'Arial Narrow', sans-serif;
     --font-text: 'Newsreader', 'Newsreader Fallback', Georgia, 'Times New Roman', serif;
     --font-mono: 'IBM Plex Mono', 'IBM Plex Mono Fallback', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
@@ -103,7 +115,7 @@
     --page-gutter: clamp(16px, 4vw, 64px);
     --grid-columns: 4;                 /* < 640 px */
     --grid-gap: 16px;
-    --grid-pattern-size: 24px;         /* quadrícula visível só em aparatos */
+    --grid-pattern-size: 24px;
 
     /* ---------- Forma ---------- */
     --border-hairline: 1px;
@@ -115,6 +127,7 @@
 
     /* ---------- Movimento ---------- */
     --dur-press: 120ms;
+    --dur-tip: 140ms;
     --dur-ui: 180ms;
     --dur-scene: 320ms;
     --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -136,8 +149,51 @@
     }
   }
 
-  /* ---------- Tema escuro: noite ---------- */
+  /* ---------- Tema escuro: o "dia" vira noite de leitura (escolha do visitante) ---------- */
   :root[data-theme='dark'] {
+    color-scheme: dark;
+    --color-bg: var(--p-night-raised);
+    --color-surface: var(--p-night);
+    --color-band: var(--p-night-deep);
+    --color-text: var(--p-on-night);
+    --color-text-soft: var(--p-on-night-soft);
+    --color-text-faint: var(--p-on-night-faint);
+    --color-rule: var(--p-night-rule);
+    --color-grid: var(--p-night-grid);
+    --color-link: var(--p-blue-night);
+    --color-link-hover: var(--p-on-night);
+    --color-accent: var(--p-on-night);
+    --color-on-accent: var(--p-night);
+    --color-focus: var(--p-sun);
+    --color-status-live: var(--p-green-night);
+    --color-mark: var(--p-on-night);
+    --color-sun: var(--p-sun);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      color-scheme: dark;
+      --color-bg: var(--p-night-raised);
+      --color-surface: var(--p-night);
+      --color-band: var(--p-night-deep);
+      --color-text: var(--p-on-night);
+      --color-text-soft: var(--p-on-night-soft);
+      --color-text-faint: var(--p-on-night-faint);
+      --color-rule: var(--p-night-rule);
+      --color-grid: var(--p-night-grid);
+      --color-link: var(--p-blue-night);
+      --color-link-hover: var(--p-on-night);
+      --color-accent: var(--p-on-night);
+      --color-on-accent: var(--p-night);
+      --color-focus: var(--p-sun);
+      --color-status-live: var(--p-green-night);
+      --color-mark: var(--p-on-night);
+      --color-sun: var(--p-sun);
+    }
+  }
+
+  /* ---------- Faixa: noite (hero, topo das páginas, rodapé). Igual nos dois temas. ---------- */
+  .band-night {
     color-scheme: dark;
     --color-bg: var(--p-night);
     --color-surface: var(--p-night-raised);
@@ -147,36 +203,44 @@
     --color-text-faint: var(--p-on-night-faint);
     --color-rule: var(--p-night-rule);
     --color-grid: var(--p-night-grid);
-    --color-link: var(--p-blue-night);
-    --color-link-hover: var(--p-on-night);
-    --color-accent: var(--p-blue-night);
+    --color-link: var(--p-on-night);
+    --color-link-hover: var(--p-sun);
+    --color-accent: var(--p-sun);
     --color-on-accent: var(--p-night);
-    --color-focus: var(--p-blue-night);
+    --color-focus: var(--p-sun);
     --color-status-live: var(--p-green-night);
     --color-mark: var(--p-on-night);
-    --color-night-bg: var(--p-night-deep);
+    --color-sun: var(--p-sun);
+    background-color: var(--color-bg);
+    color: var(--color-text);
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme='light']) {
-      color-scheme: dark;
-      --color-bg: var(--p-night);
-      --color-surface: var(--p-night-raised);
-      --color-band: var(--p-night-deep);
-      --color-text: var(--p-on-night);
-      --color-text-soft: var(--p-on-night-soft);
-      --color-text-faint: var(--p-on-night-faint);
-      --color-rule: var(--p-night-rule);
-      --color-grid: var(--p-night-grid);
-      --color-link: var(--p-blue-night);
-      --color-link-hover: var(--p-on-night);
-      --color-accent: var(--p-blue-night);
-      --color-on-accent: var(--p-night);
-      --color-focus: var(--p-blue-night);
-      --color-status-live: var(--p-green-night);
-      --color-mark: var(--p-on-night);
-      --color-night-bg: var(--p-night-deep);
-    }
+  /* ---------- Faixa: aurora (capítulos curtos da home). Só texto curto, todo em creme. ---------- */
+  .band-aurora {
+    color-scheme: dark;
+    --color-bg: var(--p-aurora);
+    --color-surface: var(--p-aurora-raised);
+    --color-band: var(--p-aurora-raised);
+    --color-text: var(--p-on-aurora);
+    --color-text-soft: var(--p-on-aurora-soft);
+    --color-text-faint: var(--p-on-aurora-soft);
+    --color-rule: var(--p-aurora-rule);
+    --color-grid: var(--p-aurora-raised);
+    --color-link: var(--p-sun-light);
+    --color-link-hover: var(--p-on-aurora);
+    --color-accent: var(--p-sun-light);
+    --color-on-accent: var(--p-aurora-top);
+    --color-focus: var(--p-sun-light);
+    --color-status-live: var(--p-green-night);
+    --color-mark: var(--p-on-aurora);
+    --color-sun: var(--p-sun-light);
+    color: var(--color-text);
+    /* Da ameixa que encosta na noite ao rosa que encosta no dia, com um brilho âmbar a leste (à direita).
+       O contraste é medido contra o ponto mais claro (--p-aurora e o brilho sobre ele). */
+    background-color: var(--p-aurora);
+    background-image:
+      radial-gradient(60% 55% at 100% 0%, rgb(232 166 82 / 0.16), rgb(232 166 82 / 0) 70%),
+      linear-gradient(to bottom, var(--p-aurora-top), var(--p-aurora));
   }
 
   /* Movimento reduzido: sem deslocamento; opacidade e cor continuam. */

@@ -44,7 +44,7 @@ test.describe('atividade pública no rodapé', () => {
     await expect(status.locator('.status__cell')).toHaveAttribute('aria-hidden', 'true')
 
     const links = region.getByRole('listitem').getByRole('link')
-    await expect(links).toHaveCount(5) // a API manda até 10; o rodapé mostra 5
+    await expect(links).toHaveCount(6) // o rodapé lista o cache inteiro (até 10), a mesma contagem do HUD
     for (const href of await links.evaluateAll((els) => els.map((el) => el.getAttribute('href')))) {
       expect(href).toMatch(/^https:\/\/github\.com\//)
     }
@@ -61,7 +61,7 @@ test.describe('atividade pública no rodapé', () => {
     await expect(stale.locator('time')).toHaveAttribute('datetime', /^\d{4}-\d{2}-\d{2}T/)
     await expect(stale).toContainText('2026') // data absoluta, não "há 3 dias"
     await expect(region.locator('.status__cell')).toHaveCount(0)
-    await expect(region.getByRole('listitem')).toHaveCount(5)
+    await expect(region.getByRole('listitem')).toHaveCount(6)
   })
 
   test('sucesso sem eventos: diz que não há atividade recente, com a fonte', async ({ page }) => {
@@ -95,14 +95,31 @@ test.describe('atividade pública no rodapé', () => {
     await expect(region.locator('[data-activity-state]')).toHaveAttribute('aria-busy', 'false')
   })
 
-  test('só busca a atividade quando o rodapé se aproxima (depois do conteúdo crítico)', async ({ page }) => {
+  test('fora da home, só busca a atividade quando o rodapé se aproxima (depois do conteúdo crítico)', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 })
     const calls = await mockActivity(page, 'fresh')
-    await page.goto('/')
+    await page.goto('/sobre/')
     await page.waitForLoadState('networkidle')
     expect(calls).toHaveLength(0)
     await page.locator('[data-activity-state]').scrollIntoViewIfNeeded()
     await expect.poll(() => calls.length).toBe(1)
+  })
+
+  test('na home, o HUD e o rodapé dividem uma única chamada, feita depois do load', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    const calls = await mockActivity(page, 'fresh')
+    await page.goto('/')
+    await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
+    await page.locator('[data-activity-state]').scrollIntoViewIfNeeded()
+    await expect(page.locator('[data-activity-state="fresh"]')).toBeVisible()
+    expect(calls).toHaveLength(1)
+    // A requisição começa depois do fim do evento load da navegação (o LCP é o H1, não a atividade).
+    const timing = await page.evaluate(() => {
+      const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
+      const api = performance.getEntriesByType('resource').find((entry) => entry.name.endsWith('/api/activity'))
+      return { loadEnd: nav.loadEventEnd, fetchStart: api?.startTime ?? -1 }
+    })
+    expect(timing.fetchStart).toBeGreaterThanOrEqual(timing.loadEnd)
   })
 
   test('inglês: rótulos em inglês, títulos marcados como pt-BR e páginas só em português sinalizadas', async ({ page }) => {
@@ -123,7 +140,7 @@ test.describe('rodapé sem JS', () => {
   test('mostra convite, contato, RSS, currículo, navegação e o link para a atividade no GitHub', async ({ page }) => {
     await page.goto('/')
     const footer = page.getByRole('contentinfo')
-    await expect(footer.getByRole('heading', { name: 'Conversar sobre um problema' })).toBeVisible()
+    await expect(footer.getByRole('heading', { name: 'Contato', exact: true })).toBeVisible()
     await expect(footer.getByRole('link', { name: 'hello@whoisclebs.com' })).toHaveAttribute('href', 'mailto:hello@whoisclebs.com')
     await expect(footer.getByRole('link', { name: 'RSS da Escrita' })).toHaveAttribute('href', '/rss/blog.xml')
     await expect(footer.getByRole('link', { name: 'Currículo (JSON)' })).toHaveAttribute('href', '/resume.json')
@@ -146,14 +163,15 @@ test.describe('rodapé sem JS', () => {
       ['LinkedIn', 'https://linkedin.com/in/whoisclebs'],
       ['Substack', 'https://whoisclebs.substack.com'],
       ['YouTube', 'https://www.youtube.com/@whoisclebs'],
-      ['Dribbble', 'https://dribbble.com/whoisclebs'],
     ] as const) {
       await expect(main.getByRole('link', { name, exact: true })).toHaveAttribute('href', href)
     }
     await expect(page.locator('form')).toHaveCount(0)
     await expect(main).toContainText('Não há formulário de contato nem newsletter própria aqui.')
     // O convite do rodapé não se repete na própria página de contato.
-    await expect(page.getByRole('contentinfo').getByRole('heading', { name: 'Conversar sobre um problema' })).toHaveCount(0)
+    await expect(page.getByRole('contentinfo').getByRole('heading', { name: 'Contato', exact: true })).toHaveCount(0)
+    // O Dribbble saiu (perfil com 404, auditoria editorial).
+    await expect(page.getByRole('link', { name: 'Dribbble' })).toHaveCount(0)
   })
 })
 

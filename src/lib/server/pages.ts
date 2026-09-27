@@ -29,9 +29,11 @@ function staticSeo(key: PageKey, locale: Locale, title: string, description: str
   return { title: pageTitle(title), description, path, locale, alternates: alternatesFor(key), ...extra }
 }
 
+/** Projetos do commit mais recente para o mais antigo (a ordem que a introdução de Projetos promete). */
 function projectCards(locale: Locale) {
   const t = getMessages(locale)
-  return projects.map((project) => {
+  const byActivity = [...projects].sort((a, b) => b.lastCommit.date.localeCompare(a.lastCommit.date) || a.slug.localeCompare(b.slug))
+  return byActivity.map((project) => {
     const study = getCaseStudy(project.slug)
     return {
       ...project,
@@ -80,9 +82,9 @@ export type RenderedCaseStudy = Awaited<ReturnType<typeof renderCaseStudy>>
 export function homeData(locale: Locale) {
   const description =
     locale === 'en'
-      ? 'Blog and portfolio of Clebson A. Fonseca about software engineering, architecture, payments, frontend, and operations.'
-      : 'Blog e portfólio de Clebson A. Fonseca sobre engenharia de software, arquitetura, pagamentos, frontend e operação.'
-  const title = locale === 'en' ? `${SITE_NAME} – Software engineering without theater` : `${SITE_NAME} – Engenharia de software sem teatro`
+      ? "Clebson Augusto's site. Senior software engineer working on distributed systems, high-performance backends and agentic AI. Open source in Go and Rust, articles and notes."
+      : 'Site de Clebson Augusto, engenheiro de software sênior: sistemas distribuídos, backend de alta performance e IA agêntica. Código aberto em Go e Rust, artigos e notas.'
+  const title = locale === 'en' ? 'WHOISCLEBS – Clebson Augusto, software engineer' : 'WHOISCLEBS – Clebson Augusto, engenheiro de software'
   const seo: Seo = {
     title,
     description,

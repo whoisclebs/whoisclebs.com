@@ -6,7 +6,7 @@ export const author = authorSchema.parse({
   username: 'whoisclebs',
   name: 'Clebson A. Fonseca',
   avatar: '/profile/clebson.png',
-  bio: 'Engenheiro de software, líder técnico e entusiasta de código aberto.',
+  bio: 'Engenheiro de software sênior: sistemas distribuídos, backend de alta performance e IA agêntica.',
 })
 
 export const contactEmail = 'hello@whoisclebs.com'
@@ -16,7 +16,6 @@ export const socialLinks = z.array(socialLinkSchema).parse([
   { label: 'LinkedIn', href: 'https://linkedin.com/in/whoisclebs' },
   { label: 'Substack', href: 'https://whoisclebs.substack.com' },
   { label: 'YouTube', href: 'https://www.youtube.com/@whoisclebs' },
-  { label: 'Dribbble', href: 'https://dribbble.com/whoisclebs' },
 ])
 
 export const books = z.array(bookSchema).parse([
@@ -39,7 +38,7 @@ export const books = z.array(bookSchema).parse([
 export const boardGames = z.array(boardGameSchema).parse([
   {
     title: 'Azul: Master Chocolatier',
-    note: 'Uma variação temática de Azul com a mesma elegância abstrata, decisões táticas curtas e uma presença de mesa deliciosa.',
+    note: 'Uma variação temática de Azul, com decisões táticas curtas e uma presença de mesa deliciosa.',
     players: '2–4 jogadores',
     image: '/boardgames/azul_chocolatier.png',
   },
@@ -51,7 +50,7 @@ export const boardGames = z.array(boardGameSchema).parse([
   },
   {
     title: 'Scrabble',
-    note: 'Palavras, vocabulário e disputa por espaço no tabuleiro — simples, clássico e sempre dependente de criatividade.',
+    note: 'Palavras, vocabulário e disputa por espaço no tabuleiro.',
     players: '2–4 jogadores',
     image: '/boardgames/scrabble.png',
   },
@@ -90,13 +89,6 @@ export const badges = z.array(badgeSchema).parse([
     issuer: 'Certiprof',
     image: 'https://images.credly.com/images/21e16d4d-d2df-46e6-9098-526caab49e63/blob',
     url: 'https://www.credly.com/badges/0daddb05-1b5f-4161-8b34-92887568b306',
-    issuedAt: '2022',
-  },
-  {
-    name: 'Scrum Foundation Professional Certification',
-    issuer: 'Certiprof',
-    image: 'https://images.credly.com/images/4e3d6f9f-55d7-4ea7-b0e6-f4d4ff543e22/image.png',
-    url: 'https://www.credly.com/badges/3e73b606-b566-4d3a-8de9-f39021f23b8f',
     issuedAt: '2022',
   },
 ])

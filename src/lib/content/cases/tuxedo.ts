@@ -21,7 +21,7 @@ const tree = { label: `Árvore da revisão ${SHA.slice(0, 7)}`, url: `${REPO}/tr
 export const tuxedoCase: CaseStudyInput = {
   slug: 'tuxedo',
   title: 'tuxedo: um cliente HTTP encadeável sem nenhuma dependência',
-  dek: 'Uma biblioteca pequena em Go que troca o ritual do net/http por uma cadeia de chamadas. O código cabe numa leitura só, e este case faz essa leitura inteira, inclusive das partes que ficaram pela metade.',
+  dek: 'Uma biblioteca pequena em Go que troca o boilerplate do net/http por uma cadeia de chamadas. O código cabe numa leitura só, e este case lê tudo, inclusive as partes que ficaram pela metade.',
   question: 'Dá para encurtar chamadas HTTP em Go sem trazer nenhuma dependência?',
   checkedAt: '2026-09-27',
   revision: { sha: SHA, date: '2025-03-04', url: `${REPO}/commit/${SHA}` },
@@ -32,7 +32,7 @@ export const tuxedoCase: CaseStudyInput = {
       body: [
         'O tuxedo foi criado em 3 de março de 2025 e recebeu o último commit no dia seguinte: 13 commits, duas pré-versões (v0.0.1 e v0.1.0-alpha) e licença MIT.',
         'O README descreve a intenção: um cliente HTTP “leve e encadeável” que simplifica o `net/http`, com uma API “inspirada em bibliotecas populares como o Resty”, suporte a headers, body e tracing, e decodificação de JSON embutida.',
-        'Não há registro público de usuários nem de uso em produção. Por isso este case trata o tuxedo como estudo de desenho de API, não como produto.',
+        'Não há registro público de usuários nem de uso em produção. Por isso este case trata o tuxedo como estudo de desenho de API.',
       ],
       sources: [history, releases, readme],
     },
@@ -66,7 +66,7 @@ export const tuxedoCase: CaseStudyInput = {
       id: 'arquitetura',
       voice: 'fonte',
       body: [
-        'Uma chamada atravessa quatro arquivos, o maior com 119 linhas. Não há middleware, pool próprio nem transporte customizado: o `*http.Client` da biblioteca padrão faz todo o trabalho de rede.',
+        'Uma chamada atravessa quatro arquivos, o maior com 119 linhas. O `*http.Client` da biblioteca padrão faz todo o trabalho de rede, sem middleware, pool próprio ou transporte customizado.',
       ],
       sources: [tree, src('client.go', 'client.go')],
     },
@@ -76,7 +76,7 @@ export const tuxedoCase: CaseStudyInput = {
       body: [
         'O repositório não explica o que foi recusado. O que dá para afirmar lendo o código:',
         'Depender do próprio Resty, citado no README como inspiração, ficou de fora: o `go.mod` não tem nenhum `require`. O tuxedo reimplementa o formato encadeado em vez de importar a biblioteca.',
-        'Usar o `net/http` direto também foi evitado, porque é justamente o boilerplate que o README quer tirar: montar o `http.NewRequest`, aplicar headers um a um, chamar `Do`, fechar o body e ler os bytes. As linhas 41–71 do `client.go` são esse ritual, escrito uma vez só.',
+        'Usar o `net/http` direto também foi evitado, porque é justamente o boilerplate que o README quer tirar: montar o `http.NewRequest`, aplicar headers um a um, chamar `Do`, fechar o body e ler os bytes. As linhas 41–71 do `client.go` são esse boilerplate, escrito uma vez só.',
         'Minha leitura da troca: aceitar uma camada a mais entre o código e o `net/http` em troca de chamadas de uma linha e de nenhuma dependência para auditar.',
       ],
       sources: [readme, goMod, src('client.go, linhas 41–71', 'client.go', 41, 71)],
@@ -87,7 +87,7 @@ export const tuxedoCase: CaseStudyInput = {
       body: [
         'Em 27 de setembro de 2026 rodei a suíte do repositório na revisão 5fbf678: um teste (`TestGet`), passando, com 62,5% de cobertura de instruções. O `go vet` não apontou nada. Comando e ambiente estão na tabela.',
         'O único teste cobre um GET com header. `Post`, `Put`, `Delete`, `Json` e `Xml` não têm teste.',
-        'Não existe benchmark, métrica de uso nem relato de produção, e nada disso é afirmado aqui.',
+        'Não existe benchmark, métrica de uso nem relato de produção.',
       ],
       sources: [tree, src('client_test.go, linhas 35–45', 'client_test.go', 35, 45)],
     },
@@ -115,7 +115,7 @@ export const tuxedoCase: CaseStudyInput = {
       voice: 'fonte',
       body: [
         'Os trechos abaixo são da revisão 5fbf678, cada um com link para o arquivo e as linhas exatas no GitHub.',
-        'O simulador depois deles não é código do tuxedo: é uma simulação com dados sintéticos do que eu colocaria na frente deste cliente (nova tentativa com backoff, chave de idempotência e disjuntor).',
+        'O simulador depois deles usa dados sintéticos para mostrar o que eu colocaria na frente deste cliente (nova tentativa com backoff, chave de idempotência e disjuntor). Nada dele está no código do tuxedo.',
       ],
       sources: [tree],
     },
@@ -143,7 +143,7 @@ export const tuxedoCase: CaseStudyInput = {
       caption: '`R()` cria o Request; `AddHeader` grava no mapa e devolve o próprio Request para encadear.',
     },
     {
-      title: 'O ritual do net/http, escrito uma vez',
+      title: 'O boilerplate do net/http, escrito uma vez',
       file: 'client.go',
       lines: [41, 71],
       lang: 'go',

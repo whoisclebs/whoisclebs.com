@@ -50,14 +50,14 @@
     <ol class="list-reset">
       <li>
         <a href="#visao-geral">Visão geral</a>
-        <span>O laço em cinco partes, sem jargão.</span>
+        <span>O laço em cinco partes.</span>
       </li>
       <li>
         <a href="#detalhes-tecnicos">Detalhes técnicos</a>
         <span>Limites de contexto, memória, permissões, avaliação e falhas.</span>
       </li>
     </ol>
-    <p class="agents__levels-projects">Só quer saber o que existe? <a href="#projetos">Projetos e status</a>.</p>
+    <p class="agents__levels-projects">Para ver só o que existe: <a href="#projetos">Projetos e status</a>.</p>
   </nav>
 
   <section class="level" id="visao-geral" aria-labelledby="visao-geral-title">
@@ -87,7 +87,7 @@
   <section class="level" id="projetos" aria-labelledby="projetos-title">
     <header class="level__head">
       <h2 id="projetos-title">O que existe, com status</h2>
-      <p>Protótipo quer dizer que o código roda e está público, não que alguém o usa em produção. Nada aqui tem usuário, cliente ou ganho medido que eu possa mostrar.</p>
+      <p>Protótipo quer dizer que o código roda e está público. Nada aqui tem uso em produção, usuário, cliente ou ganho medido que eu possa mostrar.</p>
     </header>
     <ul class="projects list-reset">
       {#each data.projects as project (project.slug)}
@@ -186,10 +186,10 @@
   </section>
 
   <footer class="agents__foot">
-    <h2 class="agents__foot-title">O que esta página não afirma</h2>
+    <h2 class="agents__foot-title">Limites</h2>
     <p>
-      Nenhum agente autônomo em produção, nenhum ganho de produtividade medido, nenhum cliente. Se você tem um problema em que um agente precisa de limites claros,
-      <a href={pages.contact['pt-BR']}>vamos conversar</a>; os casos com código aberto estão em <a href={pages.projects['pt-BR']}>Projetos</a>.
+      Não tenho agente autônomo em produção, ganho de produtividade medido nem cliente para mostrar. Para falar de agentes,
+      <a href={pages.contact['pt-BR']}>mande um e-mail</a>; o código aberto está em <a href={pages.projects['pt-BR']}>Projetos</a>.
     </p>
   </footer>
 </article>

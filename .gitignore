@@ -148,3 +148,9 @@ playwright-report/
 
 # Imagens Open Graph geradas no build (scripts/build-og.mjs)
 static/og/
+
+# Lighthouse CI (npm run lhci): relatórios locais
+.lighthouseci/
+
+# Perfis temporários do Chrome criados pelo Lighthouse no WSL
+C:*
