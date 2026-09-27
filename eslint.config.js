@@ -1,33 +1,33 @@
 import js from '@eslint/js'
+import svelte from 'eslint-plugin-svelte'
 import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
+import svelteConfig from './svelte.config.js'
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules'] },
+  { ignores: ['.svelte-kit', 'build', 'dist', 'node_modules', 'test-results', 'playwright-report', '.wrangler'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
+  ...svelte.configs.recommended,
   {
-    files: ['**/*.{ts,tsx}'],
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
-    },
-    plugins: {
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
+      globals: { ...globals.browser, ...globals.node },
     },
     rules: {
-      ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      // Caminhos internos vêm da tabela tipada src/lib/routing/paths.ts e o site não usa `paths.base`.
+      'svelte/no-navigation-without-resolve': 'off',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_' }],
     },
   },
   {
-    files: ['scripts/*.mjs'],
+    files: ['**/*.svelte', '**/*.svelte.ts'],
     languageOptions: {
-      ecmaVersion: 2022,
-      globals: globals.node,
+      parserOptions: {
+        projectService: true,
+        extraFileExtensions: ['.svelte'],
+        parser: tseslint.parser,
+        svelteConfig,
+      },
     },
   },
 )

@@ -99,66 +99,46 @@ locale: pt-BR
 
 TIL does not currently require translation backfill but follows the same editorial layer.
 
-## i18n maintenance
+## Manutenção de i18n (SvelteKit, desde o passo 02 do redesign)
 
-### UI strings (`t()`)
+Textos de interface ficam em `src/lib/i18n/pt-BR.ts` e `src/lib/i18n/en.ts`; `en.ts` é tipado como
+`typeof ptBR`, então o TypeScript exige a mesma forma. Nos componentes:
 
-Reusable labels, buttons, navigation, and helper text live in `src/locales/pt-BR.ts`
-and `src/locales/en.ts`. Use the `t()` function from `useI18n()`:
-
-```tsx
-const { t } = useI18n()
-return <h1>{t('blog.title')}</h1>
+```svelte
+<script lang="ts">
+  import { getMessages } from '$lib/i18n'
+  let { data } = $props()
+  const t = $derived(getMessages(data.locale))
+</script>
+<h1>{t['blog.title']}</h1>
 ```
 
-Add a new key by updating both locale files with the same key name.
-TypeScript enforces shape parity: `en.ts` uses `typeof ptBR` as its type constraint.
+O idioma vem **só da URL** (`localeFromPath`: `/en/...` é inglês, o resto é pt-BR); não há detecção por
+navegador nem `localStorage`. Caminhos por idioma ficam em `src/lib/routing/paths.ts`.
 
-### Structured page copy
+## Camada de conteúdo
 
-Complex page structures (arrays, nested objects, sections) consume
-`useI18n().messages` directly instead of flattening into string keys:
+- Markdown: `src/content/posts/<data-slug>/{pt-BR,en}.md` (Escrita) e `src/content/til/*.md` (Notas).
+- Carregamento tipado: `src/lib/content/{posts,notes}.ts`, com schemas Zod em `src/lib/content/schema.ts`
+  (datas ISO reais, idioma, `published`, capa https ou caminho público, `sources` opcional com URLs,
+  `updated` opcional). Conteúdo inválido lança erro no carregamento e **o build falha**.
+- Dados pequenos (projetos, livros, jogos, badges, perfis) ficam em `src/lib/content/{projects,library}.ts`,
+  também validados por Zod.
+- Markdown vira HTML no prerender (`src/lib/server/markdown.ts`: marked + Shiki); nenhum highlighter vai
+  para o cliente.
 
-```tsx
-const { messages } = useI18n()
-return messages.home.nowItems.map(item => <li>{item}</li>)
-```
+## Comandos locais
 
-This avoids awkward key-chaining for deeply structured content while keeping
-the localization source readable.
+| Comando | Para quê |
+| --- | --- |
+| `npm run check` | svelte-check + tsc estrito (0 erros, 0 avisos) |
+| `npm run lint` | ESLint (TS + Svelte) |
+| `npm test` | Vitest (schemas, i18n, redirects, Markdown) |
+| `npm run validate:editorial` | Front matter de artigos/notas contra os schemas Zod |
+| `npm run validate:locale` | Paridade profunda de chaves pt-BR × en |
+| `npm run build` | validações → `vite build` (prerender + adapter-cloudflare) → otimização de imagens |
+| `npm run preview` | `wrangler dev` sobre `.svelte-kit/cloudflare` |
+| `npm run test:e2e` | Playwright: paridade das URLs antigas, head por página, 404 real |
 
-### Adding a new locale
-
-1. Create the new locale file (e.g., `src/locales/es.ts`)
-2. Import and register it in `src/lib/i18n.tsx`
-3. Add the locale segment to `src/lib/locale-routing.ts`
-4. Run `npm run validate:locale` to check key parity
-
-## Local validation commands
-
-| Command                    | Purpose                                       |
-| -------------------------- | --------------------------------------------- |
-| `npm run typecheck`        | TypeScript compilation check (no emit)        |
-| `npm test`                 | Run all Vitest tests                          |
-| `npm run validate:editorial` | Validate post/TIL frontmatter and locale rules |
-| `npm run validate:locale`    | Check locale key parity across languages       |
-| `npm run validate`         | Run all checks (typecheck + tests + editorial + locale) |
-
-Run `npm run validate` before pushing content or code changes.
-Invalid frontmatter, missing locale fields, and translation-pair inconsistencies
-are caught early with file-and-field-level error messages.
-
-## Build pipeline
-
-```
-npm run build
-  → generate-rss.mjs   (consumes shared editorial layer)
-  → tsc -b              (typecheck)
-  → vite build          (React/Vite production build)
-  → prerender.mjs       (SSG + SEO injection via shared editorial layer)
-  → inline-critical-css.mjs
-  → optimize-images.mjs
-```
-
-The RSS and prerender scripts no longer parse markdown independently.
-They consume the same editorial validation rules through `scripts/editorial-content.mjs`.
+RSS (`/rss/blog.xml`, `/rss/blog-en.xml`, `/rss/til.xml`) e `sitemap.xml` são rotas `+server.ts`
+prerenderizadas a partir do mesmo conteúdo (`src/lib/server/feeds.ts`).

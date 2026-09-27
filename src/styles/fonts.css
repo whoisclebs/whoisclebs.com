@@ -1,0 +1,62 @@
+/*
+ * Fontes locais em WOFF2, subset latin (cobre pt-BR e en), SIL OFL 1.1 — ver src/lib/assets/fonts/OFL.txt.
+ * Decisão: docs/redesign/decisions.md (item 9). Críticas (preload no layout): Anton 400 e Newsreader 400.
+ */
+@font-face {
+  font-family: 'Anton';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../lib/assets/fonts/anton-latin-400-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../lib/assets/fonts/newsreader-latin-400-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Newsreader';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../lib/assets/fonts/newsreader-latin-400-italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../lib/assets/fonts/newsreader-latin-600-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../lib/assets/fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../lib/assets/fonts/ibm-plex-mono-latin-500-normal.woff2') format('woff2');
+}
+
+/* Fallbacks locais; o ajuste de tamanho vem de `font-size-adjust: from-font` em base.css. */
+@font-face {
+  font-family: 'Anton Fallback';
+  src: local('Impact'), local('Arial Narrow Bold'), local('Arial Narrow');
+}
+
+@font-face {
+  font-family: 'Newsreader Fallback';
+  src: local('Georgia'), local('Times New Roman');
+}

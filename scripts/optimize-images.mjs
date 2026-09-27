@@ -1,8 +1,10 @@
+// Otimiza PNG/JPEG/WebP do build no lugar (sharp, largura máx. 1800).
+// Uso: node scripts/optimize-images.mjs [diretório-do-build]  (padrão: saída do adapter-cloudflare)
 import { readdir, readFile, stat, writeFile } from 'node:fs/promises'
 import { extname, join } from 'node:path'
 import sharp from 'sharp'
 
-const distDir = 'dist'
+const distDir = process.argv[2] ?? '.svelte-kit/cloudflare'
 const supportedExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp'])
 
 async function listImages(directory) {

@@ -1,96 +1,45 @@
 /**
  * scripts/verify-locale-parity.mjs
  *
- * Verifies that pt-BR.ts and en.ts have the same shallow key structure.
- * Deep structural parity is enforced by TypeScript (`typeof ptBR` in en.ts);
- * this script provides a quick local sanity check for the top-level keys.
+ * Paridade profunda de chaves entre `src/lib/i18n/pt-BR.ts` e `src/lib/i18n/en.ts` (inclui arrays:
+ * mesmo tamanho e mesmas chaves em cada item). O TypeScript já exige `typeof ptBR` em en.ts; este
+ * script dá a mensagem legível antes do build.
  *
- * Usage: node scripts/verify-locale-parity.mjs
+ * Uso: node scripts/verify-locale-parity.mjs   (Node ≥ 22.18: importa TypeScript por type stripping)
  */
+import { ptBR } from '../src/lib/i18n/pt-BR.ts'
+import { en } from '../src/lib/i18n/en.ts'
 
-import { readFileSync } from 'node:fs'
-
-function extractTopLevelStringKeys(source) {
-  // Match lines like:   'nav.home': 'Home',
-  const re = /\s+'([^']+\.\w+)':\s*['"`]/g
-  const keys = new Set()
-  let match
-  while ((match = re.exec(source)) !== null) {
-    keys.add(match[1])
-  }
-  return keys
-}
-
-function extractFlatStringKeys(source) {
-  // Match simple string keys at the top level (not nested in objects)
-  const re = /^\s+'([^'.]+)':\s*['"`]/gm
-  const keys = new Set()
-  let match
-  while ((match = re.exec(source)) !== null) {
-    keys.add(match[1])
-  }
-  return keys
-}
-
-function extractObjectSections(source) {
-  const re = /\s+'(\w+)':\s*\{/g
-  const keys = new Set()
-  let match
-  while ((match = re.exec(source)) !== null) {
-    keys.add(match[1])
-  }
-  return keys
-}
-
-function main() {
-  const ptSource = readFileSync('src/locales/pt-BR.ts', 'utf8')
-  const enSource = readFileSync('src/locales/en.ts', 'utf8')
-
-  // Extract dot-notation keys (nav.home, blog.title, etc.)
-  const ptDotted = extractTopLevelStringKeys(ptSource)
-  const enDotted = extractTopLevelStringKeys(enSource)
-
-  // Extract flat keys (no dots)
-  const ptFlat = extractFlatStringKeys(ptSource)
-  const enFlat = extractFlatStringKeys(enSource)
-
-  // Extract object sections (home, books, etc.)
-  const ptObjects = extractObjectSections(ptSource)
-  const enObjects = extractObjectSections(enSource)
-
-  const allPtStrings = new Set([...ptDotted, ...ptFlat])
-  const allEnStrings = new Set([...enDotted, ...enFlat])
-
-  const errors = []
-
-  // Check dotted keys parity
-  for (const key of ptDotted) {
-    if (!enDotted.has(key)) errors.push(`Missing EN key: '${key}'`)
-  }
-  for (const key of enDotted) {
-    if (!ptDotted.has(key)) errors.push(`Missing PT-BR key: '${key}'`)
-  }
-
-  // Check section parity
-  for (const key of ptObjects) {
-    if (!enObjects.has(key)) errors.push(`Missing EN section: '${key}' /`)
-  }
-  for (const key of enObjects) {
-    if (!ptObjects.has(key)) errors.push(`Missing PT-BR section: '${key}' /`)
-  }
-
-  const total = allPtStrings.size + allEnStrings.size + ptObjects.size
-
-  if (errors.length > 0) {
-    console.error(`\n❌ Locale parity errors (${errors.length}):`)
-    for (const err of errors) {
-      console.error(`  ${err}`)
+function compare(a, b, path, errors) {
+  if (Array.isArray(a) || Array.isArray(b)) {
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) {
+      errors.push(`${path}: listas com tamanhos diferentes`)
+      return 0
     }
-    console.error(`\n  Note: TypeScript already enforces deep structural parity via \`typeof ptBR\`.`)
-    process.exit(1)
+    return a.reduce((total, item, index) => total + compare(item, b[index], `${path}[${index}]`, errors), 0)
   }
-
-  console.log(`✓ Locale parity OK — ${total} keys/sections across 2 locales.`)
+  if (a && typeof a === 'object') {
+    if (!b || typeof b !== 'object') {
+      errors.push(`${path}: estrutura diferente`)
+      return 0
+    }
+    let total = 0
+    for (const key of new Set([...Object.keys(a), ...Object.keys(b)])) {
+      if (!(key in a)) errors.push(`${path}.${key}: falta em pt-BR`)
+      else if (!(key in b)) errors.push(`${path}.${key}: falta em en`)
+      else total += compare(a[key], b[key], `${path}.${key}`, errors)
+    }
+    return total
+  }
+  if (typeof a !== typeof b) errors.push(`${path}: tipos diferentes`)
+  else if (typeof a === 'string' && (a.trim() === '') !== (b.trim() === '')) errors.push(`${path}: texto vazio em um dos idiomas`)
+  return 1
 }
 
-main()
+const errors = []
+const total = compare(ptBR, en, 'messages', errors)
+if (errors.length > 0) {
+  console.error(`✗ Paridade de locale: ${errors.length} erro(s)\n  ${errors.join('\n  ')}`)
+  process.exit(1)
+}
+console.log(`✓ Paridade de locale OK — ${total} textos em pt-BR e en.`)

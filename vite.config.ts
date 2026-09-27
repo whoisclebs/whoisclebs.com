@@ -1,22 +1,10 @@
-import path from "path"
-import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
+import { sveltekit } from '@sveltejs/kit/vite'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-  ],
+  plugins: [sveltekit()],
   test: {
-    environment: 'jsdom',
-    setupFiles: './src/test/setup.ts',
-    globals: true,
-    include: ['src/**/*.{test,spec}.{ts,tsx}'],
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, "./src"),
-    },
+    include: ['src/**/*.test.ts', 'scripts/**/*.test.ts'],
+    environment: 'node',
   },
 })
