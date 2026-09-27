@@ -7,7 +7,7 @@ import { expect, test } from '@playwright/test'
 const pages: Array<{ path: string; lang: 'pt-BR' | 'en'; title: RegExp; hreflangEn?: string }> = [
   { path: '/', lang: 'pt-BR', title: /Engenharia de software sem teatro/, hreflangEn: '/en/' },
   { path: '/projetos/', lang: 'pt-BR', title: /^Projetos – /, hreflangEn: '/en/projects/' },
-  { path: '/projetos/tuxedo/', lang: 'pt-BR', title: /^tuxedo – /, hreflangEn: '/en/projects/tuxedo/' },
+  { path: '/projetos/tuxedo/', lang: 'pt-BR', title: /^tuxedo: estudo de caso – /, hreflangEn: '/en/projects/tuxedo/' },
   { path: '/escrita/', lang: 'pt-BR', title: /^Escrita – /, hreflangEn: '/en/writing/' },
   { path: '/escrita/github-actions-como-fazer-deploy/', lang: 'pt-BR', title: /^GitHub Actions/, hreflangEn: '/en/writing/github-actions-como-fazer-deploy/' },
   { path: '/notas/', lang: 'pt-BR', title: /^Notas – / },

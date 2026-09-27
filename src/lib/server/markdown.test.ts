@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { renderMarkdown, slugifyHeading } from './markdown'
+import { renderMarkdown, slugifyHeading, highlightCode, renderInline } from './markdown'
 
 describe('renderMarkdown', () => {
   it('gera ids de cabeçalho únicos e sumário', async () => {
@@ -32,5 +32,19 @@ describe('renderMarkdown', () => {
 
   it('normaliza slug', () => {
     expect(slugifyHeading('Passo 1: Configurar o Workflow')).toBe('passo-1-configurar-o-workflow')
+  })
+})
+
+describe('highlightCode e renderInline (cases)', () => {
+  it('destaca Go no build, numera a partir da linha real e deixa o bloco focável', async () => {
+    const html = await highlightCode('func main() {\n}', 'go', 41)
+    expect(html).toContain('shiki--numbered')
+    expect(html).toContain('--line-start: 40')
+    expect(html).toContain('tabindex="0"')
+    expect(html.match(/class="line"/g)).toHaveLength(2)
+  })
+
+  it('escapa HTML e transforma só crases em code', () => {
+    expect(renderInline('Use `http.Header.Add` <b>já</b>')).toBe('Use <code>http.Header.Add</code> &lt;b&gt;já&lt;/b&gt;')
   })
 })

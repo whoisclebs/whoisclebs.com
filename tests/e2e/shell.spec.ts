@@ -9,6 +9,7 @@ const keyRoutes = [
   '/',
   '/projetos/',
   '/projetos/tuxedo/',
+  '/projetos/golpher/',
   '/escrita/',
   '/escrita/github-actions-como-fazer-deploy/',
   '/escrita/assunto/hackathon/',

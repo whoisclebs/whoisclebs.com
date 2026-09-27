@@ -22,6 +22,9 @@
     return { href: projectPath(slug, data.locale) }
   }
 
+  const studies = $derived(data.projects.filter((project) => project.caseStudy))
+  const others = $derived(data.projects.filter((project) => !project.caseStudy))
+
   const mapLinks = $derived({ http: { href: caseHref }, payments: { href: pages.about[data.locale] } })
 </script>
 
@@ -67,18 +70,38 @@
   </ul>
 </section>
 
-<!-- Casos: espaço reservado; o passo 07 troca esta seção pelos estudos de caso. Projetos ficam em lista simples. -->
+<!-- Casos: os dois estudos de caso em página própria (só pt-BR; no inglês o link leva hreflang) + a lista dos outros projetos. -->
 <section class="chapter cases" aria-labelledby="cases-title" data-slot="cases">
   <header class="chapter-head">
     <h2 id="cases-title">{copy.cases.title}</h2>
     <p class="chapter-head__intro">{copy.cases.intro}</p>
   </header>
+  <ul class="studies list-reset">
+    {#each studies as project (project.slug)}
+      <li class="study">
+        <h3 class="study__name"><a href={project.caseStudy?.href} hreflang={project.caseStudy?.hreflang}>{project.name}</a></h3>
+        {#if data.locale === 'pt-BR'}
+          <p class="study__question">{project.caseStudy?.question}</p>
+        {/if}
+        <p class="study__text">{data.locale === 'pt-BR' ? project.caseStudy?.dek : project.description}</p>
+        <p class="study__meta">
+          <span>{project.technologies.join(', ')}</span>
+          <span>{copy.cases.lastCommit} <time datetime={project.lastCommit.date}>{formatDate(project.lastCommit.date, data.locale)}</time></span>
+        </p>
+        <p class="study__links">
+          <a href={project.caseStudy?.href} hreflang={project.caseStudy?.hreflang}>{copy.cases.readCase}<span class="visually-hidden">: {project.name}</span></a>
+          <a href={project.repo} rel="noopener noreferrer">{copy.cases.code}<span class="visually-hidden">: {project.name}</span></a>
+        </p>
+      </li>
+    {/each}
+  </ul>
+  <h3 class="others-title">{copy.cases.others}</h3>
   <ul class="projects list-reset">
-    {#each data.projects as project (project.slug)}
+    {#each others as project (project.slug)}
       <li class="project">
-        <h3 class="project__name"><a href={project.href}>{project.name}</a></h3>
+        <h4 class="project__name"><a href={project.href}>{project.name}</a></h4>
         <p class="project__description">{project.description}</p>
-        <p class="project__stack"><span>{project.technologies.join(', ')}</span> <span>{project.year}</span></p>
+        <p class="project__stack"><span>{project.technologies.join(', ')}</span> <span>{copy.cases.lastCommit} <time datetime={project.lastCommit.date}>{formatDate(project.lastCommit.date, data.locale)}</time></span></p>
       </li>
     {/each}
   </ul>
@@ -300,7 +323,84 @@
     }
   }
 
-  /* Casos/projetos: lista simples de uma linha por projeto (o passo 07 redesenha). */
+  /* Casos: dois estudos lado a lado (6 + 6 colunas, fio vertical entre eles); outros projetos em lista quieta. */
+  .studies {
+    display: grid;
+    border-block-start: 2px solid var(--color-text);
+    margin-block-end: var(--space-8);
+  }
+
+  .study {
+    display: grid;
+    align-content: start;
+    gap: var(--space-4);
+    padding-block: var(--space-6);
+  }
+
+  .study + .study {
+    border-block-start: var(--border-hairline) solid var(--color-rule);
+  }
+
+  .study__name {
+    font-size: var(--step-5);
+    line-height: var(--leading-display);
+  }
+
+  .study__name a {
+    color: var(--color-text);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.12em;
+  }
+
+  .study__question {
+    max-width: 30ch;
+    font-size: var(--step-2);
+    line-height: 1.35;
+  }
+
+  .study__text {
+    max-width: 52ch;
+    color: var(--color-text-soft);
+  }
+
+  .study__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-5);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--color-text-faint);
+  }
+
+  .study__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+  }
+
+  @media (min-width: 960px) {
+    .studies {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+    }
+
+    .study {
+      grid-column: span 6;
+      padding-block-end: 0;
+    }
+
+    .study + .study {
+      border-block-start: 0;
+      padding-inline-start: var(--grid-gap);
+      border-inline-start: var(--border-hairline) solid var(--color-rule);
+    }
+  }
+
+  .others-title {
+    margin-block-end: var(--space-4);
+    font-size: var(--step-2);
+  }
+
   .projects {
     border-block-start: var(--border-hairline) solid var(--color-text);
     margin-block-end: var(--space-5);
@@ -325,6 +425,9 @@
   }
 
   .project__stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px var(--space-4);
     font-family: var(--font-mono);
     font-size: var(--step--1);
     color: var(--color-text-faint);
@@ -347,6 +450,7 @@
 
     .project__stack {
       grid-column: 11 / span 2;
+      justify-content: end;
       text-align: end;
     }
   }

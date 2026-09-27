@@ -88,3 +88,30 @@ export async function renderMarkdown(markdown: string): Promise<RenderedMarkdown
   const html = await marked.parse(markdown, { async: true })
   return { html, toc }
 }
+
+/**
+ * Trecho de código isolado (cases): Shiki no build, sem highlighter no cliente. `startLine` numera as linhas
+ * como no arquivo real (contador CSS `--line-start`), para o leitor casar com o link `#Lx-Ly` do GitHub.
+ */
+export async function highlightCode(code: string, lang: string, startLine = 1): Promise<string> {
+  const highlighter = await getHighlighter()
+  return highlighter.codeToHtml(code, {
+    lang,
+    themes: { light: LIGHT_THEME, dark: DARK_THEME },
+    defaultColor: false,
+    transformers: [
+      {
+        pre: (node) => {
+          node.properties.tabindex = '0'
+          node.properties.class = `${String(node.properties.class ?? '')} shiki--numbered`.trim()
+          node.properties.style = `--line-start: ${startLine - 1}`
+        },
+      },
+    ],
+  })
+}
+
+/** Texto curto de conteúdo tipado: escapa tudo e só transforma `crases` em <code>. */
+export function renderInline(text: string): string {
+  return escapeHtml(text).replace(/`([^`]+)`/g, '<code>$1</code>')
+}

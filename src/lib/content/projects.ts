@@ -16,6 +16,7 @@ const rawProjects: Project[] = [
     status: 'published',
     statusCheckedAt: '2026-09-27',
     evidence: ['https://github.com/whoisclebs/tuxedo', 'https://pkg.go.dev/github.com/whoisclebs/tuxedo'],
+    lastCommit: { date: '2025-03-04', url: 'https://github.com/whoisclebs/tuxedo/commit/5fbf678c40f9d0c628a960ea353204c205faf9d7' },
   },
   {
     slug: 'golpher',
@@ -27,6 +28,7 @@ const rawProjects: Project[] = [
     status: 'active',
     statusCheckedAt: '2026-09-27',
     evidence: ['https://github.com/go-golpher/golpher'],
+    lastCommit: { date: '2026-07-20', url: 'https://github.com/go-golpher/golpher/commit/815b8d7fc393f9f6d3b24f602b609a17edfb3433' },
   },
   {
     slug: 'seishin',
@@ -38,6 +40,7 @@ const rawProjects: Project[] = [
     status: 'experimental',
     statusCheckedAt: '2026-09-27',
     evidence: ['https://github.com/whoisclebs/seishin'],
+    lastCommit: { date: '2026-05-10', url: 'https://github.com/whoisclebs/seishin/commit/bbe608af33ecae2a316a528f0d2914866417bfdc' },
   },
   {
     slug: 'rsgit',
@@ -49,6 +52,7 @@ const rawProjects: Project[] = [
     status: 'study',
     statusCheckedAt: '2026-09-27',
     evidence: ['https://github.com/whoisclebs/rsgit'],
+    lastCommit: { date: '2026-05-03', url: 'https://github.com/whoisclebs/rsgit/commit/69218134930fd96f41565bc3ee69ee089b24f3e1' },
   },
 ]
 

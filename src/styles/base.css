@@ -324,6 +324,22 @@
     outline-offset: -2px;
   }
 
+  /* Trechos dos cases: numeração igual à do arquivo real (o link aponta para #Lx-Ly). */
+  .shiki--numbered code {
+    counter-reset: line var(--line-start, 0);
+  }
+
+  .shiki--numbered .line::before {
+    counter-increment: line;
+    content: counter(line);
+    display: inline-block;
+    width: 3ch;
+    margin-inline-end: 2ch;
+    text-align: end;
+    color: var(--color-text-faint);
+    user-select: none;
+  }
+
   .shiki span {
     color: var(--shiki-light);
   }

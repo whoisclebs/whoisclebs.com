@@ -8,10 +8,12 @@ import { groupByYear, legacyCommentTerm, projectsForEntry, shouldShowToc, writin
 import { getNote, getPublishedNotes, toNoteSummary } from '$lib/content/notes'
 import { getPost, getPublishedPosts, getTranslation, toSummary, type Post } from '$lib/content/posts'
 import { getProject, projects } from '$lib/content/projects'
+import { caseStudies, getCaseStudy } from '$lib/content/cases/index'
+import { CASE_SECTION_TITLES, type CaseStudy } from '$lib/content/case-schema'
 import { format, getMessages, type Locale } from '$lib/i18n'
 import { absoluteUrl, notePath, pagePath, pages, projectPath, topicPath, type PageKey } from '$lib/routing/paths'
 import { pageTitle, person, SITE_NAME, type Seo } from '$lib/seo'
-import { renderMarkdown } from './markdown'
+import { highlightCode, renderInline, renderMarkdown } from './markdown'
 
 function alternatesFor(key: PageKey) {
   return { ...pages[key] }
@@ -25,12 +27,46 @@ function staticSeo(key: PageKey, locale: Locale, title: string, description: str
 
 function projectCards(locale: Locale) {
   const t = getMessages(locale)
-  return projects.map((project) => ({
-    ...project,
-    description: t.openSource.projects[project.slug as keyof typeof t.openSource.projects],
-    href: projectPath(project.slug, locale),
-  }))
+  return projects.map((project) => {
+    const study = getCaseStudy(project.slug)
+    return {
+      ...project,
+      description: t.openSource.projects[project.slug as keyof typeof t.openSource.projects],
+      href: projectPath(project.slug, locale),
+      // Cases existem só em pt-BR (texto novo, sem tradução revisada): no inglês o link leva hreflang.
+      caseStudy: study
+        ? { question: study.question, dek: study.dek, href: projectPath(project.slug, 'pt-BR'), hreflang: locale === 'en' ? ('pt-BR' as const) : undefined }
+        : undefined,
+    }
+  })
 }
+
+/** Case pronto para a página: parágrafos com `code` inline escapado e trechos destacados pelo Shiki no build. */
+export async function renderCaseStudy(study: CaseStudy) {
+  return {
+    ...study,
+    sections: study.sections.map((section) => ({
+      ...section,
+      title: CASE_SECTION_TITLES[section.id],
+      html: section.body.map(renderInline),
+    })),
+    snippets: await Promise.all(
+      study.snippets.map(async (snippet) => ({
+        ...snippet,
+        captionHtml: renderInline(snippet.caption),
+        html: await highlightCode(snippet.code, snippet.lang, snippet.lines[0]),
+      })),
+    ),
+  }
+}
+
+function otherCaseFor(slug: string) {
+  const other = caseStudies.find((study) => study.slug !== slug)
+  const project = other ? getProject(other.slug) : undefined
+  return other && project ? { slug: other.slug, name: project.name, question: other.question } : undefined
+}
+
+export type RenderedCaseStudy = Awaited<ReturnType<typeof renderCaseStudy>>
 
 export function homeData(locale: Locale) {
   const description =
@@ -125,11 +161,13 @@ export function projectsData(locale: Locale) {
   }
 }
 
-export function projectData(slug: string, locale: Locale) {
+export async function projectData(slug: string, locale: Locale) {
   const project = getProject(slug)
   if (!project) error(404, 'Projeto não encontrado')
   const t = getMessages(locale)
-  const description = t.openSource.projects[project.slug as keyof typeof t.openSource.projects]
+  const study = getCaseStudy(project.slug)
+  const caseStudy = study && locale === 'pt-BR' ? await renderCaseStudy(study) : undefined
+  const description = caseStudy?.dek ?? t.openSource.projects[project.slug as keyof typeof t.openSource.projects]
   const path = projectPath(project.slug, locale)
   const related = writingForProject(project.slug, [
     ...getPublishedPosts(locale).map((post) => ({ ...post, kind: 'article' as const })),
@@ -139,8 +177,12 @@ export function projectData(slug: string, locale: Locale) {
     locale,
     relatedWriting: related,
     project: { ...project, description },
+    caseStudy,
+    otherCase: caseStudy ? otherCaseFor(project.slug) : undefined,
+    /** No inglês: o case existe só em português. */
+    caseHref: study && locale === 'en' ? projectPath(project.slug, 'pt-BR') : undefined,
     seo: {
-      title: pageTitle(project.name),
+      title: pageTitle(caseStudy ? `${project.name}: estudo de caso` : project.name),
       description,
       path,
       locale,

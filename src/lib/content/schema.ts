@@ -105,6 +105,8 @@ export const projectSchema = z
     /** Quando o status foi conferido e onde (evidência pública). */
     statusCheckedAt: isoDateSchema,
     evidence: z.array(httpsUrlSchema).min(1),
+    /** Último commit no branch padrão (conferido em `statusCheckedAt`), com link para o commit. */
+    lastCommit: z.object({ date: isoDateSchema, url: httpsUrlSchema }).strict(),
   })
   .strict()
 

@@ -2,14 +2,19 @@
   import { formatDate, getMessages } from '$lib/i18n'
   import { pages } from '$lib/routing/paths'
   import type { projectData } from '$lib/server/pages'
+  import type { Snippet } from 'svelte'
+  import CasePage from './CasePage.svelte'
   import ProjectStatus from './ProjectStatus.svelte'
 
-  let { data }: { data: ReturnType<typeof projectData> } = $props()
+  let { data, demo }: { data: Awaited<ReturnType<typeof projectData>>; demo?: Snippet } = $props()
 
   const t = $derived(getMessages(data.locale))
   const project = $derived(data.project)
 </script>
 
+{#if data.caseStudy}
+  <CasePage study={data.caseStudy} {project} other={data.otherCase} {demo} />
+{:else}
 <article>
   <header class="page-header">
     <p class="eyebrow">{t.openSource.kicker}</p>
@@ -27,7 +32,17 @@
       <dt class="eyebrow">{t.openSource.stackLabel}</dt>
       <dd>{project.technologies.join(', ')}</dd>
     </div>
+    <div>
+      <dt class="eyebrow">{t.openSource.lastCommit}</dt>
+      <dd><a href={project.lastCommit.url} rel="noopener noreferrer"><time datetime={project.lastCommit.date}>{formatDate(project.lastCommit.date, data.locale)}</time></a></dd>
+    </div>
   </dl>
+
+  {#if data.caseHref}
+    <p class="case-link">
+      <a href={data.caseHref} hreflang="pt-BR">{t.openSource.readCase}</a>
+    </p>
+  {/if}
 
   <p class="actions">
     <a class="button button--primary" href={project.repo} rel="noopener noreferrer">{t.openSource.repository}</a>
@@ -49,6 +64,7 @@
 
   <p><a href={pages.projects[data.locale]}>{t.openSource.backToProjects}</a></p>
 </article>
+{/if}
 
 <style>
   .facts {
@@ -60,6 +76,11 @@
 
   .facts dd {
     margin: 0;
+  }
+
+  .case-link {
+    margin-block-end: var(--space-7);
+    font-size: var(--step-2);
   }
 
   .related {
