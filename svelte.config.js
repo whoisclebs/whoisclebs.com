@@ -8,7 +8,9 @@ const config = {
     runes: true,
   },
   kit: {
-    adapter: adapter(),
+    // O adapter grava o Worker do SvelteKit em `main` desse arquivo. A entrada de deploy (fetch + cron)
+    // é `src/worker.ts`, declarada em wrangler.jsonc. `vite dev` segue lendo wrangler.jsonc (binding D1).
+    adapter: adapter({ config: 'wrangler.sveltekit.jsonc' }),
     prerender: {
       // Rotas EN e feeds são descobertos pelo crawler, mas ficam explícitos para não depender de links.
       entries: ['*', '/en/', '/rss/blog.xml', '/rss/blog-en.xml', '/rss/til.xml', '/sitemap.xml'],

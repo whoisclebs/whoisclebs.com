@@ -19,12 +19,29 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
-  webServer: {
-    command: `test -f .svelte-kit/cloudflare/_worker.js || npm run build; npx wrangler dev --port ${port} --ip 127.0.0.1 --log-level warn`,
-    url: `http://127.0.0.1:${port}/`,
-    reuseExistingServer: false,
-    timeout: 120_000,
-    // SIGINT deixa o wrangler encerrar o workerd filho (SIGKILL deixaria o workerd órfão).
-    gracefulShutdown: { signal: 'SIGINT', timeout: 5_000 },
-  },
+  webServer: [
+    {
+      // Substituto local da API do GitHub (sem rede real nos testes).
+      command: 'node tests/fixtures/github-fixture-server.mjs',
+      url: 'http://127.0.0.1:8790/',
+      reuseExistingServer: false,
+      timeout: 10_000,
+    },
+    {
+      // D1 local recriado do zero a cada execução com as migrações versionadas; `--test-scheduled` expõe
+      // `/__scheduled` para disparar o cron; a fonte GitHub aponta para o servidor de fixture.
+      command: [
+        'test -f .svelte-kit/cloudflare/_worker.js || npm run build',
+        'rm -rf .wrangler/e2e-state',
+        'npx wrangler d1 migrations apply DB --local --persist-to .wrangler/e2e-state',
+        `npx wrangler dev --port ${port} --ip 127.0.0.1 --log-level warn --persist-to .wrangler/e2e-state --test-scheduled --var GITHUB_API_BASE:http://127.0.0.1:8790`,
+      ].join(' && '),
+      env: { CI: '1' },
+      url: `http://127.0.0.1:${port}/`,
+      reuseExistingServer: false,
+      timeout: 120_000,
+      // SIGINT deixa o wrangler encerrar o workerd filho (SIGKILL deixaria o workerd órfão).
+      gracefulShutdown: { signal: 'SIGINT', timeout: 5_000 },
+    },
+  ],
 })
