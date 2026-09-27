@@ -15,9 +15,12 @@
     "validate:editorial": "node scripts/validate-editorial.mjs",
     "validate:locale": "node scripts/verify-locale-parity.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
-    "prepare": "svelte-kit sync || echo ''; husky"
+    "prepare": "svelte-kit sync || echo ''; husky",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260927.1",
     "@commitlint/cli": "^20.5.2",
     "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^9.39.4",
