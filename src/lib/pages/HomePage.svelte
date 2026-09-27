@@ -1,36 +1,32 @@
 <script lang="ts">
+  import DecisionMap from '$lib/components/decision-map/DecisionMap.svelte'
   import { formatDate, getMessages } from '$lib/i18n'
-  import { articlePath, pages } from '$lib/routing/paths'
+  import { articlePath, pagePath, pages, projectPath } from '$lib/routing/paths'
   import type { homeData } from '$lib/server/pages'
 
   let { data }: { data: ReturnType<typeof homeData> } = $props()
 
   const t = $derived(getMessages(data.locale))
   const copy = $derived(t.home)
+  // Contato só existe em pt-BR; no inglês o link aponta para a página em português, marcada com hreflang.
+  const contactHref = $derived(pagePath('contact', data.locale) ?? pages.contact['pt-BR'])
+  const contactLang = $derived(pagePath('contact', data.locale) ? undefined : 'pt-BR')
+  const caseHref = $derived(projectPath('tuxedo', data.locale))
+  const mapLinks = $derived({ http: { href: caseHref }, payments: { href: pages.about[data.locale] } })
 </script>
 
 <section class="hero" aria-labelledby="hero-title">
-  <div class="stack">
-    <p class="eyebrow">{copy.kicker}</p>
-    <h1 id="hero-title" class="hero__title">{copy.headline}</h1>
-    <p class="lead">{copy.intro}</p>
-    <p class="actions">
-      <a class="button button--primary" href={pages.writing[data.locale]}>{copy.ctaWriting}</a>
-      <a class="button" href={pages.projects[data.locale]}>{copy.ctaProjects}</a>
+  <div class="hero__text">
+    <h1 id="hero-title" class="hero__title">{copy.title}</h1>
+    <p class="hero__support">{copy.support}</p>
+    <p class="hero__actions">
+      <a class="button button--primary" href={caseHref}>{copy.ctaPrimary}</a>
+      <a class="button" href={contactHref} hreflang={contactLang}>{copy.ctaSecondary}</a>
     </p>
   </div>
-  <aside class="card now" aria-labelledby="now-title">
-    <h2 id="now-title">{copy.nowTitle}</h2>
-    <dl>
-      {#each copy.nowItems as item, index (item)}
-        <div>
-          <dt class="eyebrow">{copy.nowLabels[index]}</dt>
-          <dd>{item}</dd>
-        </div>
-      {/each}
-    </dl>
-    <p class="meta">{copy.nowUpdated}</p>
-  </aside>
+  <div class="hero__apparatus">
+    <DecisionMap copy={copy.map} links={mapLinks} />
+  </div>
 </section>
 
 <section class="section" aria-labelledby="latest-title">
@@ -69,36 +65,92 @@
   </ul>
 </section>
 
+<section class="section now-section" aria-labelledby="now-title">
+  <h2 id="now-title">{copy.nowTitle}</h2>
+  <dl class="now">
+    {#each copy.nowItems as item, index (item)}
+      <div>
+        <dt class="eyebrow">{copy.nowLabels[index]}</dt>
+        <dd>{item}</dd>
+      </div>
+    {/each}
+  </dl>
+  <p class="meta">{copy.nowUpdated}</p>
+</section>
+
 <style>
+  /* Hero: texto em 8 colunas + aparato em 4 no desktop (≥ 960 px, grade de 12); empilhado abaixo disso. */
   .hero {
     display: grid;
     gap: var(--space-7);
-    padding-block-end: var(--space-8);
+    padding-block: var(--space-5) var(--space-8);
   }
 
   @media (min-width: 960px) {
     .hero {
-      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-      align-items: end;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+      align-items: start;
+    }
+
+    .hero__text {
+      grid-column: 1 / span 8;
+    }
+
+    .hero__apparatus {
+      grid-column: 9 / span 4;
     }
   }
 
-  .hero__title {
-    font-size: var(--step-5);
-    line-height: var(--leading-display);
+  .hero__text {
+    display: grid;
+    gap: var(--space-6);
+    align-content: start;
   }
 
-  .actions {
+  /* 48 px em 390, ~67 px em 768 (duas linhas, nada de palavra por linha), teto de 88 px no desktop. */
+  .hero__title {
+    font-size: clamp(3rem, 1.6rem + 5.4vw, 5.5rem);
+    line-height: 1.02;
+    letter-spacing: var(--tracking-display);
+    text-wrap: balance;
+  }
+
+  .hero__support {
+    max-width: 58ch;
+    font-size: var(--step-2);
+    line-height: 1.45;
+    color: var(--color-text-soft);
+  }
+
+  .hero__actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
   }
 
-  .now dl {
+  .hero__actions .button {
+    transition: transform var(--dur-press) var(--ease-out);
+  }
+
+  @media (max-width: 639px) {
+    .hero__actions .button {
+      flex: 1 1 100%;
+      justify-content: center;
+    }
+  }
+
+  .hero__actions .button:active {
+    transform: scale(var(--press-scale));
+  }
+
+  .now {
     display: grid;
     gap: var(--space-3);
     margin: 0;
   }
 
-
+  .now dd {
+    margin: 0;
+  }
 </style>

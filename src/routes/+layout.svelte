@@ -3,7 +3,6 @@
   import '../styles/fonts.css'
   import '../styles/base.css'
   import antonUrl from '$lib/assets/fonts/anton-latin-400-normal.woff2?url'
-  import newsreaderUrl from '$lib/assets/fonts/newsreader-latin-400-normal.woff2?url'
   import { page } from '$app/state'
   import Seo from '$lib/components/Seo.svelte'
   import SiteFooter from '$lib/components/SiteFooter.svelte'
@@ -18,8 +17,8 @@
 </script>
 
 <svelte:head>
+  <!-- Só a fonte do LCP (H1 em Anton); texto e mono usam fallbacks com métricas ajustadas (fonts.css). -->
   <link rel="preload" href={antonUrl} as="font" type="font/woff2" crossorigin="anonymous" />
-  <link rel="preload" href={newsreaderUrl} as="font" type="font/woff2" crossorigin="anonymous" />
 </svelte:head>
 
 {#if seo && !page.error}

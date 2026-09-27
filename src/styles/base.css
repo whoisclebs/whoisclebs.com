@@ -39,12 +39,9 @@
 }
 
 @layer base {
-  /* Cada elemento calcula o ajuste pela própria fonte primária (valor herdado seria o do pai e
-     encolheria a Anton/Plex Mono). Estabiliza o tamanho visual quando cai no fallback. */
-  :where(*) {
-    font-size-adjust: from-font;
-  }
-
+  /* A estabilidade na troca de fonte vem das faces "… Fallback" com size-adjust/ascent-override
+     (fonts.css). `font-size-adjust` foi retirado no passo 05: ele reescalaria o fallback já ajustado
+     pela altura-x e desfaria o casamento de largura (mesmas quebras de linha = CLS ≈ 0). */
   html {
     background: var(--color-bg);
     color: var(--color-text);

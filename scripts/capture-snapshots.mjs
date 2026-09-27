@@ -13,7 +13,7 @@
  *   npm run snapshots -- <pasta-de-saida>           ex.: npm run snapshots -- 02-sveltekit
  *   node scripts/capture-snapshots.mjs 00-baseline dist
  *
- * Variáveis opcionais: SNAPSHOT_ROUTES (JSON [{ name, path }]) substitui as rotas padrão;
+ * Variáveis opcionais: SNAPSHOT_ROUTES (JSON [{ name, path, scheme? }]) substitui as rotas padrão;
  * SNAPSHOT_LOCALE troca o locale do navegador (padrão en-US: o site novo não pode depender dele).
  */
 
@@ -47,6 +47,7 @@ const legacyRoutes = [
 ]
 const siteRoutes = [
   { name: 'home', path: '/' },
+  { name: 'home-escuro', path: '/', scheme: 'dark' },
   { name: 'projetos', path: '/projetos/' },
   { name: 'projeto-tuxedo', path: '/projetos/tuxedo/' },
   { name: 'escrita', path: '/escrita/' },
@@ -139,6 +140,8 @@ try {
     const context = await browser.newContext({ viewport, deviceScaleFactor: 1, colorScheme: 'light', reducedMotion: 'reduce', locale })
     const page = await context.newPage()
     for (const route of routes) {
+      // Rotas com `scheme: 'dark'` emulam prefers-color-scheme (tema "noite"); as demais ficam no claro.
+      await page.emulateMedia({ colorScheme: route.scheme ?? 'light' })
       await page.goto(base + route.path, { waitUntil: 'networkidle' })
       await page.evaluate(async () => {
         await document.fonts.ready

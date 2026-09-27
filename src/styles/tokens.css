@@ -63,7 +63,7 @@
     /* Licença SIL OFL 1.1; WOFF2 local, subset latin (+ latin-ext só se preciso). */
     --font-display: 'Anton', 'Anton Fallback', Impact, 'Arial Narrow', sans-serif;
     --font-text: 'Newsreader', 'Newsreader Fallback', Georgia, 'Times New Roman', serif;
-    --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    --font-mono: 'IBM Plex Mono', 'IBM Plex Mono Fallback', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 
     /* Escala: texto base 18 px; razão ~1.25 no corpo, títulos fluidos. */
     --step--2: 0.75rem;                                        /* 12 px — mínimo absoluto (mono) */
