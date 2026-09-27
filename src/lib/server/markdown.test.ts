@@ -19,6 +19,11 @@ describe('renderMarkdown', () => {
     expect(html).toContain('&lt;b&gt;x&lt;/b&gt;')
   })
 
+  it('bloco de código rolável é focável por teclado, com ou sem linguagem conhecida', async () => {
+    const { html } = await renderMarkdown('```yaml\nname: deploy\n```\n\n```text\nx\n```')
+    expect(html.match(/<pre[^>]*tabindex="0"/g)).toHaveLength(2)
+  })
+
   it('escapa HTML cru e renderiza código inline', async () => {
     const { html } = await renderMarkdown('Use `<seu_usuario>.github.io` e <script>alert(1)</script>')
     expect(html).toContain('<code>&lt;seu_usuario&gt;.github.io</code>')

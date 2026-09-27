@@ -1,6 +1,8 @@
 <script lang="ts">
+  import Comments from '$lib/components/Comments.svelte'
   import NewsletterCta from '$lib/components/NewsletterCta.svelte'
-  import { formatDate, getMessages } from '$lib/i18n'
+  import EntryMeta from '$lib/components/writing/EntryMeta.svelte'
+  import { getMessages } from '$lib/i18n'
   import { pages } from '$lib/routing/paths'
   import type { articleData } from '$lib/server/pages'
 
@@ -8,27 +10,23 @@
 
   const t = $derived(getMessages(data.locale))
   const post = $derived(data.post)
+  const sourcesLabel = $derived(data.locale === 'en' ? 'Sources' : 'Fontes')
 </script>
 
-<article class="article">
-  <header class="page-header">
-    <p class="eyebrow">{post.kicker}</p>
-    <h1>{post.title}</h1>
-    <p class="lead">{post.excerpt}</p>
-    <p class="meta">
-      {t['blog.by']} {data.author.name} · <time datetime={post.date}>{formatDate(post.date, data.locale)}</time>
-      {#if post.updated}
-        · {data.locale === 'en' ? 'revised' : 'revisado'} <time datetime={post.updated}>{formatDate(post.updated, data.locale)}</time>
-      {/if}
-      · {post.readingTime}
-    </p>
+<!-- Linha de progresso: só decorativa (aria-hidden), CSS scroll-driven, some com reduced motion. -->
+<div class="reading-progress" aria-hidden="true"></div>
+
+<article class="entry" class:entry--with-toc={data.showToc}>
+  <header class="entry__header">
+    <p class="entry__topic"><a href={data.topicHref}>{post.topic.label}</a></p>
+    <h1 class="entry__title">{post.title}</h1>
+    <p class="entry__lead">{post.excerpt}</p>
+    <EntryMeta locale={data.locale} date={post.date} updated={post.updated} minutes={post.readingMinutes} />
   </header>
 
-  <img class="cover" src={post.cover} alt={post.coverAlt} width="1200" height="675" fetchpriority="high" />
-
-  {#if data.toc.length > 1}
-    <nav class="toc" aria-labelledby="toc-title">
-      <p id="toc-title" class="eyebrow">{t['blog.tocTitle']}</p>
+  {#if data.showToc}
+    <nav class="entry__toc" aria-labelledby="toc-title">
+      <h2 id="toc-title" class="entry__toc-title">{t.writing.toc}</h2>
       <ol>
         {#each data.toc as item (item.id)}
           <li><a href={`#${item.id}`}>{item.text}</a></li>
@@ -37,52 +35,36 @@
     </nav>
   {/if}
 
-  <div class="prose">
-    <!-- eslint-disable-next-line svelte/no-at-html-tags -- HTML gerado no build a partir do Markdown do repositório (HTML cru escapado) -->
-    {@html data.html}
+  <div class="entry__body">
+    <img class="entry__cover" src={post.cover} alt={post.coverAlt} width="1200" height="675" fetchpriority="high" />
+
+    <div class="prose">
+      <!-- eslint-disable-next-line svelte/no-at-html-tags -- HTML gerado no build a partir do Markdown do repositório (HTML cru escapado) -->
+      {@html data.html}
+    </div>
+
+    {#if post.sources.length > 0}
+      <section class="entry__aside" aria-labelledby="sources-title">
+        <h2 id="sources-title" class="entry__aside-title">{sourcesLabel}</h2>
+        <ul>
+          {#each post.sources as source (source)}<li><a href={source} rel="noopener noreferrer">{source}</a></li>{/each}
+        </ul>
+      </section>
+    {/if}
+
+    {#if data.relatedProjects.length > 0}
+      <section class="entry__aside" aria-labelledby="related-title">
+        <h2 id="related-title" class="entry__aside-title">{t.writing.relatedProjects}</h2>
+        <ul>
+          {#each data.relatedProjects as project (project.slug)}<li><a href={project.href}>{project.name}</a></li>{/each}
+        </ul>
+      </section>
+    {/if}
+
+    <Comments locale={data.locale} term={data.commentTerm} />
+
+    <NewsletterCta locale={data.locale} />
+
+    <p class="entry__back"><a href={pages.writing[data.locale]}>{t.writing.back}</a></p>
   </div>
-
-  {#if post.sources.length > 0}
-    <section class="sources" aria-label={data.locale === 'en' ? 'Sources' : 'Fontes'}>
-      <p class="eyebrow">{data.locale === 'en' ? 'Sources' : 'Fontes'}</p>
-      <ul>
-        {#each post.sources as source (source)}<li><a href={source} rel="noopener noreferrer">{source}</a></li>{/each}
-      </ul>
-    </section>
-  {/if}
-
-  <NewsletterCta locale={data.locale} />
-
-  <p><a href={pages.writing[data.locale]}>{t['blog.backToBlog']}</a></p>
 </article>
-
-<style>
-  .article {
-    max-width: calc(var(--measure) + 2 * var(--space-6));
-    margin-inline: auto;
-  }
-
-  .cover {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-    margin-block-end: var(--space-7);
-    border: var(--border-hairline) solid var(--color-rule);
-  }
-
-  .toc {
-    margin-block-end: var(--space-7);
-    padding: var(--space-4) var(--space-5);
-    border-inline-start: 2px solid var(--color-accent);
-    font-size: var(--step-0);
-  }
-
-  .toc ol {
-    margin: var(--space-2) 0 0;
-    padding-inline-start: var(--space-5);
-  }
-
-  .sources {
-    margin-block-start: var(--space-7);
-  }
-</style>

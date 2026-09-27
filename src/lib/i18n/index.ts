@@ -26,3 +26,11 @@ export function formatDate(date: string, locale: Locale): string {
     .format(new Date(`${date}T12:00:00Z`))
     .replace('.', '')
 }
+
+/** Dia e mês (`16 set`, `Sep 16`), para listas já agrupadas por ano. */
+export function formatDayMonth(date: string, locale: Locale): string {
+  return new Intl.DateTimeFormat(locale, { day: '2-digit', month: 'short', timeZone: 'UTC' })
+    .format(new Date(`${date}T12:00:00Z`))
+    .replace('.', '')
+    .replace(' de ', ' ')
+}

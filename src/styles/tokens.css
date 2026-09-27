@@ -83,6 +83,7 @@
     --tracking-display: -0.01em;
     --tracking-mono: 0.01em;
     --measure: 66ch;
+    --measure-article: 28.5em;         /* ≈ 66 caracteres de Newsreader a 18 px (medido no e2e) */
     --measure-narrow: 44ch;
 
     /* ---------- Espaço e grade (quadrícula de 8 px) ---------- */

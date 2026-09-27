@@ -3,14 +3,19 @@ import type { Locale } from '$lib/i18n'
 import { getPublishedNotes } from '$lib/content/notes'
 import { getPublishedPosts, getTranslation } from '$lib/content/posts'
 import { projects } from '$lib/content/projects'
-import { absoluteUrl, articlePath, notePath, pages, projectPath, type PageKey } from '$lib/routing/paths'
+import { absoluteUrl, articlePath, notePath, pages, projectPath, topicPath, type PageKey } from '$lib/routing/paths'
 
 export function escapeXml(value: string): string {
   return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&apos;')
 }
 
-type FeedItem = { title: string; url: string; guid: string; date: string; excerpt: string }
+type FeedItem = { title: string; url: string; guid: string; date: string; excerpt: string; category?: string }
 type Feed = { title: string; description: string; sitePath: string; feedPath: string; language: Locale; items: FeedItem[] }
+
+/** Data `YYYY-MM-DD` → RFC 822 (exigido pelo RSS 2.0), meio-dia UTC para não mudar de dia por fuso. */
+export function rfc822(date: string): string {
+  return new Date(`${date}T12:00:00Z`).toUTCString()
+}
 
 export function renderRss(feed: Feed): string {
   const items = feed.items
@@ -19,8 +24,8 @@ export function renderRss(feed: Feed): string {
       <title>${escapeXml(item.title)}</title>
       <link>${escapeXml(item.url)}</link>
       <guid isPermaLink="${item.guid === item.url}">${escapeXml(item.guid)}</guid>
-      <pubDate>${new Date(`${item.date}T12:00:00Z`).toUTCString()}</pubDate>
-      <description>${escapeXml(item.excerpt)}</description>
+      <pubDate>${rfc822(item.date)}</pubDate>
+      <description>${escapeXml(item.excerpt)}</description>${item.category ? `\n      <category>${escapeXml(item.category)}</category>` : ''}
     </item>`,
     )
     .join('\n')
@@ -30,7 +35,7 @@ export function renderRss(feed: Feed): string {
     <title>${escapeXml(feed.title)}</title>
     <link>${absoluteUrl(feed.sitePath)}</link>
     <description>${escapeXml(feed.description)}</description>
-    <language>${feed.language}</language>
+    <language>${feed.language}</language>${feed.items[0] ? `\n    <lastBuildDate>${rfc822(feed.items[0].date)}</lastBuildDate>` : ''}
     <atom:link href="${absoluteUrl(feed.feedPath)}" rel="self" type="application/rss+xml" />
 ${items}
   </channel>
@@ -59,6 +64,7 @@ export function blogFeed(locale: Locale): string {
       guid: absoluteUrl(`${legacyPrefix}${post.slug}/`),
       date: post.date,
       excerpt: post.excerpt,
+      category: post.topic.label,
     })),
   })
 }
@@ -76,6 +82,7 @@ export function notesFeed(): string {
       guid: absoluteUrl(`/til/${note.slug}/`),
       date: note.date,
       excerpt: note.excerpt,
+      category: note.topic.label,
     })),
   })
 }
@@ -97,6 +104,15 @@ export function sitemapEntries(): SitemapEntry[] {
       const translation = getTranslation(post, locale === 'en' ? 'pt-BR' : 'en')
       const alternates = translation ? { [post.locale]: post.path, [translation.locale]: translation.path } : undefined
       entries.push({ path: articlePath(post.slug, locale), lastmod: post.updated ?? post.date, alternates })
+    }
+  }
+  const topicSlugs = (locale: 'pt-BR' | 'en') => new Set(getPublishedPosts(locale).map((post) => post.topic.slug))
+  const ptTopics = topicSlugs('pt-BR')
+  const enTopics = topicSlugs('en')
+  for (const [locale, own, other] of [['pt-BR', ptTopics, enTopics], ['en', enTopics, ptTopics]] as const) {
+    for (const slug of own) {
+      const alternates = other.has(slug) ? { 'pt-BR': topicPath(slug, 'pt-BR'), en: topicPath(slug, 'en') } : undefined
+      entries.push({ path: topicPath(slug, locale), alternates })
     }
   }
   for (const note of getPublishedNotes()) entries.push({ path: notePath(note.slug), lastmod: note.updated ?? note.date })

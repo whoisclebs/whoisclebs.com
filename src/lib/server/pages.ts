@@ -4,11 +4,12 @@
  */
 import { error } from '@sveltejs/kit'
 import { author, badges, boardGames, books, contactEmail, socialLinks } from '$lib/content/library'
+import { groupByYear, legacyCommentTerm, projectsForEntry, shouldShowToc, writingForProject } from '$lib/content/editorial'
 import { getNote, getPublishedNotes, toNoteSummary } from '$lib/content/notes'
-import { getPost, getPublishedPosts, getTranslation, toSummary } from '$lib/content/posts'
+import { getPost, getPublishedPosts, getTranslation, toSummary, type Post } from '$lib/content/posts'
 import { getProject, projects } from '$lib/content/projects'
-import { getMessages, type Locale } from '$lib/i18n'
-import { absoluteUrl, pagePath, pages, projectPath, type PageKey } from '$lib/routing/paths'
+import { format, getMessages, type Locale } from '$lib/i18n'
+import { absoluteUrl, notePath, pagePath, pages, projectPath, topicPath, type PageKey } from '$lib/routing/paths'
 import { pageTitle, person, SITE_NAME, type Seo } from '$lib/seo'
 import { renderMarkdown } from './markdown'
 
@@ -48,9 +49,71 @@ export function homeData(locale: Locale) {
   return {
     locale,
     seo,
-    posts: getPublishedPosts(locale).slice(0, 3).map(toSummary),
+    recent: recentWriting(locale, 5),
     projects: projectCards(locale),
   }
+}
+
+export type RecentItem = {
+  kind: 'article' | 'note'
+  slug: string
+  title: string
+  excerpt: string
+  href: string
+  date: string
+  topic: { slug: string; label: string; href?: string }
+  readingMinutes: number
+  /** Nota só existe em pt-BR: na home inglesa o link leva `hreflang`. */
+  hreflang?: Locale
+}
+
+/** Artigos e notas misturados por data. Notas só entram no pt-BR (não há tradução revisada). */
+export function recentWriting(locale: Locale, limit: number): RecentItem[] {
+  const articles: RecentItem[] = getPublishedPosts(locale).map((post) => ({
+    kind: 'article',
+    slug: post.slug,
+    title: post.title,
+    excerpt: post.excerpt,
+    href: post.path,
+    date: post.date,
+    topic: { ...post.topic, href: topicPath(post.topic.slug, locale) },
+    readingMinutes: post.readingMinutes,
+  }))
+  const notes: RecentItem[] =
+    locale === 'pt-BR'
+      ? getPublishedNotes().map((note) => ({
+          kind: 'note',
+          slug: note.slug,
+          title: note.title,
+          excerpt: note.excerpt,
+          href: note.path,
+          date: note.date,
+          topic: note.topic,
+          readingMinutes: note.readingMinutes,
+        }))
+      : []
+  return [...articles, ...notes].sort((a, b) => b.date.localeCompare(a.date) || a.slug.localeCompare(b.slug)).slice(0, limit)
+}
+
+/** Assuntos com contagem, na ordem do mais usado; empate pelo rótulo. */
+function topicsFor(locale: Locale) {
+  const counts = new Map<string, { slug: string; label: string; count: number }>()
+  for (const post of getPublishedPosts(locale)) {
+    const current = counts.get(post.topic.slug) ?? { ...post.topic, count: 0 }
+    current.count += 1
+    counts.set(post.topic.slug, current)
+  }
+  return [...counts.values()]
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, locale))
+    .map((topic) => ({ ...topic, href: topicPath(topic.slug, locale) }))
+}
+
+export function topicEntries(locale: Locale) {
+  return topicsFor(locale).map((topic) => ({ slug: topic.slug }))
+}
+
+function projectLinks(post: Pick<Post, 'slug' | 'projects'>, locale: Locale) {
+  return projectsForEntry(post).map((project) => ({ slug: project.slug, name: project.name, href: projectPath(project.slug, locale) }))
 }
 
 export function projectsData(locale: Locale) {
@@ -68,8 +131,13 @@ export function projectData(slug: string, locale: Locale) {
   const t = getMessages(locale)
   const description = t.openSource.projects[project.slug as keyof typeof t.openSource.projects]
   const path = projectPath(project.slug, locale)
+  const related = writingForProject(project.slug, [
+    ...getPublishedPosts(locale).map((post) => ({ ...post, kind: 'article' as const })),
+    ...(locale === 'pt-BR' ? getPublishedNotes().map((note) => ({ ...note, kind: 'note' as const })) : []),
+  ]).map((entry) => ({ kind: entry.kind, slug: entry.slug, title: entry.title, href: entry.path, date: entry.date }))
   return {
     locale,
+    relatedWriting: related,
     project: { ...project, description },
     seo: {
       title: pageTitle(project.name),
@@ -91,12 +159,59 @@ export function projectData(slug: string, locale: Locale) {
   }
 }
 
+function writingIndex(locale: Locale, posts: Post[]) {
+  return groupByYear(
+    posts.map((post) => ({
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt,
+      href: post.path,
+      date: post.date,
+      topic: { ...post.topic, href: topicPath(post.topic.slug, locale) },
+      readingMinutes: post.readingMinutes,
+    })),
+  )
+}
+
 export function writingData(locale: Locale) {
   const t = getMessages(locale)
   return {
     locale,
-    seo: staticSeo('writing', locale, locale === 'en' ? 'Writing' : 'Escrita', t['blog.description']),
-    posts: getPublishedPosts(locale).map(toSummary),
+    seo: staticSeo('writing', locale, t.writing.title, t['blog.description']),
+    heading: t.writing.title,
+    lead: t['blog.description'],
+    topics: topicsFor(locale),
+    currentTopic: undefined as string | undefined,
+    years: writingIndex(locale, getPublishedPosts(locale)),
+  }
+}
+
+export function topicData(slug: string, locale: Locale) {
+  const t = getMessages(locale)
+  const topic = topicsFor(locale).find((item) => item.slug === slug)
+  if (!topic) error(404, 'Assunto não encontrado')
+  const other: Locale = locale === 'en' ? 'pt-BR' : 'en'
+  const pair = topicsFor(other).some((item) => item.slug === slug)
+  const path = topicPath(slug, locale)
+  const heading = format(t.writing.topicTitle, { topic: topic.label })
+  return {
+    locale,
+    seo: {
+      title: pageTitle(heading),
+      description: format(t.writing.topicDescription, { topic: topic.label }),
+      path,
+      locale,
+      // hreflang só quando o mesmo assunto existe publicado no outro idioma.
+      alternates: pair ? { [locale]: path, [other]: topicPath(slug, other) } : { [locale]: path },
+    } satisfies Seo,
+    heading,
+    lead: format(t.writing.topicDescription, { topic: topic.label }),
+    topics: topicsFor(locale),
+    currentTopic: slug as string | undefined,
+    years: writingIndex(
+      locale,
+      getPublishedPosts(locale).filter((post) => post.topic.slug === slug),
+    ),
   }
 }
 
@@ -109,6 +224,10 @@ export async function articleData(slug: string, locale: Locale) {
   return {
     locale,
     post: toSummary(post),
+    topicHref: topicPath(post.topic.slug, locale),
+    relatedProjects: projectLinks(post, locale),
+    showToc: shouldShowToc(rendered.toc),
+    commentTerm: legacyCommentTerm({ kind: 'article', slug: post.slug, locale }),
     author,
     socialLinks,
     ...rendered,
@@ -142,8 +261,8 @@ export function notesData() {
   const t = getMessages('pt-BR')
   return {
     locale: 'pt-BR' as const,
-    seo: staticSeo('notes', 'pt-BR', 'Notas', t['til.seoDescription']),
-    notes: getPublishedNotes().map(toNoteSummary),
+    seo: staticSeo('notes', 'pt-BR', t.notes.title, t['til.seoDescription']),
+    years: groupByYear(getPublishedNotes().map((note) => ({ ...toNoteSummary(note), href: notePath(note.slug) }))),
   }
 }
 
@@ -154,6 +273,8 @@ export async function noteData(slug: string) {
   return {
     locale: 'pt-BR' as const,
     note: toNoteSummary(note),
+    relatedProjects: projectLinks(note, 'pt-BR'),
+    commentTerm: legacyCommentTerm({ kind: 'note', slug: note.slug, locale: 'pt-BR' }),
     ...rendered,
     seo: {
       title: pageTitle(note.title),

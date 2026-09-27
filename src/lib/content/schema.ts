@@ -38,6 +38,12 @@ const urlList = z
 
 const nonEmpty = z.string().trim().min(1)
 
+/** Projetos relacionados (`projects: tuxedo, golpher`); a existência do slug é conferida no loader. */
+const slugList = z
+  .string()
+  .transform((value) => value.split(',').map((item) => item.trim()).filter(Boolean))
+  .pipe(z.array(slugSchema))
+
 export const postFrontmatterSchema = z
   .object({
     slug: slugSchema,
@@ -54,6 +60,7 @@ export const postFrontmatterSchema = z
     published: booleanString,
     locale: localeSchema.default('pt-BR'),
     sources: urlList.optional(),
+    projects: slugList.optional(),
   })
   .strict()
   .refine((post) => !post.updated || post.updated >= post.date, {
@@ -72,8 +79,13 @@ export const noteFrontmatterSchema = z
     published: booleanString,
     locale: localeSchema.default('pt-BR'),
     sources: urlList.optional(),
+    projects: slugList.optional(),
   })
   .strict()
+  .refine((note) => !note.updated || note.updated >= note.date, {
+    message: 'updated não pode ser anterior a date',
+    path: ['updated'],
+  })
 
 export type PostFrontmatter = z.infer<typeof postFrontmatterSchema>
 export type NoteFrontmatter = z.infer<typeof noteFrontmatterSchema>

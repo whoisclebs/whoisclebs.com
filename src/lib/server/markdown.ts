@@ -9,10 +9,17 @@ export type TocItem = { id: string; text: string }
 export type RenderedMarkdown = { html: string; toc: TocItem[] }
 
 const languages = ['bash', 'css', 'dockerfile', 'html', 'javascript', 'js', 'json', 'typescript', 'ts', 'yaml', 'go', 'rust'] as const
+/**
+ * Temas escolhidos por contraste AA medido contra as superfícies reais do bloco (`--color-surface`:
+ * #FCFAF5 no claro, #19233A no escuro): `github-light` reprovava verde/vermelho (4,4:1) e `github-dark`
+ * reprovava comentários (3,3:1). Ver decisions.md (passo 06).
+ */
+const LIGHT_THEME = 'github-light-high-contrast'
+const DARK_THEME = 'github-dark-default'
 let highlighterPromise: Promise<Highlighter> | undefined
 
 function getHighlighter(): Promise<Highlighter> {
-  highlighterPromise ??= createHighlighter({ themes: ['github-light', 'github-dark'], langs: [...languages] })
+  highlighterPromise ??= createHighlighter({ themes: [LIGHT_THEME, DARK_THEME], langs: [...languages] })
   return highlighterPromise
 }
 
@@ -54,8 +61,14 @@ export async function renderMarkdown(markdown: string): Promise<RenderedMarkdown
         const language = (lang ?? '').trim().split(/\s+/)[0]?.toLowerCase() || 'text'
         const label = escapeHtml(language)
         const body = loaded.has(language)
-          ? highlighter.codeToHtml(text, { lang: language, themes: { light: 'github-light', dark: 'github-dark' }, defaultColor: false })
-          : `<pre class="shiki"><code>${escapeHtml(text)}</code></pre>`
+          ? highlighter.codeToHtml(text, {
+              lang: language,
+              themes: { light: LIGHT_THEME, dark: DARK_THEME },
+              defaultColor: false,
+              // Bloco com rolagem horizontal precisa ser alcançável por teclado (axe: scrollable-region-focusable).
+              transformers: [{ pre: (node) => void (node.properties.tabindex = '0') }],
+            })
+          : `<pre class="shiki" tabindex="0"><code>${escapeHtml(text)}</code></pre>`
         return `<figure class="code-block"><figcaption>${label}</figcaption>${body}</figure>\n`
       },
       // Conteúdo é Markdown puro: HTML cru é exibido como texto, nunca interpretado.

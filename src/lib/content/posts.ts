@@ -5,6 +5,7 @@
  */
 import type { Locale } from '$lib/i18n'
 import { absoluteUrl, articlePath } from '$lib/routing/paths'
+import { projectsForEntry, readingMinutes, topicFromKicker, type Topic } from './editorial'
 import { formatIssues, parseFrontmatter, postFrontmatterSchema, validateTranslationPairs } from './schema'
 import { sortByDateDesc } from './sort'
 
@@ -24,6 +25,10 @@ export type Post = {
   coverAlt: string
   published: boolean
   sources: string[]
+  /** Slugs de projetos relacionados declarados no front matter. */
+  projects: string[]
+  topic: Topic
+  readingMinutes: number
   path: string
   canonical: string
   body: string
@@ -53,11 +58,23 @@ export function loadPosts(sources: Record<string, string>): Post[] {
       errors.push(`  ${file}: [locale] "${meta.locale}" não corresponde ao nome do arquivo (${expectedLocale})`)
     }
     const path = articlePath(meta.slug, meta.locale)
+    const projects = meta.projects ?? []
+    let minutes = 0
+    try {
+      projectsForEntry({ slug: meta.slug, projects })
+      minutes = readingMinutes(meta.readingTime)
+    } catch (error) {
+      errors.push(`  ${file}: ${(error as Error).message}`)
+      continue
+    }
     posts.push({
       file,
       ...meta,
       translationKey: meta.translationKey ?? meta.slug,
       sources: meta.sources ?? [],
+      projects,
+      topic: topicFromKicker(meta.kicker),
+      readingMinutes: minutes,
       path,
       canonical: absoluteUrl(path),
       body: parsed.body,

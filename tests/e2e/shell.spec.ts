@@ -11,13 +11,17 @@ const keyRoutes = [
   '/projetos/tuxedo/',
   '/escrita/',
   '/escrita/github-actions-como-fazer-deploy/',
+  '/escrita/assunto/hackathon/',
   '/notas/',
+  '/notas/docker-healthcheck-para-servicos/',
   '/sobre/',
   '/contato/',
   '/livros/',
   '/hobbies/',
   '/rota-inexistente/',
   '/en/',
+  '/en/writing/',
+  '/en/writing/github-actions-como-fazer-deploy/',
 ]
 
 const widths = [390, 768, 1440]

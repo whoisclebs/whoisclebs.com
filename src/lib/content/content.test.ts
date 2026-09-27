@@ -85,6 +85,17 @@ describe('loadPosts', () => {
     ).toThrow(/date/)
   })
 
+  it('aceita projetos relacionados existentes e rejeita slug desconhecido (o build falha)', () => {
+    const [post] = loadPosts({ '/src/content/posts/x/pt-BR.md': markdown({ ...validPost, projects: 'tuxedo, golpher' }) })
+    expect(post?.projects).toEqual(['tuxedo', 'golpher'])
+    expect(post?.topic).toEqual({ slug: 'devops', label: 'DevOps' })
+    expect(() => loadPosts({ '/src/content/posts/x/pt-BR.md': markdown({ ...validPost, projects: 'fantasma' }) })).toThrow(/fantasma/)
+  })
+
+  it('exige minutos no tempo de leitura', () => {
+    expect(() => loadPosts({ '/src/content/posts/x/pt-BR.md': markdown({ ...validPost, readingTime: 'rápido' }) })).toThrow(/readingTime/)
+  })
+
   it('gera caminho e canonical com barra final por idioma', () => {
     const [pt, en] = loadPosts({
       '/src/content/posts/x/pt-BR.md': markdown(validPost),

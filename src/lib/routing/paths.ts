@@ -38,6 +38,11 @@ export function articlePath(slug: string, locale: Locale): string {
   return locale === 'en' ? `/en/writing/${slug}/` : `/escrita/${slug}/`
 }
 
+/** Índice de Escrita filtrado por assunto (link HTML, página prerenderizada; sem JS). */
+export function topicPath(slug: string, locale: Locale): string {
+  return locale === 'en' ? `/en/writing/topic/${slug}/` : `/escrita/assunto/${slug}/`
+}
+
 export function projectPath(slug: string, locale: Locale): string {
   return locale === 'en' ? `/en/projects/${slug}/` : `/projetos/${slug}/`
 }

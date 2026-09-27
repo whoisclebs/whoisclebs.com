@@ -254,8 +254,11 @@
     font-size: var(--step--1);
   }
 
+  /* Texto de leitura: 18 px / 1,7 e 62–68 caracteres por linha (spec §3). `ch` mede o "0", mais largo que a
+     letra média da Newsreader: 66ch dava ~78 caracteres. `--measure-article` é calibrado em em (teste e2e). */
   .prose {
-    max-width: var(--measure);
+    max-width: var(--measure-article);
+    font-size: var(--step-1);
     line-height: var(--leading-article);
   }
 
@@ -265,11 +268,26 @@
 
   .prose h2 {
     margin-block-start: var(--space-8);
+    scroll-margin-block-start: var(--space-6);
+  }
+
+  .prose h3 {
+    margin-block-start: var(--space-7);
+    scroll-margin-block-start: var(--space-6);
+  }
+
+  .prose h2 + *,
+  .prose h3 + * {
+    margin-block-start: var(--space-4);
   }
 
   .prose ul,
   .prose ol {
     padding-inline-start: var(--space-5);
+  }
+
+  .prose li + li {
+    margin-block-start: var(--space-2);
   }
 
   .prose :not(pre) > code {
@@ -280,6 +298,7 @@
 
   .code-block {
     max-width: 100%;
+    min-width: 0;
     border: var(--border-hairline) solid var(--color-rule);
     background: var(--color-surface);
   }
@@ -297,7 +316,12 @@
     padding: var(--space-4);
     overflow-x: auto;
     line-height: 1.6;
+    tab-size: 2;
     background: transparent !important;
+  }
+
+  .code-block pre:focus-visible {
+    outline-offset: -2px;
   }
 
   .shiki span {
@@ -311,6 +335,162 @@
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme='light']) .shiki span {
       color: var(--shiki-dark);
+    }
+  }
+}
+
+/* ---------- Artigo e nota (passo 06) ---------- */
+@layer components {
+  .entry {
+    display: grid;
+    gap: var(--space-7);
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .entry__header {
+    display: grid;
+    gap: var(--space-4);
+    max-width: 52rem;
+  }
+
+  .entry__topic {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+  }
+
+  .entry__title {
+    font-size: var(--step-4);
+  }
+
+  .entry__lead {
+    max-width: 52ch;
+    font-size: var(--step-2);
+    line-height: 1.45;
+    color: var(--color-text-soft);
+  }
+
+  .entry__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-7);
+    align-content: start;
+    min-width: 0;
+  }
+
+  .entry__cover {
+    width: 100%;
+    max-width: var(--measure-article);
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border: var(--border-hairline) solid var(--color-rule);
+  }
+
+  .entry__toc {
+    align-self: start;
+    padding-block: var(--space-4);
+    border-block: var(--border-hairline) solid var(--color-rule);
+    font-size: var(--step-0);
+    line-height: 1.4;
+  }
+
+  .entry__toc-title,
+  .entry__aside-title {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 400;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-text-faint);
+  }
+
+  .entry__toc ol {
+    display: grid;
+    gap: var(--space-2);
+    margin: var(--space-3) 0 0;
+    padding-inline-start: var(--space-5);
+  }
+
+  .entry__toc li::marker {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--color-text-faint);
+  }
+
+  .entry__aside {
+    display: grid;
+    gap: var(--space-3);
+    max-width: var(--measure);
+    padding-block-start: var(--space-4);
+    border-block-start: var(--border-hairline) solid var(--color-rule);
+    font-size: var(--step-0);
+  }
+
+  .entry__aside ul {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding-inline-start: var(--space-5);
+    overflow-wrap: anywhere;
+  }
+
+  /* Desktop: cabeçalho nas colunas 1–8; a prosa (28,5em ≈ 5 colunas) fica à esquerda e o sumário fixo
+     encosta nela (colunas 7–9), sem o vão que as colunas 10–12 deixavam. */
+  @media (min-width: 1100px) {
+    .entry {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+    }
+
+    .entry__header,
+    .entry__body {
+      grid-column: 1 / span 8;
+    }
+
+    /* Corpo e sumário dividem a mesma linha (o sumário vem antes no DOM para aparecer primeiro no celular). */
+    .entry__body {
+      grid-row: 2;
+    }
+
+    .entry__body {
+      grid-column: 1 / span 6;
+    }
+
+    .entry__toc {
+      grid-column: 7 / span 3;
+      grid-row: 2;
+      position: sticky;
+      top: var(--space-6);
+    }
+  }
+
+  /* Linha de progresso de leitura: decorativa, sem fallback em JS (aprimoramento progressivo). */
+  .reading-progress {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+      @keyframes reading-progress {
+        from {
+          transform: scaleX(0);
+        }
+
+        to {
+          transform: scaleX(1);
+        }
+      }
+
+      .reading-progress {
+        display: block;
+        position: fixed;
+        inset: 0 0 auto;
+        z-index: 10;
+        height: 2px;
+        background: var(--color-accent);
+        transform-origin: 0 50%;
+        animation: reading-progress auto linear;
+        animation-timeline: scroll(root block);
+        pointer-events: none;
+      }
     }
   }
 }

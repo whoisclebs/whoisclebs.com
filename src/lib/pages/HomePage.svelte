@@ -1,7 +1,8 @@
 <script lang="ts">
   import DecisionMap from '$lib/components/decision-map/DecisionMap.svelte'
   import { formatDate, getMessages } from '$lib/i18n'
-  import { articlePath, pagePath, pages, projectPath } from '$lib/routing/paths'
+  import WritingList from '$lib/components/writing/WritingList.svelte'
+  import { notePath, pagePath, pages, projectPath } from '$lib/routing/paths'
   import type { homeData } from '$lib/server/pages'
 
   let { data }: { data: ReturnType<typeof homeData> } = $props()
@@ -12,6 +13,15 @@
   const contactHref = $derived(pagePath('contact', data.locale) ?? pages.contact['pt-BR'])
   const contactLang = $derived(pagePath('contact', data.locale) ? undefined : 'pt-BR')
   const caseHref = $derived(projectPath('tuxedo', data.locale))
+  const feedHref = $derived(data.locale === 'en' ? '/rss/blog-en.xml' : '/rss/blog.xml')
+
+  /** `project:<slug>` ou `note:<slug>` → link interno; notas só existem em pt-BR (hreflang no inglês). */
+  function siteLink(target: string): { href: string; hreflang?: string } {
+    const [kind, slug = ''] = target.split(':')
+    if (kind === 'note') return { href: notePath(slug), hreflang: data.locale === 'en' ? 'pt-BR' : undefined }
+    return { href: projectPath(slug, data.locale) }
+  }
+
   const mapLinks = $derived({ http: { href: caseHref }, payments: { href: pages.about[data.locale] } })
 </script>
 
@@ -29,54 +39,79 @@
   </div>
 </section>
 
-<section class="section" aria-labelledby="latest-title">
-  <h2 id="latest-title">{copy.latest}</h2>
-  <ul class="grid list-reset">
-    {#each data.posts as post (post.slug)}
-      <li class="card">
-        <p class="eyebrow">{post.kicker}</p>
-        <h3><a href={articlePath(post.slug, data.locale)}>{post.title}</a></h3>
-        <p>{post.excerpt}</p>
-        <p class="meta"><time datetime={post.date}>{formatDate(post.date, data.locale)}</time> · {post.readingTime}</p>
+<section class="manifesto" aria-labelledby="manifesto-title">
+  <header class="chapter-head">
+    <h2 id="manifesto-title">{copy.manifesto.title}</h2>
+    <p class="chapter-head__intro">{copy.manifesto.intro}</p>
+  </header>
+  <ul class="claims list-reset">
+    {#each copy.manifesto.items as item (item.claim)}
+      {@const site = siteLink(item.siteTarget)}
+      <li class="claim">
+        <h3 class="claim__title">{item.claim}</h3>
+        <div class="claim__body">
+          <p class="claim__text">{item.text}</p>
+          <figure class="claim__proof">
+            <figcaption class="claim__label">{copy.manifesto.exampleLabel}</figcaption>
+            <p>{item.example}</p>
+            <p class="claim__links">
+              {#if item.sourceHref}
+                <a class="claim__source" href={item.sourceHref} rel="noopener noreferrer">{item.sourceLabel}</a>
+              {/if}
+              <a href={site.href} hreflang={site.hreflang}>{item.siteLabel}</a>
+            </p>
+          </figure>
+        </div>
       </li>
     {/each}
-    <li class="card">
-      <p class="eyebrow">{copy.archiveKicker}</p>
-      <h3><a href={pages.writing[data.locale]}>{copy.moreWriting}</a></h3>
-      <p>{copy.archiveText}</p>
-    </li>
   </ul>
 </section>
 
-<section class="section" aria-labelledby="projects-title">
-  <h2 id="projects-title">{t.openSource.title}</h2>
-  <p class="lead">{t.openSource.intro}</p>
-  <ul class="grid list-reset">
+<!-- Casos: espaço reservado; o passo 07 troca esta seção pelos estudos de caso. Projetos ficam em lista simples. -->
+<section class="chapter cases" aria-labelledby="cases-title" data-slot="cases">
+  <header class="chapter-head">
+    <h2 id="cases-title">{copy.cases.title}</h2>
+    <p class="chapter-head__intro">{copy.cases.intro}</p>
+  </header>
+  <ul class="projects list-reset">
     {#each data.projects as project (project.slug)}
-      <li class="card">
-        <h3><a href={project.href}>{project.name}</a></h3>
-        <p>{project.description}</p>
-        <ul class="tags" aria-label={t.openSource.stackLabel}>
-          {#each project.technologies as tech (tech)}<li>{tech}</li>{/each}
-        </ul>
-        <p class="meta">{project.year}</p>
+      <li class="project">
+        <h3 class="project__name"><a href={project.href}>{project.name}</a></h3>
+        <p class="project__description">{project.description}</p>
+        <p class="project__stack"><span>{project.technologies.join(', ')}</span> <span>{project.year}</span></p>
       </li>
     {/each}
   </ul>
+  <p><a href={pages.projects[data.locale]}>{copy.cases.all}</a></p>
 </section>
 
-<section class="section now-section" aria-labelledby="now-title">
-  <h2 id="now-title">{copy.nowTitle}</h2>
-  <dl class="now">
-    {#each copy.nowItems as item, index (item)}
-      <div>
-        <dt class="eyebrow">{copy.nowLabels[index]}</dt>
-        <dd>{item}</dd>
-      </div>
-    {/each}
-  </dl>
-  <p class="meta">{copy.nowUpdated}</p>
-</section>
+<div class="chapter writing-now">
+  <section class="writing" aria-labelledby="writing-title">
+    <header class="chapter-head chapter-head--stacked">
+      <h2 id="writing-title">{copy.writing.title}</h2>
+      <p class="chapter-head__intro">{copy.writing.intro}</p>
+    </header>
+    <WritingList items={data.recent} locale={data.locale} showKind={data.locale === 'pt-BR'} />
+    <p class="writing__more">
+      <a href={pages.writing[data.locale]}>{copy.writing.all}</a>
+      <a href={pages.notes['pt-BR']} hreflang={data.locale === 'en' ? 'pt-BR' : undefined}>{copy.writing.notes}</a>
+      <a href={feedHref} type="application/rss+xml">{copy.writing.rss}</a>
+    </p>
+  </section>
+
+  <section class="now" aria-labelledby="now-title">
+    <h2 id="now-title" class="now__title">{copy.now.title}</h2>
+    <dl class="now__list">
+      {#each copy.now.items as item, index (item)}
+        <div>
+          <dt>{copy.now.labels[index]}</dt>
+          <dd>{item}</dd>
+        </div>
+      {/each}
+    </dl>
+    <p class="now__updated">{copy.now.updatedLabel} <time datetime={copy.now.updatedAt}>{formatDate(copy.now.updatedAt, data.locale)}</time></p>
+  </section>
+</div>
 
 <style>
   /* Hero: texto em 8 colunas + aparato em 4 no desktop (≥ 960 px, grade de 12); empilhado abaixo disso. */
@@ -144,13 +179,236 @@
     transform: scale(var(--press-scale));
   }
 
-  .now {
-    display: grid;
-    gap: var(--space-3);
-    margin: 0;
+  /* ---------- Ritmo depois do hero: respiro (manifesto) → lista quieta (casos) → índice denso + Agora ---------- */
+  .chapter,
+  .manifesto {
+    padding-block: var(--space-chapter);
   }
 
-  .now dd {
+  /* A lista de projetos é o trecho quieto: o respiro grande fica antes (depois do manifesto), não depois. */
+  .cases {
+    padding-block-end: var(--space-8);
+  }
+
+  .chapter-head {
+    display: grid;
+    gap: var(--space-4);
+    margin-block-end: var(--space-7);
+  }
+
+  .chapter-head__intro {
+    max-width: 52ch;
+    color: var(--color-text-soft);
+  }
+
+  @media (min-width: 960px) {
+    .chapter-head:not(.chapter-head--stacked) {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+      align-items: end;
+    }
+
+    .chapter-head:not(.chapter-head--stacked) h2 {
+      grid-column: 1 / span 6;
+    }
+
+    .chapter-head:not(.chapter-head--stacked) .chapter-head__intro {
+      grid-column: 8 / span 5;
+    }
+  }
+
+  /* Manifesto: faixa de página inteira sem sair da grade (border-image pinta até as bordas da janela
+     como ink overflow, sem criar rolagem horizontal). */
+  .manifesto {
+    border-image-source: linear-gradient(var(--color-band), var(--color-band));
+    border-image-slice: 0 fill;
+    border-image-outset: 0 100vw;
+  }
+
+  .claim {
+    display: grid;
+    gap: var(--space-5);
+    padding-block: var(--space-7);
+    border-block-start: var(--border-hairline) solid var(--color-text);
+  }
+
+  .claim:last-child {
+    padding-block-end: 0;
+  }
+
+  .claim__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: var(--step-4);
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-display);
+    text-wrap: balance;
+  }
+
+  .claim__body {
+    display: grid;
+    gap: var(--space-5);
+    align-content: start;
+  }
+
+  .claim__text {
+    max-width: 52ch;
+    font-size: var(--step-2);
+    line-height: 1.45;
+  }
+
+  .claim__proof {
+    display: grid;
+    gap: var(--space-2);
+    max-width: 60ch;
+    padding-inline-start: var(--space-4);
+    border-inline-start: 2px solid var(--color-accent);
+    color: var(--color-text-soft);
+    font-size: var(--step-0);
+    line-height: 1.55;
+  }
+
+  .claim__label {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--color-text-faint);
+  }
+
+  .claim__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-5);
+  }
+
+  .claim__source {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+  }
+
+  @media (min-width: 960px) {
+    .claim {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+    }
+
+    .claim__title {
+      grid-column: 1 / span 5;
+    }
+
+    .claim__body {
+      grid-column: 7 / span 6;
+    }
+  }
+
+  /* Casos/projetos: lista simples de uma linha por projeto (o passo 07 redesenha). */
+  .projects {
+    border-block-start: var(--border-hairline) solid var(--color-text);
+    margin-block-end: var(--space-5);
+  }
+
+  .project {
+    display: grid;
+    gap: var(--space-2);
+    padding-block: var(--space-4);
+    border-block-end: var(--border-hairline) solid var(--color-rule);
+  }
+
+  .project__name {
+    font-size: var(--step-2);
+  }
+
+  .project__description {
+    max-width: 62ch;
+    color: var(--color-text-soft);
+    font-size: var(--step-0);
+    line-height: 1.55;
+  }
+
+  .project__stack {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--color-text-faint);
+  }
+
+  @media (min-width: 960px) {
+    .project {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+      align-items: baseline;
+    }
+
+    .project__name {
+      grid-column: 1 / span 3;
+    }
+
+    .project__description {
+      grid-column: 4 / span 7;
+    }
+
+    .project__stack {
+      grid-column: 11 / span 2;
+      text-align: end;
+    }
+  }
+
+  /* Escrita (8 colunas) + Agora (3 colunas) lado a lado no desktop. */
+  .writing-now {
+    display: grid;
+    gap: var(--space-8);
+    border-block-start: var(--border-hairline) solid var(--color-rule);
+  }
+
+  @media (min-width: 960px) {
+    .writing-now {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: var(--grid-gap);
+      align-items: start;
+    }
+
+    .writing {
+      grid-column: 1 / span 8;
+    }
+
+    .now {
+      grid-column: 10 / span 3;
+      position: sticky;
+      top: var(--space-6);
+    }
+  }
+
+  .writing__more {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    margin-block-start: var(--space-5);
+  }
+
+  .now {
+    display: grid;
+    gap: var(--space-4);
+    padding-block-start: var(--space-4);
+    border-block-start: 2px solid var(--color-text);
+  }
+
+  .now__title {
+    font-size: var(--step-3);
+  }
+
+  .now__list {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .now__list dt,
+  .now__updated {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--color-text-faint);
+  }
+
+  .now__list dd {
     margin: 0;
+    font-size: var(--step-0);
+    line-height: 1.5;
   }
 </style>

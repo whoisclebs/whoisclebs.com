@@ -4,6 +4,7 @@
  */
 import type { Locale } from '$lib/i18n'
 import { absoluteUrl, notePath } from '$lib/routing/paths'
+import { estimateReadingMinutes, projectsForEntry, topicFromKicker, type Topic } from './editorial'
 import { formatIssues, noteFrontmatterSchema, parseFrontmatter } from './schema'
 import { sortByDateDesc } from './sort'
 
@@ -18,6 +19,9 @@ export type Note = {
   excerpt: string
   published: boolean
   sources: string[]
+  projects: string[]
+  topic: Topic
+  readingMinutes: number
   path: string
   canonical: string
   body: string
@@ -46,7 +50,24 @@ export function loadNotes(sources: Record<string, string>): Note[] {
       continue
     }
     const path = notePath(result.data.slug)
-    notes.push({ file, ...result.data, sources: result.data.sources ?? [], path, canonical: absoluteUrl(path), body: parsed.body })
+    const projects = result.data.projects ?? []
+    try {
+      projectsForEntry({ slug: result.data.slug, projects })
+    } catch (error) {
+      errors.push(`  ${file}: ${(error as Error).message}`)
+      continue
+    }
+    notes.push({
+      file,
+      ...result.data,
+      sources: result.data.sources ?? [],
+      projects,
+      topic: topicFromKicker(result.data.kicker),
+      readingMinutes: estimateReadingMinutes(parsed.body),
+      path,
+      canonical: absoluteUrl(path),
+      body: parsed.body,
+    })
   }
   const slugs = notes.map((note) => note.slug)
   const duplicated = slugs.filter((slug, index) => slugs.indexOf(slug) !== index)

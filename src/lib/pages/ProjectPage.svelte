@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getMessages } from '$lib/i18n'
+  import { formatDate, getMessages } from '$lib/i18n'
   import { pages } from '$lib/routing/paths'
   import type { projectData } from '$lib/server/pages'
   import ProjectStatus from './ProjectStatus.svelte'
@@ -36,6 +36,17 @@
     {/if}
   </p>
 
+  {#if data.relatedWriting.length > 0}
+    <section class="related" aria-labelledby="related-writing-title">
+      <h2 id="related-writing-title">{t.writing.relatedWriting}</h2>
+      <ul>
+        {#each data.relatedWriting as entry (`${entry.kind}:${entry.slug}`)}
+          <li><a href={entry.href}>{entry.title}</a> <time datetime={entry.date}>{formatDate(entry.date, data.locale)}</time></li>
+        {/each}
+      </ul>
+    </section>
+  {/if}
+
   <p><a href={pages.projects[data.locale]}>{t.openSource.backToProjects}</a></p>
 </article>
 
@@ -49,6 +60,18 @@
 
   .facts dd {
     margin: 0;
+  }
+
+  .related {
+    display: grid;
+    gap: var(--space-3);
+    margin-block-end: var(--space-7);
+  }
+
+  .related time {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--color-text-faint);
   }
 
   .actions {
