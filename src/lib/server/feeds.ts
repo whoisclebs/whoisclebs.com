@@ -3,6 +3,8 @@ import type { Locale } from '$lib/i18n'
 import { getPublishedNotes } from '$lib/content/notes'
 import { getPublishedPosts, getTranslation } from '$lib/content/posts'
 import { projects } from '$lib/content/projects'
+import { getCaseStudy } from '$lib/content/cases/index'
+import { AGENTS_CHECKED_AT } from '$lib/content/agents'
 import { absoluteUrl, articlePath, notePath, pages, projectPath, topicPath, type PageKey } from '$lib/routing/paths'
 
 export function escapeXml(value: string): string {
@@ -89,33 +91,63 @@ export function notesFeed(): string {
 
 type SitemapEntry = { path: string; lastmod?: string; alternates?: Partial<Record<Locale, string>> }
 
+function latest(dates: Array<string | undefined>): string | undefined {
+  return dates.filter((date): date is string => Boolean(date)).sort().at(-1)
+}
+
+const revised = (entry: { date: string; updated?: string }) => entry.updated ?? entry.date
+
+/**
+ * Todas as rotas indexáveis (páginas prerenderizadas com 200; nada de redirect ou 404). `lastmod` só onde há
+ * data de revisão no conteúdo; hreflang só entre pares que são tradução um do outro.
+ */
 export function sitemapEntries(): SitemapEntry[] {
   const entries: SitemapEntry[] = []
+  const lastmodFor: Partial<Record<PageKey, Partial<Record<Locale, string>>>> = {
+    writing: { 'pt-BR': latest(getPublishedPosts('pt-BR').map(revised)), en: latest(getPublishedPosts('en').map(revised)) },
+    notes: { 'pt-BR': latest(getPublishedNotes().map(revised)) },
+    projects: { 'pt-BR': latest(projects.map((project) => project.statusCheckedAt)), en: latest(projects.map((project) => project.statusCheckedAt)) },
+    agents: { 'pt-BR': AGENTS_CHECKED_AT },
+  }
   for (const key of Object.keys(pages) as PageKey[]) {
     const alternates: Partial<Record<Locale, string>> = pages[key]
-    for (const path of Object.values(alternates)) if (path) entries.push({ path, alternates })
+    for (const [locale, path] of Object.entries(alternates) as Array<[Locale, string | undefined]>) {
+      if (path) entries.push({ path, lastmod: lastmodFor[key]?.[locale], alternates })
+    }
   }
   for (const project of projects) {
-    const alternates = { 'pt-BR': projectPath(project.slug, 'pt-BR'), en: projectPath(project.slug, 'en') }
-    entries.push({ path: alternates['pt-BR'], alternates }, { path: alternates.en, alternates })
+    const study = getCaseStudy(project.slug)
+    // Com case, pt-BR (estudo de caso) e en (ficha) não são tradução: sem hreflang.
+    const alternates = study ? undefined : { 'pt-BR': projectPath(project.slug, 'pt-BR'), en: projectPath(project.slug, 'en') }
+    entries.push(
+      { path: projectPath(project.slug, 'pt-BR'), lastmod: study?.checkedAt ?? project.statusCheckedAt, alternates },
+      { path: projectPath(project.slug, 'en'), lastmod: project.statusCheckedAt, alternates },
+    )
   }
   for (const locale of ['pt-BR', 'en'] as const) {
     for (const post of getPublishedPosts(locale)) {
       const translation = getTranslation(post, locale === 'en' ? 'pt-BR' : 'en')
       const alternates = translation ? { [post.locale]: post.path, [translation.locale]: translation.path } : undefined
-      entries.push({ path: articlePath(post.slug, locale), lastmod: post.updated ?? post.date, alternates })
+      entries.push({ path: articlePath(post.slug, locale), lastmod: revised(post), alternates })
     }
   }
-  const topicSlugs = (locale: 'pt-BR' | 'en') => new Set(getPublishedPosts(locale).map((post) => post.topic.slug))
-  const ptTopics = topicSlugs('pt-BR')
-  const enTopics = topicSlugs('en')
+  const topicDates = (locale: 'pt-BR' | 'en') => {
+    const dates = new Map<string, string>()
+    for (const post of getPublishedPosts(locale)) {
+      const current = dates.get(post.topic.slug)
+      if (!current || revised(post) > current) dates.set(post.topic.slug, revised(post))
+    }
+    return dates
+  }
+  const ptTopics = topicDates('pt-BR')
+  const enTopics = topicDates('en')
   for (const [locale, own, other] of [['pt-BR', ptTopics, enTopics], ['en', enTopics, ptTopics]] as const) {
-    for (const slug of own) {
+    for (const [slug, lastmod] of own) {
       const alternates = other.has(slug) ? { 'pt-BR': topicPath(slug, 'pt-BR'), en: topicPath(slug, 'en') } : undefined
-      entries.push({ path: topicPath(slug, locale), alternates })
+      entries.push({ path: topicPath(slug, locale), lastmod, alternates })
     }
   }
-  for (const note of getPublishedNotes()) entries.push({ path: notePath(note.slug), lastmod: note.updated ?? note.date })
+  for (const note of getPublishedNotes()) entries.push({ path: notePath(note.slug), lastmod: revised(note) })
   return entries
 }
 

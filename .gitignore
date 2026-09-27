@@ -145,3 +145,6 @@ playwright-report/
 
 # Playwright MCP snapshots/screenshots
 .playwright-mcp/
+
+# Imagens Open Graph geradas no build (scripts/build-og.mjs)
+static/og/

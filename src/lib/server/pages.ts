@@ -13,7 +13,8 @@ import { AGENT_STATUS, AGENTS_CHECKED_AT, agentProjects, EVALUATION_CRITERIA, lo
 import { CASE_SECTION_TITLES, type CaseStudy } from '$lib/content/case-schema'
 import { format, getMessages, type Locale } from '$lib/i18n'
 import { absoluteUrl, notePath, pagePath, pages, projectPath, topicPath, type PageKey } from '$lib/routing/paths'
-import { pageTitle, person, SITE_NAME, type Seo } from '$lib/seo'
+import { ogImageAlt, ogImagePath, pageTitle, SITE_NAME, type Seo } from '$lib/seo'
+import { articleNode, breadcrumbNode, caseStudyNodes, personNode, personRef, profilePageNode, softwareSourceCodeNode, webPageNode, websiteNode } from './publishing/structured-data'
 import { highlightCode, renderInline, renderMarkdown } from './markdown'
 import { describeSummary } from '$lib/sim/labels'
 import { DEFAULT_CONFIG, runToEnd, summarize } from '$lib/sim/simulator'
@@ -88,7 +89,7 @@ export function homeData(locale: Locale) {
     path: pages.home[locale],
     locale,
     alternates: alternatesFor('home'),
-    jsonLd: [person, { '@type': 'WebSite', name: SITE_NAME, url: absoluteUrl(pages.home[locale]), inLanguage: locale, description }],
+    jsonLd: [personNode(locale), websiteNode(locale, SITE_NAME, description)],
   }
   return {
     locale,
@@ -164,7 +165,9 @@ export function projectsData(locale: Locale) {
   const t = getMessages(locale)
   return {
     locale,
-    seo: staticSeo('projects', locale, locale === 'en' ? 'Projects' : 'Projetos', t.portfolio.description),
+    seo: staticSeo('projects', locale, locale === 'en' ? 'Projects' : 'Projetos', t.portfolio.description, {
+      jsonLd: webPageNode('CollectionPage', locale, pages.projects[locale], locale === 'en' ? 'Projects' : 'Projetos'),
+    }),
     projects: projectCards(locale),
   }
 }
@@ -197,16 +200,20 @@ export async function projectData(slug: string, locale: Locale) {
       path,
       locale,
       alternates: { 'pt-BR': projectPath(project.slug, 'pt-BR'), en: projectPath(project.slug, 'en') },
-      jsonLd: {
-        '@type': 'SoftwareSourceCode',
-        name: project.name,
-        description,
-        codeRepository: project.repo,
-        programmingLanguage: project.technologies.join(', '),
-        url: absoluteUrl(path),
-        inLanguage: locale,
-        author: { '@type': 'Person', name: author.name },
-      },
+      // Com case, o pt-BR é o estudo de caso e o inglês é só a ficha: não são tradução uma da outra, então
+      // o seletor de idioma continua ligando as duas, mas sem hreflang (nem na página, nem no sitemap).
+      hreflang: !study,
+      image: caseStudy ? ogImagePath(project.slug) : undefined,
+      imageAlt: caseStudy ? ogImageAlt(project.name) : undefined,
+      jsonLd: caseStudy && study
+        ? caseStudyNodes(study, project, path)
+        : [
+            softwareSourceCodeNode(project, description, locale),
+            breadcrumbNode(locale, [
+              { name: t['nav.projects'], path: pages.projects[locale] },
+              { name: project.name, path },
+            ]),
+          ],
     } satisfies Seo,
   }
 }
@@ -229,7 +236,9 @@ export function writingData(locale: Locale) {
   const t = getMessages(locale)
   return {
     locale,
-    seo: staticSeo('writing', locale, t.writing.title, t['blog.description']),
+    seo: staticSeo('writing', locale, t.writing.title, t['blog.description'], {
+      jsonLd: webPageNode('CollectionPage', locale, pages.writing[locale], t.writing.title),
+    }),
     heading: t.writing.title,
     lead: t['blog.description'],
     topics: topicsFor(locale),
@@ -255,6 +264,10 @@ export function topicData(slug: string, locale: Locale) {
       locale,
       // hreflang só quando o mesmo assunto existe publicado no outro idioma.
       alternates: pair ? { [locale]: path, [other]: topicPath(slug, other) } : { [locale]: path },
+      jsonLd: breadcrumbNode(locale, [
+        { name: t.writing.title, path: pages.writing[locale] },
+        { name: heading, path },
+      ]),
     } satisfies Seo,
     heading,
     lead: format(t.writing.topicDescription, { topic: topic.label }),
@@ -290,21 +303,24 @@ export async function articleData(slug: string, locale: Locale) {
       locale,
       alternates,
       type: 'article',
-      image: post.cover,
       publishedTime: post.date,
       modifiedTime: post.updated,
-      jsonLd: {
-        '@type': 'BlogPosting',
-        headline: post.title,
-        description: post.excerpt,
-        image: absoluteUrl(post.cover),
-        datePublished: post.date,
-        ...(post.updated ? { dateModified: post.updated } : {}),
-        inLanguage: locale,
-        url: post.canonical,
-        mainEntityOfPage: post.canonical,
-        author: { '@type': 'Person', name: author.name, url: absoluteUrl('/sobre/') },
-      },
+      jsonLd: [
+        articleNode({
+          type: 'BlogPosting',
+          headline: post.title,
+          description: post.excerpt,
+          url: post.canonical,
+          locale,
+          image: post.cover,
+          datePublished: post.date,
+          dateModified: post.updated ?? post.date,
+        }),
+        breadcrumbNode(locale, [
+          { name: getMessages(locale).writing.title, path: pages.writing[locale] },
+          { name: post.title, path: post.path },
+        ]),
+      ],
     } satisfies Seo,
   }
 }
@@ -313,7 +329,9 @@ export function notesData() {
   const t = getMessages('pt-BR')
   return {
     locale: 'pt-BR' as const,
-    seo: staticSeo('notes', 'pt-BR', t.notes.title, t['til.seoDescription']),
+    seo: staticSeo('notes', 'pt-BR', t.notes.title, t['til.seoDescription'], {
+      jsonLd: webPageNode('CollectionPage', 'pt-BR', pages.notes['pt-BR'], t.notes.title),
+    }),
     years: groupByYear(getPublishedNotes().map((note) => ({ ...toNoteSummary(note), href: notePath(note.slug) }))),
   }
 }
@@ -337,15 +355,21 @@ export async function noteData(slug: string) {
       type: 'article',
       publishedTime: note.date,
       modifiedTime: note.updated,
-      jsonLd: {
-        '@type': 'TechArticle',
-        headline: note.title,
-        description: note.excerpt,
-        datePublished: note.date,
-        inLanguage: 'pt-BR',
-        url: note.canonical,
-        author: { '@type': 'Person', name: author.name },
-      },
+      jsonLd: [
+        articleNode({
+          type: 'TechArticle',
+          headline: note.title,
+          description: note.excerpt,
+          url: note.canonical,
+          locale: 'pt-BR',
+          datePublished: note.date,
+          dateModified: note.updated ?? note.date,
+        }),
+        breadcrumbNode('pt-BR', [
+          { name: getMessages('pt-BR').notes.title, path: pages.notes['pt-BR'] },
+          { name: note.title, path: note.path },
+        ]),
+      ],
     } satisfies Seo,
   }
 }
@@ -356,7 +380,7 @@ export function aboutData(locale: Locale) {
     locale,
     badges,
     seo: staticSeo('about', locale, locale === 'en' ? 'About' : 'Sobre', t.about.intro, {
-      jsonLd: { '@type': 'ProfilePage', mainEntity: person, inLanguage: locale },
+      jsonLd: profilePageNode(locale, pages.about[locale], t.about.title),
     }),
   }
 }
@@ -368,7 +392,7 @@ export function contactData() {
     email: contactEmail,
     socialLinks,
     seo: staticSeo('contact', 'pt-BR', t.contact.title, t.contact.description, {
-      jsonLd: { '@type': 'ContactPage', inLanguage: 'pt-BR', mainEntity: person },
+      jsonLd: { '@type': 'ContactPage', name: t.contact.title, url: absoluteUrl(pages.contact['pt-BR']), inLanguage: 'pt-BR', mainEntity: personNode('pt-BR') },
     }),
   }
 }
@@ -385,24 +409,32 @@ export function agentsData() {
     criteria: EVALUATION_CRITERIA,
     topics: techTopics.map((topic) => ({ ...topic, approachHtml: topic.approach.map(renderInline), inCodeHtml: topic.inCode.map(renderInline) })),
     seo: staticSeo('agents', 'pt-BR', t.agents.title, t.agents.description, {
-      jsonLd: { '@type': 'WebPage', inLanguage: 'pt-BR', about: 'Sistemas agênticos', author: person },
+      jsonLd: { '@type': 'WebPage', name: t.agents.title, url: absoluteUrl(pages.agents['pt-BR']), inLanguage: 'pt-BR', dateModified: AGENTS_CHECKED_AT, author: personRef() },
     }),
   }
 }
 
 export function booksData(locale: Locale) {
   const t = getMessages(locale)
-  return { locale, books, seo: staticSeo('books', locale, locale === 'en' ? 'Books' : 'Livros', t.books.description) }
+  return {
+    locale,
+    books,
+    seo: staticSeo('books', locale, locale === 'en' ? 'Books' : 'Livros', t.books.description, { jsonLd: webPageNode('CollectionPage', locale, pages.books[locale], t.books.title) }),
+  }
 }
 
 export function hobbiesData(locale: Locale) {
   const t = getMessages(locale)
-  return { locale, boardGames, seo: staticSeo('hobbies', locale, 'Hobbies', t.hobbies.seoDescription) }
+  return {
+    locale,
+    boardGames,
+    seo: staticSeo('hobbies', locale, 'Hobbies', t.hobbies.seoDescription, { jsonLd: webPageNode('WebPage', locale, pages.hobbies[locale], t.hobbies.title) }),
+  }
 }
 
 export function legalData(key: 'privacy' | 'terms', locale: Locale) {
   const copy = getMessages(locale)[key]
-  return { locale, kind: key, seo: staticSeo(key, locale, copy.title, copy.description) }
+  return { locale, kind: key, seo: staticSeo(key, locale, copy.title, copy.description, { jsonLd: webPageNode('WebPage', locale, pages[key][locale], copy.title) }) }
 }
 
 export function articleEntries() {

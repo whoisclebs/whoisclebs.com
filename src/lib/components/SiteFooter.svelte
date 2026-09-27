@@ -59,7 +59,7 @@
         <h2 id="footer-read-title" class="col__title">{c.readHeading}</h2>
         <ul aria-labelledby="footer-read-title">
           <li><a href={feed} type="application/rss+xml">{c.rss}</a></li>
-          <!-- /resume.json é gerado no passo 12 (camada legível por agentes). -->
+          <!-- /resume.json: JSON Resume gerado do conteúdo (src/lib/server/publishing/resume.ts). -->
           <li><a href="/resume.json" type="application/json">{c.resume}</a></li>
         </ul>
         <nav aria-label={t['nav.secondary']}>

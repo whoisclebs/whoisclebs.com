@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { blogFeed, notesFeed, renderRss, rfc822, sitemapEntries } from './feeds'
+import { blogFeed, notesFeed, renderRss, renderSitemap, rfc822, sitemapEntries } from './feeds'
 
 describe('RSS', () => {
   it('data ISO vira RFC 822 sem trocar de dia', () => {
@@ -35,5 +35,38 @@ describe('sitemap', () => {
   it('inclui as páginas de assunto com hreflang só quando o par existe', () => {
     const topic = sitemapEntries().find((entry) => entry.path === '/escrita/assunto/devops/')
     expect(topic?.alternates).toEqual({ 'pt-BR': '/escrita/assunto/devops/', en: '/en/writing/topic/devops/' })
+  })
+})
+
+describe('sitemap: rotas indexáveis, lastmod e hreflang', () => {
+  const entries = sitemapEntries()
+
+  it('não repete URL e toda URL termina com barra (sem redirect de barra)', () => {
+    const paths = entries.map((entry) => entry.path)
+    expect(new Set(paths).size).toBe(paths.length)
+    for (const path of paths) expect(path).toMatch(/^\/(.*\/)?$/)
+  })
+
+  it('não lista rotas antigas que só redirecionam', () => {
+    for (const legacy of ['/blog/', '/til/', '/about/', '/portfolio/', '/books/', '/en/blog/']) {
+      expect(entries.some((entry) => entry.path === legacy)).toBe(false)
+    }
+  })
+
+  it('lastmod vem da data de revisão do conteúdo', () => {
+    const article = entries.find((entry) => entry.path === '/escrita/github-actions-como-fazer-deploy/')
+    expect(article?.lastmod).toBe('2025-09-16')
+    expect(entries.find((entry) => entry.path === '/projetos/tuxedo/')?.lastmod).toBe('2026-09-27')
+    expect(entries.find((entry) => entry.path === '/agentes/')?.lastmod).toBe('2026-09-27')
+    for (const entry of entries) if (entry.lastmod) expect(entry.lastmod).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+  })
+
+  it('hreflang só entre pares traduzidos: case (pt) e ficha (en) não são tradução', () => {
+    expect(entries.find((entry) => entry.path === '/projetos/tuxedo/')?.alternates).toBeUndefined()
+    expect(entries.find((entry) => entry.path === '/en/projects/golpher/')?.alternates).toBeUndefined()
+    expect(entries.find((entry) => entry.path === '/projetos/seishin/')?.alternates).toEqual({ 'pt-BR': '/projetos/seishin/', en: '/en/projects/seishin/' })
+    expect(entries.find((entry) => entry.path === '/notas/')?.alternates).toEqual({ 'pt-BR': '/notas/' })
+    const xml = renderSitemap(entries)
+    expect(xml).not.toMatch(/<loc>https:\/\/whoisclebs\.com\/notas\/<\/loc>\s*<xhtml:link/)
   })
 })

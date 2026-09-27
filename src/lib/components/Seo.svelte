@@ -1,6 +1,6 @@
 <script lang="ts">
   import { absoluteUrl } from '$lib/routing/paths'
-  import { DEFAULT_IMAGE, type Seo } from '$lib/seo'
+  import { DEFAULT_IMAGE, DEFAULT_IMAGE_ALT, OG_IMAGE_SIZE, type Seo } from '$lib/seo'
 
   let { seo }: { seo: Seo } = $props()
 
@@ -20,7 +20,7 @@
   <title>{seo.title}</title>
   <meta name="description" content={seo.description} />
   <link rel="canonical" href={canonical} />
-  {#if alternates.length > 1}
+  {#if alternates.length > 1 && seo.hreflang !== false}
     {#each alternates as [locale, path] (locale)}
       <link rel="alternate" hreflang={locale} href={absoluteUrl(path)} />
     {/each}
@@ -35,6 +35,10 @@
   <meta property="og:type" content={seo.type ?? 'website'} />
   <meta property="og:url" content={canonical} />
   <meta property="og:image" content={image} />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content={String(OG_IMAGE_SIZE.width)} />
+  <meta property="og:image:height" content={String(OG_IMAGE_SIZE.height)} />
+  <meta property="og:image:alt" content={seo.imageAlt ?? DEFAULT_IMAGE_ALT} />
   {#if seo.publishedTime}
     <meta property="article:published_time" content={seo.publishedTime} />
   {/if}
@@ -42,6 +46,9 @@
     <meta property="article:modified_time" content={seo.modifiedTime} />
   {/if}
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={seo.title} />
+  <meta name="twitter:description" content={seo.description} />
+  <meta name="twitter:image" content={image} />
   {#if jsonLdTag}
     <!-- eslint-disable-next-line svelte/no-at-html-tags -- JSON-LD serializado do próprio conteúdo, com < escapado -->
     {@html jsonLdTag}
