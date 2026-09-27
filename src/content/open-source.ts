@@ -42,6 +42,10 @@ export const openSourceProjects: OpenSourceProject[] = [
   },
 ]
 
+export function getProjectById(id: string): OpenSourceProject | undefined {
+  return openSourceProjects.find((project) => project.id === id)
+}
+
 export const technologyIcons: Record<OpenSourceProject['technologies'][number], string> = {
   Java: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg',
   Spring: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg',

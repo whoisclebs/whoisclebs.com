@@ -73,6 +73,11 @@ export const ptBR = {
     maintain: 'MANTENHO',
     repository: 'Repositório',
     docs: 'Documentação',
+    yearLabel: 'Ano',
+    stackLabel: 'Stack',
+    backToProjects: 'Voltar para os projetos',
+    notFoundTitle: 'Projeto não encontrado',
+    notFoundDescription: 'Esse projeto não existe ou ainda não ganhou uma página própria.',
     sponsor: 'Apoiar no GitHub Sponsors',
     intro: 'Projetos que mantenho no GitHub.',
     projects: {

@@ -22,6 +22,32 @@ const defaultTitle = `${siteName} - Engenharia de software sem teatro`
 const defaultDescription =
   'Blog e portfólio de Clebson A. Fonseca sobre engenharia de software, arquitetura, pagamentos, frontend e operação.'
 const defaultImage = `/profile/clebson.png`
+const openSourceProjectRoutes = [
+  {
+    id: 'tuxedo',
+    ptTitle: 'tuxedo',
+    ptDescription: 'Cliente HTTP leve e encadeável para Go, criado para reduzir boilerplate do net/http ao montar requests, definir headers, enviar bodies, fazer tracing e decodificar respostas JSON com uma API simples inspirada em bibliotecas como Resty.',
+    enDescription: 'Lightweight, chainable HTTP client for Go, built to reduce net/http boilerplate when assembling requests, setting headers, sending bodies, tracing calls, and decoding JSON responses through a simple API inspired by libraries like Resty.',
+  },
+  {
+    id: 'golpher',
+    ptTitle: 'golpher',
+    ptDescription: 'Micro framework HTTP para Go construído sobre net/http, com roteador simples por método, abstrações de Request/Response, parsing de body em JSON/XML e tratamento centralizado de erros para APIs pequenas e diretas.',
+    enDescription: 'Small Go HTTP micro-framework built on top of net/http, with method-based routing, Request/Response abstractions, JSON/XML body parsing, and centralized error handling for small direct APIs.',
+  },
+  {
+    id: 'seishin',
+    ptTitle: 'seishin engine',
+    ptDescription: 'Engine open source em Rust para explorar arquitetura de runtime, componentes reutilizáveis e uma base de desenvolvimento enxuta para experiências interativas.',
+    enDescription: 'Open source Rust engine for exploring runtime architecture, reusable components, and a lean development base for interactive experiences.',
+  },
+  {
+    id: 'rsgit',
+    ptTitle: 'rsgit',
+    ptDescription: 'Implementação experimental de conceitos do Git em Rust, criada para estudar internals de versionamento, estruturas de dados e operações de repositório com uma abordagem didática.',
+    enDescription: 'Experimental implementation of Git concepts in Rust, built to study version-control internals, data structures, and repository operations through a hands-on codebase.',
+  },
+]
 
 // ── SEO helpers ──────────────────────────────────────────────────────
 
@@ -88,6 +114,7 @@ function getHreflangLinks(route, ptPosts, enPosts) {
     '/about': '/en/about',
     '/blog': '/en/blog',
     '/portfolio': '/en/portfolio',
+    ...Object.fromEntries(openSourceProjectRoutes.map((project) => [`/projects/${project.id}`, `/en/projects/${project.id}`])),
     '/hobbies': '/en/hobbies',
     '/books': '/en/books',
     '/privacy-policy': '/en/privacy-policy',
@@ -186,6 +213,35 @@ function getSeoForRoute(route, ptPosts, enPosts, tilEntries) {
     }
   }
 
+  const projectMatch = route.match(/^\/(en\/)?projects\/(.+)/)
+  if (projectMatch) {
+    const isEn = !!projectMatch[1]
+    const projectId = projectMatch[2]
+    const project = openSourceProjectRoutes.find((entry) => entry.id === projectId)
+
+    if (project) {
+      const projectUrl = isEn ? `${siteUrl}/en/projects/${project.id}` : `${siteUrl}/projects/${project.id}`
+      const description = isEn ? project.enDescription : project.ptDescription
+
+      return {
+        locale: isEn ? 'en' : 'pt-BR',
+        title: `${project.ptTitle} – ${siteName}`,
+        description,
+        url: projectUrl,
+        image: defaultImage,
+        type: 'website',
+        jsonLd: {
+          '@context': 'https://schema.org',
+          '@type': 'SoftwareSourceCode',
+          name: project.ptTitle,
+          description,
+          url: projectUrl,
+          author: { '@type': 'Person', name: 'Clebson A. Fonseca' },
+        },
+      }
+    }
+  }
+
   const staticPages = {
     '/': {
       locale: 'pt-BR', title: defaultTitle, description: defaultDescription, jsonLd: [personJsonLd, websiteJsonLd],
@@ -271,10 +327,12 @@ async function main() {
   const ptStatic = ['/', '/about', '/blog', '/til', '/portfolio', '/hobbies', '/books', '/privacy-policy', '/terms-of-use', '/404']
   const ptBlog = ptPosts.map((p) => `/blog/${p.slug}`)
   const ptTil = tilEntries.map((e) => `/til/${e.slug}`)
+  const ptProjects = openSourceProjectRoutes.map((project) => `/projects/${project.id}`)
   const enStatic = ['/en/', '/en/about', '/en/blog', '/en/portfolio', '/en/hobbies', '/en/books', '/en/privacy-policy', '/en/terms-of-use']
   const enBlog = enPosts.map((p) => `/en/blog/${p.slug}`)
+  const enProjects = openSourceProjectRoutes.map((project) => `/en/projects/${project.id}`)
 
-  const routes = [...ptStatic, ...ptBlog, ...ptTil, ...enStatic, ...enBlog]
+  const routes = [...ptStatic, ...ptBlog, ...ptTil, ...ptProjects, ...enStatic, ...enBlog, ...enProjects]
   console.log(`Prerendering ${routes.length} routes …\n`)
 
   const templatePath = join(distDir, 'index.html')

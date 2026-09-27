@@ -7,6 +7,7 @@ import Books from "./pages/books"
 import Blog from "./pages/blog"
 import BlogPost from "./pages/blog-post"
 import Portfolio from "./pages/portfolio"
+import ProjectDetail from "./pages/project-detail"
 import Til from "./pages/til"
 import TilPost from "./pages/til-post"
 import Hobbies from "./pages/hobbies"
@@ -22,6 +23,7 @@ function App() {
         <Route path="about" element={<About />} />
         <Route path="books" element={<Books />} />
         <Route path="portfolio" element={<Portfolio />} />
+        <Route path="projects/:id" element={<ProjectDetail />} />
         <Route path="hobbies" element={<Hobbies />} />
         <Route path="blog" element={<Blog />} />
         <Route path="blog/:slug" element={<BlogPost />} />
@@ -36,6 +38,7 @@ function App() {
           <Route path="about" element={<About />} />
           <Route path="books" element={<Books />} />
           <Route path="portfolio" element={<Portfolio />} />
+          <Route path="projects/:id" element={<ProjectDetail />} />
           <Route path="hobbies" element={<Hobbies />} />
           <Route path="blog" element={<Blog />} />
           <Route path="blog/:slug" element={<BlogPost />} />

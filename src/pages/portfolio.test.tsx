@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import Home from './home'
 import Portfolio from './portfolio'
 import Books from './books'
+import ProjectDetail from './project-detail'
 import { I18nProvider, i18nStorageKey } from '@/lib/i18n'
 
 function withI18n(children: ReactNode) {
@@ -28,6 +29,7 @@ describe('editorial secondary pages', () => {
     expect(screen.getByRole('heading', { name: /tuxedo/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /seishin engine/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /rsgit/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /tuxedo — projetos/i })).toHaveAttribute('href', '/projects/tuxedo')
     expect(screen.getByRole('link', { name: /ler artigos/i })).toHaveAttribute('href', '/blog')
     expect(screen.getByRole('link', { name: /ver projetos/i })).toHaveAttribute('href', '/portfolio')
     expect(screen.getByText(/um orquestrador de agentes em go/i)).toBeInTheDocument()
@@ -68,5 +70,21 @@ describe('editorial secondary pages', () => {
     expect(screen.getByRole('button', { name: /pr.ximo livro/i })).toBeInTheDocument()
     expect(screen.getAllByRole('article')).toHaveLength(2)
     expect(screen.getByText(/links afiliados amazon/i)).toBeInTheDocument()
+  })
+
+  it('renders an open source project detail page', () => {
+    render(
+      <MemoryRouter initialEntries={['/projects/tuxedo']}>
+        {withI18n(
+          <Routes>
+            <Route path="/projects/:id" element={<ProjectDetail />} />
+          </Routes>,
+        )}
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByRole('heading', { level: 1, name: /tuxedo/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /repositório/i })).toHaveAttribute('href', 'https://github.com/whoisclebs/tuxedo')
+    expect(screen.getByRole('link', { name: /documentação/i })).toHaveAttribute('href', 'https://pkg.go.dev/github.com/whoisclebs/tuxedo')
   })
 })

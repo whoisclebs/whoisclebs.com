@@ -75,6 +75,11 @@ export const en: typeof ptBR = {
     maintain: 'MAINTAINED BY ME',
     repository: 'Repository',
     docs: 'Documentation',
+    yearLabel: 'Year',
+    stackLabel: 'Stack',
+    backToProjects: 'Back to projects',
+    notFoundTitle: 'Project not found',
+    notFoundDescription: 'This project does not exist or does not have its own page yet.',
     sponsor: 'Sponsor on GitHub Sponsors',
     intro: 'Projects I maintain on GitHub.',
     projects: {
