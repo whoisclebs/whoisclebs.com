@@ -14,7 +14,8 @@
  *   node scripts/capture-snapshots.mjs 00-baseline dist
  *
  * Variáveis opcionais: SNAPSHOT_ROUTES (JSON [{ name, path, scheme?, click?, element? }]) substitui as rotas
- * padrão; `click: { selector, count }` clica N vezes antes da captura (estados do simulador) e `element`
+ * padrão; `activity` ('fresh' | 'stale' | 'empty' | 'unavailable' | 'loading') intercepta `/api/activity` com os
+ * corpos de `tests/fixtures/activity-fixtures.mjs` (estados do rodapé); `click: { selector, count }` clica N vezes antes da captura (estados do simulador) e `element`
  * captura só aquele elemento em vez da página inteira; SNAPSHOT_WIDTHS ("390,1440") limita as larguras;
  * SNAPSHOT_LOCALE troca o locale do navegador (padrão en-US: o site novo não pode depender dele).
  */
@@ -25,6 +26,7 @@ import { mkdirSync, readFileSync, existsSync, statSync } from 'node:fs'
 import { join, extname, normalize } from 'node:path'
 import { chromium } from '@playwright/test'
 import sharp from 'sharp'
+import { activityBody, unavailableBody } from '../tests/fixtures/activity-fixtures.mjs'
 
 const outName = process.argv[2]
 if (!outName) {
@@ -132,6 +134,16 @@ async function startWrangler() {
   throw new Error('wrangler dev não respondeu em 60 s')
 }
 
+/** Estados do rodapé: resposta simulada de `/api/activity` (a fixture nunca vai para o site). */
+async function mockActivity(page, state) {
+  await page.route('**/api/activity', async (request) => {
+    if (state === 'loading') return // nunca responde: o rodapé fica em "carregando" até o timeout
+    if (state === 'unavailable') return request.fulfill({ status: 503, json: unavailableBody })
+    const body = activityBody(state === 'stale' ? 'stale' : 'fresh', new Date(), { empty: state === 'empty' })
+    return request.fulfill({ status: 200, json: body })
+  })
+}
+
 const { base, stop } = buildDir ? await startStatic() : await startWrangler()
 
 mkdirSync(outDir, { recursive: true })
@@ -147,6 +159,11 @@ try {
     for (const route of routes) {
       // Rotas com `scheme: 'dark'` emulam prefers-color-scheme (tema "noite"); as demais ficam no claro.
       await page.emulateMedia({ colorScheme: route.scheme ?? 'light' })
+      await page.unroute('**/api/activity')
+      if (route.activity) await mockActivity(page, route.activity)
+      // Página em branco entre rotas: ir de `/` para `/` restauraria a rolagem no rodapé e dispararia a
+      // atividade antes da hora (no estado "carregando", a requisição pendurada seguraria o networkidle).
+      await page.goto('about:blank')
       await page.goto(base + route.path, { waitUntil: 'networkidle' })
       await page.evaluate(async () => {
         await document.fonts.ready
@@ -156,6 +173,11 @@ try {
         }
         window.scrollTo(0, 0)
       })
+      if (route.activity) {
+        await page.locator('[data-activity-state]').scrollIntoViewIfNeeded()
+        const expected = route.activity === 'empty' ? 'fresh' : route.activity
+        await page.locator(`[data-activity-state="${expected}"]`).waitFor({ timeout: 10_000 })
+      }
       if (route.click) {
         const target = page.locator(route.click.selector)
         await target.waitFor()

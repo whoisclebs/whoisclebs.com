@@ -29,4 +29,4 @@
 <main id="conteudo" class="page" tabindex="-1">
   {@render children()}
 </main>
-<SiteFooter {locale} />
+<SiteFooter {locale} currentPath={page.url.pathname} />
