@@ -376,13 +376,13 @@
       padding-block-start: var(--space-8);
     }
 
+    /* Texto e e-mail embaixo do título "Contato", na mesma coluna (pedido do proprietário). */
     .invite__title {
       grid-column: 1 / span 6;
     }
 
     .invite__body {
-      grid-column: 7 / -1;
-      padding-inline-start: var(--grid-gap);
+      grid-column: 1 / span 6;
     }
 
     .columns {
