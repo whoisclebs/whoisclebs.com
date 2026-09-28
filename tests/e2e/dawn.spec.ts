@@ -34,24 +34,28 @@ function luminance([r = 0, g = 0, b = 0]: (number | undefined)[]) {
 const ratio = (a: number, b: number) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
 
 test.describe('faixas do amanhecer', () => {
-  test('home: noite no hero, aurora nos capítulos curtos, dia na leitura, noite no rodapé', async ({ page }) => {
+  test('home: noite no hero, céu índigo com estrelas depois dele, noite do farol no rodapé', async ({ page }) => {
     await mockActivity(page, 'fresh')
     await page.goto('/')
     const bg = (selector: string) => page.locator(selector).first().evaluate((el) => getComputedStyle(el).backgroundColor)
-    expect(await bg('section.hero')).toBe('rgb(14, 20, 29)')
-    expect(await bg('[data-band="aurora"]')).toBe('rgb(107, 63, 74)')
-    expect(await page.locator('[data-band="aurora"]').evaluate((el) => getComputedStyle(el).backgroundImage)).toContain('linear-gradient')
-    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(238, 236, 230)')
-    expect(await bg('footer.site-footer')).toBe('rgb(14, 20, 29)')
+    expect(await bg('section.hero')).toBe('rgb(11, 17, 32)')
+    // Céu índigo quase preto, estrelas em SVG e a transição da noite do hero (e para o rodapé) em degradê.
+    expect(await bg('[data-band="aurora"]')).toBe('rgb(10, 14, 32)')
+    const image = await page.locator('[data-band="aurora"]').evaluate((el) => getComputedStyle(el).backgroundImage)
+    expect(image).toContain('linear-gradient')
+    expect(image).toContain('circle')
+    // O papel só aparece na leitura longa; o corpo continua papel por baixo.
+    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(236, 238, 241)')
+    expect(await bg('footer.site-footer')).toBe('rgb(11, 21, 16)')
   })
 
   test('páginas internas: topo em noite curta com o fio do horizonte e corpo em papel', async ({ page }) => {
     await page.goto('/escrita/github-actions-como-fazer-deploy/')
     const header = page.locator('header.site-header')
-    expect(await header.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(14, 20, 29)')
-    expect(await header.evaluate((el) => getComputedStyle(el).borderBottomColor)).toBe('rgb(232, 166, 82)')
+    expect(await header.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(11, 17, 32)')
+    expect(await header.evaluate((el) => getComputedStyle(el).borderBottomColor)).toBe('rgb(242, 230, 160)')
     expect(await header.evaluate((el) => el.getBoundingClientRect().height)).toBeLessThan(200)
-    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(238, 236, 230)')
+    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(236, 238, 241)')
     // Leitura longa confortável: 18 px / 1,7 no papel.
     const prose = await page.locator('.prose').first().evaluate((el) => ({ size: getComputedStyle(el).fontSize, line: getComputedStyle(el).lineHeight }))
     expect(prose).toEqual({ size: '18px', line: '30.6px' })
@@ -89,9 +93,6 @@ test.describe('HUD no horizonte', () => {
     await expect(hudItem(page, 'sync').locator('.hud__seg[data-on]')).toHaveCount(8)
     await expect(hudItem(page, 'latency').locator('.hud__value')).toHaveText(/^\d+ ms$/)
     await expect(hudItem(page, 'build').locator('a.hud__value')).toHaveText(/^[0-9a-f]{7}$/)
-    // O rodapé lista os mesmos 6 eventos que o HUD conta.
-    await page.locator('[data-activity-state]').scrollIntoViewIfNeeded()
-    await expect(page.locator('[data-activity-state="fresh"] ul.items > li')).toHaveCount(6)
   })
 
   test('sync desatualizado: texto com a data e barra cinza', async ({ page }) => {
@@ -167,7 +168,7 @@ test.describe('vídeo da luz rasante', () => {
     await mockActivity(page, 'fresh')
     const media: { url: string; at: number }[] = []
     page.on('request', (request) => {
-      if (/\/media\/hero-light-v2\.(webm|mp4)/.test(request.url())) media.push({ url: request.url(), at: Date.now() })
+      if (/\/media\/hero-light-v3\.(webm|mp4)/.test(request.url())) media.push({ url: request.url(), at: Date.now() })
     })
     await page.addInitScript(() => {
       const w = window as unknown as { __lcp: string[] }
@@ -220,7 +221,7 @@ test.describe('vídeo da luz rasante', () => {
     await mockActivity(page, 'fresh')
     const media: string[] = []
     page.on('request', (request) => {
-      if (/\/media\/hero-light-v2\.(webm|mp4)/.test(request.url())) media.push(request.url())
+      if (/\/media\/hero-light-v3\.(webm|mp4)/.test(request.url())) media.push(request.url())
     })
     await page.goto('/', { waitUntil: 'load' })
     await expect(page.locator('.light')).toHaveAttribute('data-light', 'poster')
@@ -235,7 +236,7 @@ test.describe('vídeo da luz rasante', () => {
     await page.addInitScript(() => Object.defineProperty(navigator, 'connection', { value: { saveData: true }, configurable: true }))
     const media: string[] = []
     page.on('request', (request) => {
-      if (/\/media\/hero-light-v2\.(webm|mp4)/.test(request.url())) media.push(request.url())
+      if (/\/media\/hero-light-v3\.(webm|mp4)/.test(request.url())) media.push(request.url())
     })
     await page.goto('/', { waitUntil: 'load' })
     await expect(page.locator('.light')).toHaveAttribute('data-light', 'poster')
@@ -254,24 +255,30 @@ test.describe('vídeo da luz rasante', () => {
       await expect(page.locator('.light')).toHaveAttribute('data-shown', 'true')
       await page.waitForTimeout(1200) // fim do fade de opacidade do pôster
       const targets = { h1: '.hero__title', apoio: '.hero__support' }
+      // Caixas das linhas de texto (Range.getClientRects), não a caixa do elemento: a faixa de luz passa à
+      // direita do título (passo 17) e a caixa de 20ch do H1 incluiria luz que não fica atrás de nenhuma letra.
       const info = await page.evaluate((selectors) => {
-        const out: Record<string, { rect: { x: number; y: number; w: number; h: number }; color: string }> = {}
+        const out: Record<string, { rects: { x: number; y: number; w: number; h: number }[]; color: string }> = {}
         for (const [name, selector] of Object.entries(selectors)) {
           const el = document.querySelector<HTMLElement>(selector)!
-          const r = el.getBoundingClientRect()
-          out[name] = { rect: { x: r.left, y: r.top + scrollY, w: r.width, h: r.height }, color: getComputedStyle(el).color }
+          const range = document.createRange()
+          range.selectNodeContents(el)
+          const rects = [...range.getClientRects()].map((r) => ({ x: r.left, y: r.top + scrollY, w: r.width, h: r.height }))
+          out[name] = { rects, color: getComputedStyle(el).color }
           el.style.color = 'transparent'
         }
         return out
       }, targets)
       const png = await page.screenshot({ fullPage: true })
       const { data, info: meta } = await sharp(png).removeAlpha().raw().toBuffer({ resolveWithObject: true })
-      for (const [name, { rect, color }] of Object.entries(info)) {
+      for (const [name, { rects, color }] of Object.entries(info)) {
         let brightest = 0
-        for (let y = Math.max(0, Math.floor(rect.y)); y < Math.min(meta.height, Math.ceil(rect.y + rect.h)); y += 1) {
-          for (let x = Math.max(0, Math.floor(rect.x)); x < Math.min(meta.width, Math.ceil(rect.x + rect.w)); x += 1) {
-            const i = (y * meta.width + x) * 3
-            brightest = Math.max(brightest, luminance([data[i], data[i + 1], data[i + 2]]))
+        for (const rect of rects) {
+          for (let y = Math.max(0, Math.floor(rect.y)); y < Math.min(meta.height, Math.ceil(rect.y + rect.h)); y += 1) {
+            for (let x = Math.max(0, Math.floor(rect.x)); x < Math.min(meta.width, Math.ceil(rect.x + rect.w)); x += 1) {
+              const i = (y * meta.width + x) * 3
+              brightest = Math.max(brightest, luminance([data[i], data[i + 1], data[i + 2]]))
+            }
           }
         }
         const text = luminance(color.match(/\d+/g)!.slice(0, 3).map(Number))

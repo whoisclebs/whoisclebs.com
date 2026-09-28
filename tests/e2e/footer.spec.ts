@@ -1,143 +1,78 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page, type Route } from '@playwright/test'
-import { activityBody, unavailableBody } from '../fixtures/activity-fixtures.mjs'
+import { activityBody } from '../fixtures/activity-fixtures.mjs'
 
 /**
- * Passo 11 — rodapé (convite, contato, atividade pública, horizonte) e `/contato/`.
- * `/api/activity` é interceptado com `page.route`: o estado do rodapé não depende do D1 do e2e.
+ * Passos 11 e 17 — rodapé (convite, perfis, leitura, navegação secundária, noite do farol) e `/contato/`.
+ * A atividade pública saiu do rodapé no passo 17 (decisão do proprietário); só o HUD do hero usa
+ * `/api/activity`, interceptado com `page.route` para não depender do D1 do e2e.
  */
 
 test.use({ timezoneId: 'America/Fortaleza' })
 
-type Mode = 'fresh' | 'stale' | 'empty' | 'unavailable' | 'invalid' | 'hang'
-
-async function mockActivity(page: Page, mode: Mode) {
+async function mockActivity(page: Page) {
   const calls: number[] = []
   await page.route('**/api/activity', async (route: Route) => {
     calls.push(Date.now())
-    if (mode === 'hang') return // nunca responde: o cliente aborta no timeout
-    if (mode === 'unavailable') return route.fulfill({ status: 503, json: unavailableBody })
-    if (mode === 'invalid') return route.fulfill({ status: 200, json: { hello: 'world' } })
-    const body = activityBody(mode === 'stale' ? 'stale' : 'fresh', new Date(), { empty: mode === 'empty' })
-    return route.fulfill({ status: 200, json: body })
+    return route.fulfill({ status: 200, json: activityBody('fresh', new Date()) })
   })
   return calls
 }
 
+/** Abre a página e rola até o rodapé (a camada animada da cena entra perto dele). */
 async function openFooter(page: Page, path = '/') {
   await page.goto(path)
-  await page.getByRole('contentinfo').scrollIntoViewIfNeeded()
-  await page.locator('[data-activity-state]').scrollIntoViewIfNeeded()
-  return page.getByRole('region', { name: /Atividade pública|Public activity/ })
+  const footer = page.getByRole('contentinfo')
+  await footer.scrollIntoViewIfNeeded()
+  const scene = page.locator('footer .scene__image')
+  if (await scene.count()) await scene.scrollIntoViewIfNeeded()
+  return footer
 }
 
-test.describe('atividade pública no rodapé', () => {
-  test('fresh: itens com link do GitHub, rótulo "Em dia", fonte e <time> relativo', async ({ page }) => {
-    await mockActivity(page, 'fresh')
-    const region = await openFooter(page)
-    await expect(region.locator('[data-activity-state="fresh"]')).toBeVisible()
-    const status = region.locator('.status')
-    await expect(status).toContainText('Em dia')
-    await expect(status).toContainText('fonte: GitHub · atualizado há 12 minutos')
-    expect(Date.parse((await status.locator('time').getAttribute('datetime')) ?? '')).not.toBeNaN()
-    // Verde só com rótulo: a célula é decorativa e o estado está escrito.
-    await expect(status.locator('.status__cell')).toHaveAttribute('aria-hidden', 'true')
+test('o rodapé não tem região de atividade pública (PT e EN)', async ({ page }) => {
+  const calls = await mockActivity(page)
+  for (const path of ['/sobre/', '/en/']) {
+    const footer = await openFooter(page, path)
+    await expect(footer.getByRole('region', { name: /Atividade pública|Public activity/ })).toHaveCount(0)
+    await expect(footer.locator('[data-activity-state]')).toHaveCount(0)
+    await expect(footer).not.toContainText(/Atividade pública|Public activity/)
+  }
+  // Fora da home ninguém mais chama a API (o HUD só existe na home).
+  await page.goto('/sobre/')
+  await page.getByRole('contentinfo').scrollIntoViewIfNeeded()
+  await page.waitForTimeout(500)
+  expect(calls).toHaveLength(1) // a única chamada veio do HUD de /en/
+})
 
-    const links = region.getByRole('listitem').getByRole('link')
-    await expect(links).toHaveCount(6) // o rodapé lista o cache inteiro (até 10), a mesma contagem do HUD
-    for (const href of await links.evaluateAll((els) => els.map((el) => el.getAttribute('href')))) {
-      expect(href).toMatch(/^https:\/\/github\.com\//)
-    }
-    await expect(region.getByRole('listitem').first().locator('time')).toHaveAttribute('datetime', /Z$/)
-    // Nenhum contador: nada de "N commits", "N eventos".
-    expect(await region.innerText()).not.toMatch(/\d+\s+(commits?|eventos|events|contribui)/i)
+test('na home, o HUD faz uma única chamada à API, depois do load', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  const calls = await mockActivity(page)
+  await page.goto('/')
+  await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
+  await page.getByRole('contentinfo').scrollIntoViewIfNeeded()
+  await page.waitForTimeout(500)
+  expect(calls).toHaveLength(1)
+  // A requisição começa depois do fim do evento load da navegação (o LCP é o H1, não a atividade).
+  const timing = await page.evaluate(() => {
+    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
+    const api = performance.getEntriesByType('resource').find((entry) => entry.name.endsWith('/api/activity'))
+    return { loadEnd: nav.loadEventEnd, fetchStart: api?.startTime ?? -1 }
   })
+  expect(timing.fetchStart).toBeGreaterThanOrEqual(timing.loadEnd)
+})
 
-  test('stale: aviso textual com a data da última sincronização e sem o verde de estado', async ({ page }) => {
-    await mockActivity(page, 'stale')
-    const region = await openFooter(page)
-    const stale = region.locator('[data-activity-state="stale"] .status')
-    await expect(stale).toContainText('Desatualizada: a última sincronização com o GitHub foi em')
-    await expect(stale.locator('time')).toHaveAttribute('datetime', /^\d{4}-\d{2}-\d{2}T/)
-    await expect(stale).toContainText('2026') // data absoluta, não "há 3 dias"
-    await expect(region.locator('.status__cell')).toHaveCount(0)
-    await expect(region.getByRole('listitem')).toHaveCount(6)
-  })
-
-  test('sucesso sem eventos: diz que não há atividade recente, com a fonte', async ({ page }) => {
-    await mockActivity(page, 'empty')
-    const region = await openFooter(page)
-    await expect(region).toContainText('Nenhuma atividade pública recente no GitHub.')
-    await expect(region.locator('.status')).toContainText('fonte: GitHub')
-  })
-
-  test('503: "Atividade indisponível no momento" e link para o perfil', async ({ page }) => {
-    await mockActivity(page, 'unavailable')
-    const region = await openFooter(page)
-    await expect(region.locator('[data-activity-state="unavailable"]')).toContainText('Atividade indisponível no momento.')
-    await expect(region.getByRole('link', { name: 'Ver o perfil no GitHub' })).toHaveAttribute('href', 'https://github.com/whoisclebs')
-    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
-  })
-
-  test('corpo fora do contrato também vira indisponível', async ({ page }) => {
-    await mockActivity(page, 'invalid')
-    const region = await openFooter(page)
-    await expect(region).toContainText('Atividade indisponível no momento.')
-  })
-
-  test('API lenta: mostra "carregando" e, no timeout, indisponível sem travar a página', async ({ page }) => {
-    test.setTimeout(30_000)
-    await mockActivity(page, 'hang')
-    const region = await openFooter(page)
-    await expect(region.locator('[data-activity-state="loading"]')).toContainText('Carregando a atividade pública do GitHub')
-    await expect(region.locator('[data-activity-state]')).toHaveAttribute('aria-busy', 'true')
-    await expect(region.locator('[data-activity-state="unavailable"]')).toBeVisible({ timeout: 8_000 })
-    await expect(region.locator('[data-activity-state]')).toHaveAttribute('aria-busy', 'false')
-  })
-
-  test('fora da home, só busca a atividade quando o rodapé se aproxima (depois do conteúdo crítico)', async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 900 })
-    const calls = await mockActivity(page, 'fresh')
-    await page.goto('/sobre/')
-    await page.waitForLoadState('networkidle')
-    expect(calls).toHaveLength(0)
-    await page.locator('[data-activity-state]').scrollIntoViewIfNeeded()
-    await expect.poll(() => calls.length).toBe(1)
-  })
-
-  test('na home, o HUD e o rodapé dividem uma única chamada, feita depois do load', async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 900 })
-    const calls = await mockActivity(page, 'fresh')
-    await page.goto('/')
-    await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
-    await page.locator('[data-activity-state]').scrollIntoViewIfNeeded()
-    await expect(page.locator('[data-activity-state="fresh"]')).toBeVisible()
-    expect(calls).toHaveLength(1)
-    // A requisição começa depois do fim do evento load da navegação (o LCP é o H1, não a atividade).
-    const timing = await page.evaluate(() => {
-      const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
-      const api = performance.getEntriesByType('resource').find((entry) => entry.name.endsWith('/api/activity'))
-      return { loadEnd: nav.loadEventEnd, fetchStart: api?.startTime ?? -1 }
-    })
-    expect(timing.fetchStart).toBeGreaterThanOrEqual(timing.loadEnd)
-  })
-
-  test('inglês: rótulos em inglês, títulos marcados como pt-BR e páginas só em português sinalizadas', async ({ page }) => {
-    await mockActivity(page, 'fresh')
-    const region = await openFooter(page, '/en/')
-    await expect(region.locator('.status')).toContainText('Up to date')
-    await expect(region.locator('.status')).toContainText('source: GitHub · updated 12 minutes ago')
-    await expect(region.locator('ul.items')).toHaveAttribute('lang', 'pt-BR')
-    const more = page.getByRole('contentinfo').getByRole('navigation', { name: 'More' })
-    await expect(more.getByRole('link', { name: 'Notes' })).toHaveAttribute('hreflang', 'pt-BR')
-    await expect(more.getByRole('link', { name: 'Books' })).toHaveAttribute('href', '/en/books/')
-  })
+test('inglês: rótulos em inglês e páginas só em português sinalizadas', async ({ page }) => {
+  await mockActivity(page)
+  const footer = await openFooter(page, '/en/')
+  await expect(footer.getByRole('heading', { name: 'Contact', exact: true })).toBeVisible()
+  const notes = footer.getByRole('navigation', { name: 'More' }).getByRole('link', { name: 'Notes' })
+  await expect(notes).toHaveAttribute('hreflang', 'pt-BR')
 })
 
 test.describe('rodapé sem JS', () => {
   test.use({ javaScriptEnabled: false })
 
-  test('mostra convite, contato, RSS, currículo, navegação e o link para a atividade no GitHub', async ({ page }) => {
+  test('mostra convite, contato, RSS, currículo, navegação e a imagem da cena', async ({ page }) => {
     await page.goto('/')
     const footer = page.getByRole('contentinfo')
     await expect(footer.getByRole('heading', { name: 'Contato', exact: true })).toBeVisible()
@@ -147,9 +82,8 @@ test.describe('rodapé sem JS', () => {
     for (const name of ['Notas', 'Livros', 'Hobbies', 'Agentes']) {
       await expect(footer.getByRole('navigation', { name: 'Mais' }).getByRole('link', { name })).toBeVisible()
     }
-    const activity = footer.locator('[data-activity-state="nojs"]')
-    await expect(activity).toContainText('A atividade pública recente fica no perfil do GitHub.')
-    await expect(activity.getByRole('link', { name: 'perfil do GitHub' })).toHaveAttribute('href', 'https://github.com/whoisclebs')
+    await expect(footer.getByRole('link', { name: 'GitHub', exact: true })).toHaveAttribute('href', 'https://github.com/whoisclebs')
+    await expect(footer.locator('.scene__image')).toHaveAttribute('alt', '')
     await expect(footer).not.toContainText('Carregando')
   })
 
@@ -176,10 +110,8 @@ test.describe('rodapé sem JS', () => {
 })
 
 test('teclado: os links do rodapé seguem a ordem visual e têm foco visível', async ({ page }) => {
-  await mockActivity(page, 'fresh')
-  await openFooter(page)
-  await expect(page.locator('[data-activity-state="fresh"]')).toBeVisible()
-  const footer = page.getByRole('contentinfo')
+  await mockActivity(page)
+  const footer = await openFooter(page)
   const expected = await footer.locator('a').evaluateAll((els) => els.map((el) => el.getAttribute('href')))
   await footer.locator('a').first().focus()
   const seen: (string | null)[] = []
@@ -197,34 +129,6 @@ test('teclado: os links do rodapé seguem a ordem visual e têm foco visível', 
     await page.keyboard.press('Tab')
   }
   expect(seen).toEqual(expected)
-})
-
-test.describe('horizonte de células', () => {
-  test('é decorativo, fica estático com reduced motion e não gera overflow', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' })
-    await mockActivity(page, 'fresh')
-    await page.goto('/')
-    const horizon = page.locator('.horizon')
-    await expect(horizon).toHaveAttribute('aria-hidden', 'true')
-    await expect(horizon).toHaveAttribute('data-rise', 'none')
-    await horizon.scrollIntoViewIfNeeded()
-    const duration = await page.locator('.sun-row').first().evaluate((el) => getComputedStyle(el).transitionDuration)
-    expect(duration).toBe('0s')
-    await expect(horizon).toHaveAttribute('data-rise', 'none')
-  })
-
-  test('sem reduced motion, o sol sobe uma vez quando o rodapé aparece', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'no-preference' })
-    await mockActivity(page, 'fresh')
-    await page.goto('/')
-    const horizon = page.locator('.horizon')
-    await expect(horizon).toHaveAttribute('data-rise', 'pending')
-    await horizon.scrollIntoViewIfNeeded()
-    await expect(horizon).toHaveAttribute('data-rise', 'done')
-    // Só transform/opacity animam, nunca `all`.
-    const property = await page.locator('.sun-row').first().evaluate((el) => getComputedStyle(el).transitionProperty)
-    expect(property).toBe('transform, opacity')
-  })
 })
 
 test('Política de Privacidade e Termos descrevem o site novo (PT e EN)', async ({ page }) => {
@@ -246,31 +150,28 @@ test('Política de Privacidade e Termos descrevem o site novo (PT e EN)', async 
   await expect(page.getByRole('main')).toContainText('This site has no contact form of its own.')
 })
 
-const axeRoutes = ['/', '/contato/', '/privacy-policy/', '/en/privacy-policy/', '/terms-of-use/']
+const axeRoutes = ['/', '/contato/', '/privacy-policy/', '/en/privacy-policy/', '/terms-of-use/', '/nao-existe/']
 for (const scheme of ['light', 'dark'] as const) {
-  for (const mode of ['fresh', 'stale', 'unavailable'] as const) {
-    test(`axe sem critical/serious com atividade ${mode} (${scheme})`, async ({ page }) => {
-      test.setTimeout(60_000)
-      await page.emulateMedia({ colorScheme: scheme })
-      await mockActivity(page, mode)
-      for (const path of mode === 'fresh' ? axeRoutes : ['/']) {
-        await openFooter(page, path)
-        await expect(page.locator(`[data-activity-state="${mode}"]`)).toBeVisible()
-        const results = await new AxeBuilder({ page }).analyze()
-        const serious = results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious')
-        expect(serious.map((v) => `${path}: ${v.id} ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([])
-      }
-    })
-  }
+  test(`axe sem critical/serious no rodapé e na 404 (${scheme})`, async ({ page }) => {
+    test.setTimeout(60_000)
+    await page.emulateMedia({ colorScheme: scheme })
+    await mockActivity(page)
+    for (const path of axeRoutes) {
+      await openFooter(page, path)
+      const results = await new AxeBuilder({ page }).analyze()
+      const serious = results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious')
+      expect(serious.map((v) => `${path}: ${v.id} ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([])
+    }
+  })
 }
 
 for (const width of [390, 768, 1440]) {
   test(`sem overflow horizontal com o rodapé carregado em ${width} px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
-    await mockActivity(page, 'fresh')
+    await mockActivity(page)
     for (const path of ['/', '/contato/', '/escrita/github-actions-como-fazer-deploy/', '/privacy-policy/', '/en/']) {
       await openFooter(page, path)
-      await expect(page.locator('[data-activity-state="fresh"]')).toBeVisible()
+      await expect.poll(() => page.locator('footer .scene__image').evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true)
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
       expect(overflow, `${path} em ${width} px`).toBeLessThanOrEqual(0)
     }

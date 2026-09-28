@@ -1,12 +1,14 @@
 /*
- * WHOISCLEBS — tokens do design system "Amanhecer por rolagem" (passo 15, direção C).
+ * WHOISCLEBS — tokens do design system "Amanhecer por rolagem" (passo 15, direção C), com a paleta da noite do
+ * farol (passo 17): azuis noturnos, creme das paredes, branco-estrela e o amarelo-pálido da lâmpada como acento.
  * Framework-agnóstico: só custom properties. Decisões e motivos em docs/redesign/decisions.md.
  * Contraste de cada par real (dia, escuro, noite, aurora e o hero sobre o vídeo) verificado por
  * scripts/check-contrast.mjs (AA).
  *
- * A página segue o nascer do sol visto do ponto mais oriental das Américas, em faixas fixas:
- *   noite  → hero, topo das páginas internas e rodapé (`.band-night`);
- *   aurora → capítulos curtos da home (`.band-aurora`), só texto curto;
+ * A página segue o nascer do sol visto do ponto mais oriental das Américas, em faixas que passam uma para a
+ * outra por degradês (passo 17):
+ *   noite  → hero, topo das páginas internas e rodapé (`.band-night`; o rodapé soma `.band-sky`);
+ *   aurora → a home depois do hero (`.band-aurora`): céu noturno índigo com estrelas e via láctea;
  *   dia    → leitura longa (projetos, escrita, artigos): o tema padrão, sem classe.
  * As faixas redefinem os mesmos tokens semânticos, então um componente muda de faixa sem variante própria.
  *
@@ -15,46 +17,54 @@
 @layer tokens {
   :root {
     /* ---------- Primitivos: dia (papel frio, não creme) ---------- */
-    --p-paper: #eeece6;
-    --p-paper-raised: #f7f6f2;
-    --p-paper-deep: #e2dfd7;
+    --p-paper: #eceef1;          /* papel frio, levemente azulado (passo 17: paleta da noite do farol) */
+    --p-paper-raised: #f6f7f9;
+    --p-paper-deep: #dfe3e9;
     --p-ink: #16181d;
     --p-ink-soft: #454951;
     --p-ink-faint: #585c66;
-    --p-rule: #b8b4ab;           /* fio de 1 px (não é texto) */
-    --p-grid: #d9d6ce;           /* linhas de apoio (não é texto) */
+    --p-rule: #b3bac5;           /* fio de 1 px (não é texto) */
+    --p-grid: #d5dae2;           /* linhas de apoio (não é texto) */
     --p-blue: #2236d8;           /* tinta azul: links no papel */
     --p-blue-deep: #18279f;
     --p-green: #1d6b43;          /* estado "ao vivo": sempre com rótulo */
-    --p-sun-deep: #9a5310;       /* âmbar escuro: foco e fios no papel, nunca texto pequeno */
+    --p-sun-deep: #1d3d7a;       /* azul-marinho do céu do farol: foco e fios no papel */
 
     /* ---------- Primitivos: noite ---------- */
-    --p-night: #0e141d;
-    --p-night-raised: #172030;
-    --p-night-deep: #0a0f16;
-    --p-on-night: #efeae0;
-    --p-on-night-soft: #b9bdc6;
-    --p-on-night-faint: #a3a8b3;
-    --p-night-rule: #313c50;
-    --p-night-grid: #1d2636;
+    --p-night: #0b1120;
+    --p-night-raised: #151d33;
+    --p-night-deep: #080d19;
+    --p-on-night: #eeeee6;       /* creme das paredes do farol */
+    --p-on-night-soft: #bcc3d1;
+    --p-on-night-faint: #a6aebf;
+    --p-night-rule: #2f3a55;
+    --p-night-grid: #1b2439;
     --p-blue-night: #a3b0ff;
     --p-green-night: #6fd39a;
-    --p-sun: #e8a652;            /* primeira luz: texto e foco só sobre a noite/aurora */
+    --p-sun: #f2e6a0;            /* amarelo-pálido da lâmpada do farol: acento (CTA, fios, foco) sobre a noite */
 
-    /* ---------- Primitivos: aurora (ameixa → rosa, com brilho a leste) ---------- */
-    --p-aurora-top: #2c2336;     /* encosta na noite */
-    --p-aurora: #6b3f4a;         /* parte mais clara: é o fundo de referência do contraste */
-    --p-aurora-raised: #5a3542;
-    --p-on-aurora: #f6eee6;
-    --p-on-aurora-soft: #ead6d2;
-    --p-aurora-rule: #9a6b72;
-    --p-sun-light: #f7c98a;      /* âmbar claro: links e foco na aurora */
+    /* ---------- Primitivos: céu da jornada da home (noite índigo com via láctea) ---------- */
+    --p-cosmos: #0a0e20;         /* céu depois do hero: índigo quase preto */
+    --p-cosmos-raised: #121830;
+    --p-cosmos-lit: #1e2444;     /* ponto mais claro da via láctea: é o fundo de referência do contraste */
+    --p-on-aurora: #eeeee6;
+    --p-on-aurora-soft: #c9cfdd;
+    --p-aurora-rule: #2e3658;
+    --p-sun-light: #f2e6a0;      /* a mesma luz da lâmpada: links, foco e acentos no céu */
+
+    /* ---------- Primitivos: céu do farol (rodapé) ---------- */
+    --p-sky-top: #10295c;        /* topo do céu da ilustração do rodapé (amostrado da imagem) */
+    --p-sky-deep: #0c1a3a;
+    --p-on-sky-soft: #eceef3;
+    --p-on-sky-faint: #e8ebf1;
+    --p-ground: #0b1510;         /* chão noturno sob a grama, faixa do colofão */
 
     --p-white: #ffffff;
 
     /* ---------- Semânticos de cor (dia, tema claro) ---------- */
     color-scheme: light;
     --color-bg: var(--p-paper);
+    --color-page: var(--p-paper);      /* fundo da página fora das faixas (transições entre faixas) */
     --color-surface: var(--p-paper-raised);
     --color-band: var(--p-paper-deep);
     --color-text: var(--p-ink);
@@ -153,6 +163,7 @@
   :root[data-theme='dark'] {
     color-scheme: dark;
     --color-bg: var(--p-night-raised);
+    --color-page: var(--p-night-raised);
     --color-surface: var(--p-night);
     --color-band: var(--p-night-deep);
     --color-text: var(--p-on-night);
@@ -174,6 +185,7 @@
     :root:not([data-theme='light']) {
       color-scheme: dark;
       --color-bg: var(--p-night-raised);
+      --color-page: var(--p-night-raised);
       --color-surface: var(--p-night);
       --color-band: var(--p-night-deep);
       --color-text: var(--p-on-night);
@@ -215,32 +227,39 @@
     color: var(--color-text);
   }
 
-  /* ---------- Faixa: aurora (capítulos curtos da home). Só texto curto, todo em creme. ---------- */
+  /* ---------- Faixa: aurora = céu da jornada da home (depois do hero). Texto em creme, âmbar só de acento. ---------- */
+  /* O céu (estrelas, via láctea) fica em HomePage.svelte; aqui só as cores. `--color-bg` é o ponto mais claro
+     da via láctea (`--p-cosmos-lit`): o contraste é medido contra ele. */
   .band-aurora {
     color-scheme: dark;
-    --color-bg: var(--p-aurora);
-    --color-surface: var(--p-aurora-raised);
-    --color-band: var(--p-aurora-raised);
+    --color-bg: var(--p-cosmos-lit);
+    --color-surface: var(--p-cosmos-raised);
+    --color-band: var(--p-cosmos);
     --color-text: var(--p-on-aurora);
     --color-text-soft: var(--p-on-aurora-soft);
     --color-text-faint: var(--p-on-aurora-soft);
     --color-rule: var(--p-aurora-rule);
-    --color-grid: var(--p-aurora-raised);
+    --color-grid: var(--p-cosmos-raised);
     --color-link: var(--p-sun-light);
     --color-link-hover: var(--p-on-aurora);
     --color-accent: var(--p-sun-light);
-    --color-on-accent: var(--p-aurora-top);
+    --color-on-accent: var(--p-cosmos);
     --color-focus: var(--p-sun-light);
     --color-status-live: var(--p-green-night);
     --color-mark: var(--p-on-aurora);
     --color-sun: var(--p-sun-light);
     color: var(--color-text);
-    /* Da ameixa que encosta na noite ao rosa que encosta no dia, com um brilho âmbar a leste (à direita).
-       O contraste é medido contra o ponto mais claro (--p-aurora e o brilho sobre ele). */
-    background-color: var(--p-aurora);
-    background-image:
-      radial-gradient(60% 55% at 100% 0%, rgb(232 166 82 / 0.16), rgb(232 166 82 / 0) 70%),
-      linear-gradient(to bottom, var(--p-aurora-top), var(--p-aurora));
+    background-color: var(--p-cosmos);
+  }
+
+  /* ---------- Rodapé: céu do farol. Texto direto no céu da ilustração; medido no e2e sobre a imagem. ---------- */
+  .band-sky {
+    --color-bg: var(--p-sky-top);
+    --color-surface: var(--p-sky-deep);
+    --color-band: var(--p-sky-deep);
+    --color-text-soft: var(--p-on-sky-soft);
+    --color-text-faint: var(--p-on-sky-faint);
+    --color-rule: #3d5486;
   }
 
   /* Movimento reduzido: sem deslocamento; opacidade e cor continuam. */

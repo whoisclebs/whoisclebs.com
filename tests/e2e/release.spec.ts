@@ -71,7 +71,8 @@ test.describe('console e rede limpos', () => {
       const response = await page.goto(path, { waitUntil: 'networkidle' })
       expect(response?.status()).toBe(path === NOT_FOUND ? 404 : 200)
       await scrollThrough(page)
-      if (path !== NOT_FOUND) await expect(page.locator('[data-activity-state="fresh"]')).toBeVisible()
+      // Só o HUD da home busca a atividade (o rodapé não tem mais essa região, passo 17).
+      if (path === '/' || path === '/en/') await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
       await page.waitForLoadState('networkidle')
       expect(problems).toEqual([])
     })
@@ -105,7 +106,8 @@ test.describe('prefers-reduced-motion', () => {
       })
       await page.goto(path, { waitUntil: 'networkidle' })
       await scrollThrough(page)
-      if (path !== NOT_FOUND) await expect(page.locator('[data-activity-state="fresh"]')).toBeVisible()
+      // Só o HUD da home busca a atividade (o rodapé não tem mais essa região, passo 17).
+      if (path === '/' || path === '/en/') await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
       const motion = await page.evaluate(() => ({
         started: (window as unknown as { __motion: string[] }).__motion,
         running: document

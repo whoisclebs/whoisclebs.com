@@ -1,23 +1,28 @@
 <script lang="ts">
   import { SYMBOL_PATH, SYMBOL_VIEWBOX } from '$lib/brand/symbol'
+  import { contactEmail } from '$lib/content/library'
   import { getMessages, locales, type Locale } from '$lib/i18n'
   import { pagePath, pages, type Alternates } from '$lib/routing/paths'
 
   let { locale, currentPath, alternates, home = false }: { locale: Locale; currentPath: string; alternates?: Alternates; home?: boolean } = $props()
 
   const t = $derived(getMessages(locale))
-  const items = $derived(
-    (
+  // Arquitetura é uma âncora da home (a oferta vem logo abaixo do hero); o contato fecha a lista, em destaque.
+  // Sem página de contato no idioma (inglês), o destaque abre o e-mail.
+  const architectureHref = $derived(`${pages.home[locale]}#${locale === 'en' ? 'architecture' : 'arquitetura'}`)
+  const items = $derived([
+    { href: architectureHref, label: t['nav.architecture'] },
+    ...(
       [
         ['projects', t['nav.projects']],
         ['writing', t['nav.writing']],
         ['about', t['nav.about']],
-        ['contact', t['nav.contact']],
       ] as const
     )
       .map(([key, label]) => ({ href: pagePath(key, locale), label }))
       .filter((item): item is { href: string; label: string } => Boolean(item.href)),
-  )
+  ])
+  const contact = $derived({ href: pagePath('contact', locale) ?? `mailto:${contactEmail}`, label: t['nav.contact'] })
   const isCurrent = (href: string) => currentPath === href || (href !== '/' && href !== '/en/' && currentPath.startsWith(href))
 
   /** Seletor de idioma por link: a página equivalente quando há tradução; senão, a home do idioma. */
@@ -51,6 +56,9 @@
         {/each}
       </ul>
     </nav>
+
+    <!-- Contato em destaque, fora da lista: no celular fica na linha da marca, ao lado do idioma. -->
+    <a class="contact-cta" href={contact.href} aria-current={isCurrent(contact.href) ? 'page' : undefined}>{contact.label}</a>
 
     <ul class="lang" aria-label={t['language.label']}>
       {#each languages as language (language.code)}
@@ -87,30 +95,14 @@
     transform: none;
   }
 
+  /* Noite sólida com o fio âmbar fino embaixo; sem brilho (a luz é do hero, não do header). */
   .site-header {
     position: relative;
-    padding-block-end: var(--space-6);
     border-block-end: var(--border-hairline) solid var(--color-sun);
   }
 
-  /* Primeira luz a leste, sobre o fio: o mesmo gesto do horizonte do hero, em escala de faixa curta. */
-  .site-header::after {
-    content: '';
-    position: absolute;
-    inset: auto 0 0 auto;
-    width: min(60%, 44rem);
-    height: 56px;
-    background: radial-gradient(60% 100% at 100% 100%, rgb(232 166 82 / 0.26), rgb(232 166 82 / 0) 72%);
-    pointer-events: none;
-  }
-
   .site-header--home {
-    padding-block-end: 0;
     border-block-end: 0;
-  }
-
-  .site-header--home::after {
-    content: none;
   }
 
   /*
@@ -119,20 +111,21 @@
    */
   .site-header__inner {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr auto auto;
     grid-template-areas:
-      'brand lang'
-      'nav nav';
+      'brand cta lang'
+      'nav nav nav';
     align-items: center;
-    column-gap: var(--space-5);
-    padding-block-start: var(--space-3);
+    column-gap: var(--space-3);
+    padding-block-start: var(--space-2);
   }
 
   @media (min-width: 720px) {
     .site-header__inner {
-      grid-template-columns: auto 1fr auto;
-      grid-template-areas: 'brand nav lang';
-      padding-block: var(--space-3);
+      grid-template-columns: auto 1fr auto auto;
+      grid-template-areas: 'brand nav cta lang';
+      column-gap: var(--space-5);
+      padding-block: var(--space-2);
     }
   }
 
@@ -154,6 +147,14 @@
   .brand__symbol {
     flex: none;
     shape-rendering: crispEdges;
+  }
+
+  /* Tablet (720–1023 px): cinco destinos + idioma numa linha só; a marca fica só com o símbolo (o nome
+     continua no aria-label do link). */
+  @media (min-width: 720px) and (max-width: 1023px) {
+    .brand__name {
+      display: none;
+    }
   }
 
   .site-nav {
@@ -179,11 +180,18 @@
   }
 
   .site-nav ul {
+    flex-wrap: wrap;
     justify-content: space-between;
-    column-gap: var(--space-4);
+    column-gap: var(--space-3);
   }
 
   @media (min-width: 720px) {
+    .site-nav ul {
+      column-gap: var(--space-5);
+    }
+  }
+
+  @media (min-width: 1100px) {
     .site-nav ul {
       column-gap: var(--space-6);
     }
@@ -195,9 +203,44 @@
     align-items: center;
     min-height: 44px;
     font-family: var(--font-mono);
-    font-size: var(--step-0);
+    font-size: var(--step--1);
     color: var(--color-text);
     text-decoration: none;
+  }
+
+  @media (min-width: 1100px) {
+    .site-nav a {
+      font-size: var(--step-0);
+    }
+  }
+
+  /* Contato em destaque: moldura âmbar fina, no mesmo desenho do botão secundário. */
+  .contact-cta {
+    grid-area: cta;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: var(--space-4);
+    box-shadow: inset 0 0 0 var(--border-hairline) var(--color-sun);
+    color: var(--color-text);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    text-decoration: none;
+    transition: transform var(--dur-press) var(--ease-out);
+  }
+
+  .contact-cta:active {
+    transform: scale(var(--press-scale));
+  }
+
+  .contact-cta[aria-current='page'] {
+    background: color-mix(in oklab, var(--p-sun) 18%, transparent);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .contact-cta:hover {
+      color: var(--color-link-hover);
+    }
   }
 
   /* Página atual: sublinhado grosso em tinta azul, não só cor. */

@@ -37,7 +37,7 @@
 -->
 <ol class="writing-list list-reset">
   {#each items as item (`${item.kind ?? 'article'}:${item.slug}`)}
-    <li class="row">
+    <li class="row target">
       <p class="row__date">
         <time datetime={item.date}>{dateStyle === 'day' ? formatDayMonth(item.date, locale) : formatDate(item.date, locale)}</time>
       </p>
@@ -104,8 +104,46 @@
   }
 
   .row__title a {
+    display: inline-block;
     color: var(--color-text);
     text-decoration-color: var(--color-rule);
+    transition: transform 220ms var(--ease-out);
+  }
+
+  /* Linha-alvo (base.css): o título avança um passo e a data acende junto com os cantos. */
+  .row__date {
+    transition: color var(--dur-ui) ease;
+  }
+
+  .row:has(:focus-visible) .row__title a {
+    transform: translateX(4px);
+  }
+
+  .row:has(:focus-visible) .row__date {
+    color: var(--color-text);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .row:hover .row__title a {
+      transform: translateX(4px);
+    }
+
+    .row:hover .row__date {
+      color: var(--color-text);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .row__title a,
+    .row:has(:focus-visible) .row__title a {
+      transform: none;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .row:hover .row__title a {
+        transform: none;
+      }
+    }
   }
 
   @media (hover: hover) and (pointer: fine) {

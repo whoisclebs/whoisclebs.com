@@ -62,7 +62,7 @@ test.describe('skip link e navegação por teclado', () => {
     test(`header operável por teclado com foco visível (${viewport.width} px)`, async ({ page }) => {
       await page.setViewportSize(viewport)
       await page.goto('/')
-      const expected = ['Pular para o conteúdo', 'WHOISCLEBS', 'Projetos', 'Escrita', 'Sobre', 'Contato', 'PT (Português)', 'EN (English)']
+      const expected = ['Pular para o conteúdo', 'WHOISCLEBS', 'Arquitetura', 'Projetos', 'Escrita', 'Sobre', 'Contato', 'PT (Português)', 'EN (English)']
       for (const text of expected) {
         await page.keyboard.press('Tab')
         const info = await focusedInfo(page)
@@ -108,7 +108,11 @@ test.describe('sem JavaScript', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Construo sistemas distribuídos, backends de alta performance e agentes de IA.')
     await expect(page.getByText(/Sou Clebson Augusto, engenheiro de software sênior/)).toBeVisible()
     const nav = page.getByRole('navigation', { name: 'Principal' })
-    for (const name of ['Projetos', 'Escrita', 'Sobre', 'Contato']) await expect(nav.getByRole('link', { name })).toBeVisible()
+    for (const name of ['Arquitetura', 'Projetos', 'Escrita', 'Sobre']) await expect(nav.getByRole('link', { name })).toBeVisible()
+    await expect(nav.getByRole('link', { name: 'Arquitetura' })).toHaveAttribute('href', '/#arquitetura')
+    // Contato em destaque, fora da lista (no celular fica na linha da marca).
+    await expect(page.getByRole('banner').getByRole('link', { name: 'Contato' })).toHaveAttribute('href', '/contato/')
+    await expect(page.locator('#arquitetura').getByRole('heading', { level: 2, name: 'Arquitetura' })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Ver projetos' })).toHaveAttribute('href', '/projetos/')
     await expect(page.getByRole('link', { name: 'Mandar um e-mail' })).toHaveAttribute('href', 'mailto:hello@whoisclebs.com')
     await expect(page.getByRole('tablist')).toHaveCount(0)

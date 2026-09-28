@@ -38,16 +38,19 @@ const darkAttr = block(/:root\[data-theme='dark'\]\s*\{/)
 const darkMedia = block(/:root:not\(\[data-theme='light'\]\)\s*\{/)
 const night = block(/\.band-night\s*\{/)
 const aurora = block(/\.band-aurora\s*\{/)
+const sky = block(/\.band-sky\s*\{/)
 /**
- * Faixas do amanhecer (passo 15). A aurora é um degradê: mede-se contra o ponto mais claro (`--p-aurora`,
- * que é o fundo sólido declarado) e contra a ponta escura (`--p-aurora-top`), que só importa para o foco.
+ * Faixas do amanhecer (passos 15 e 17). A aurora é o céu índigo da home: mede-se contra o ponto mais claro da
+ * via láctea (`--p-cosmos-lit`, o `--color-bg` declarado) e contra o céu sem ela (`--p-cosmos`). O céu do rodapé é medido aqui contra o topo da ilustração (`--p-sky-top`) e, no e2e, contra os
+ * pixels reais da imagem atrás de cada texto.
  */
 const themes = {
   'dia (claro)': light,
   'dia (escuro)': { ...light, ...darkAttr },
   noite: { ...light, ...night },
   aurora: { ...light, ...aurora },
-  'aurora (ponta escura)': { ...light, ...aurora, '--color-bg': 'var(--p-aurora-top)' },
+  'aurora (céu sem via láctea)': { ...light, ...aurora, '--color-bg': 'var(--p-cosmos)' },
+  'céu do rodapé': { ...light, ...night, ...sky },
 }
 
 function resolve(vars, name, seen = new Set()) {

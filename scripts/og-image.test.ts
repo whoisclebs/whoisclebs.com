@@ -9,7 +9,7 @@ const colors = readPrimitives(readFileSync('src/styles/tokens.css', 'utf8'))
 
 describe('imagens Open Graph', () => {
   it('lê as cores dos tokens primitivos', () => {
-    expect(colors.paper).toBe('#eeece6')
+    expect(colors.paper).toBe('#eceef1')
     expect(colors.ink).toBe('#16181d')
   })
 

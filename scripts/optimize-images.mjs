@@ -5,6 +5,7 @@ import { extname, join } from 'node:path'
 import sharp from 'sharp'
 
 const distDir = process.argv[2] ?? '.svelte-kit/cloudflare'
+const skipDirectories = new Set(['scene', 'media'])
 const supportedExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp'])
 
 async function listImages(directory) {
@@ -14,6 +15,8 @@ async function listImages(directory) {
   for (const entry of entries) {
     const fullPath = join(directory, entry.name)
     if (entry.isDirectory()) {
+      // `scene/` e `media/` já saem otimizados dos próprios scripts (larguras exatas do srcset, pôsteres).
+      if (directory === distDir && skipDirectories.has(entry.name)) continue
       images.push(...await listImages(fullPath))
       continue
     }

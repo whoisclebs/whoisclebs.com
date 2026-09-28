@@ -109,11 +109,11 @@
    * controle. Vale para todo controle em bloco (botões, navegação, idioma, marca, HUD). Links dentro de
    * texto corrido ficam só com o anel: cantos numa linha quebrada ficariam soltos. Sem animação no foco.
    */
-  :is(.button, .site-nav a, .lang a, .brand, .hud__label, a.hud__value) {
+  :is(.button, .site-nav a, .contact-cta, .lang a, .brand, .hud__label, a.hud__value) {
     position: relative;
   }
 
-  :is(.button, .site-nav a, .lang a, .brand, .hud__label, a.hud__value, .skip-link):focus-visible::after {
+  :is(.button, .site-nav a, .contact-cta, .lang a, .brand, .hud__label, a.hud__value, .skip-link):focus-visible::after {
     content: '';
     position: absolute;
     inset: -8px;
@@ -130,6 +130,96 @@
       linear-gradient(var(--color-focus) 0 0) 100% 100% / var(--corner) var(--stroke),
       linear-gradient(var(--color-focus) 0 0) 100% 100% / var(--stroke) var(--corner);
     background-repeat: no-repeat;
+  }
+
+  /*
+   * Linha-alvo (passo 17): listas editoriais da home e da escrita. No hover (ponteiro fino) ou com o foco do
+   * teclado num link da linha, quatro cantos travam na linha e um fio âmbar percorre o topo, como a seleção
+   * de uma unidade no HUD. Cantos e fio são decorativos; o foco continua no anel do link.
+   */
+  .target {
+    position: relative;
+  }
+
+  .target::before,
+  .target::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .target::before {
+    inset: 0 calc(-1 * var(--space-3));
+    --corner: 10px;
+    --stroke: 2px;
+    background:
+      linear-gradient(var(--color-sun) 0 0) 0 0 / var(--corner) var(--stroke),
+      linear-gradient(var(--color-sun) 0 0) 0 0 / var(--stroke) var(--corner),
+      linear-gradient(var(--color-sun) 0 0) 100% 0 / var(--corner) var(--stroke),
+      linear-gradient(var(--color-sun) 0 0) 100% 0 / var(--stroke) var(--corner),
+      linear-gradient(var(--color-sun) 0 0) 0 100% / var(--corner) var(--stroke),
+      linear-gradient(var(--color-sun) 0 0) 0 100% / var(--stroke) var(--corner),
+      linear-gradient(var(--color-sun) 0 0) 100% 100% / var(--corner) var(--stroke),
+      linear-gradient(var(--color-sun) 0 0) 100% 100% / var(--stroke) var(--corner);
+    background-repeat: no-repeat;
+    opacity: 0;
+    transform: scale(1.015, 1.06);
+    transition:
+      opacity var(--dur-ui) var(--ease-out),
+      transform 240ms var(--ease-out);
+  }
+
+  .target::after {
+    inset: -1px 0 auto;
+    height: 2px;
+    background: var(--color-sun);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 320ms var(--ease-out);
+  }
+
+  .target:has(:focus-visible)::before {
+    opacity: 1;
+    transform: none;
+  }
+
+  .target:has(:focus-visible)::after {
+    transform: scaleX(1);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .target:hover::before {
+      opacity: 1;
+      transform: none;
+    }
+
+    .target:hover::after {
+      transform: scaleX(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .target::before,
+    .target::after {
+      transform: none;
+      transition: opacity var(--dur-ui) linear;
+    }
+
+    .target::after {
+      opacity: 0;
+    }
+
+    .target:has(:focus-visible)::after {
+      transform: none;
+      opacity: 1;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .target:hover::after {
+        transform: none;
+        opacity: 1;
+      }
+    }
   }
 
   code,

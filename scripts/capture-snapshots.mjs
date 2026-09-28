@@ -13,11 +13,13 @@
  *   npm run snapshots -- <pasta-de-saida>           ex.: npm run snapshots -- 02-sveltekit
  *   node scripts/capture-snapshots.mjs 00-baseline dist
  *
- * Variáveis opcionais: SNAPSHOT_ROUTES (JSON [{ name, path, scheme?, click?, element? }]) substitui as rotas
+ * Variáveis opcionais: SNAPSHOT_ROUTES (JSON [{ name, path, scheme?, click?, element?, motion?, scroll?, video? }]) substitui as rotas
  * padrão; `activity` ('fresh' | 'stale' | 'empty' | 'unavailable' | 'loading') intercepta `/api/activity` com os
- * corpos de `tests/fixtures/activity-fixtures.mjs` (estados do rodapé); `click: { selector, count }` clica N vezes antes da captura (estados do simulador) e `element`
+ * corpos de `tests/fixtures/activity-fixtures.mjs` (estados do HUD da home); `click: { selector, count }` clica N vezes antes da captura (estados do simulador) e `element`
  * captura só aquele elemento em vez da página inteira; SNAPSHOT_WIDTHS ("390,1440") limita as larguras;
  * SNAPSHOT_LOCALE troca o locale do navegador (padrão en-US: o site novo não pode depender dele).
+ * Passo 17: `motion: true` libera o movimento (o padrão é reduzido); `scroll` (0–1) captura só a viewport naquela
+ * fração da rolagem; `video` (segundos) para o vídeo da 404 naquele instante e captura só a viewport.
  */
 
 import { spawn } from 'node:child_process'
@@ -71,6 +73,14 @@ const siteRoutes = [
   { name: 'hobbies', path: '/hobbies/' },
   { name: '404', path: '/rota-inexistente/' },
   { name: 'en-home', path: '/en/', activity: 'fresh' },
+  // Passo 17: a home na viewport no topo, a 35 % e a 70 % da rolagem (com a luz da jornada em movimento), o
+  // rodapé com a cena (quadro estático, movimento reduzido) e a 404 em dois momentos do ciclo do farol.
+  { name: 'home-topo', path: '/', activity: 'fresh', motion: true, scroll: 0 },
+  { name: 'home-35', path: '/', activity: 'fresh', motion: true, scroll: 0.35 },
+  { name: 'home-70', path: '/', activity: 'fresh', motion: true, scroll: 0.7 },
+  { name: 'rodape', path: '/', activity: 'fresh', element: 'footer' },
+  { name: '404-noite', path: '/rota-inexistente/', motion: true, video: 1 },
+  { name: '404-dia', path: '/rota-inexistente/', motion: true, video: 20 },
 ]
 const defaultRoutes = buildDir ? legacyRoutes : siteRoutes
 const routes = process.env.SNAPSHOT_ROUTES ? JSON.parse(process.env.SNAPSHOT_ROUTES) : defaultRoutes
@@ -142,6 +152,27 @@ async function startWrangler() {
   throw new Error('wrangler dev não respondeu em 60 s')
 }
 
+/**
+ * O `wrangler dev` serve os assets sem Range nem Content-Length e o Chrome não consegue buscar no vídeo da 404;
+ * aqui o arquivo do build é servido com Range (como o CDN), para parar o ciclo num instante fixo.
+ */
+async function serveVideoWithRanges(page) {
+  await page.route(/\/media\/farol-ciclo\.(webm|mp4)$/, async (request) => {
+    const kind = new URL(request.request().url()).pathname.endsWith('.webm') ? 'webm' : 'mp4'
+    const body = readFileSync(`static/media/farol-ciclo.${kind}`)
+    const type = kind === 'webm' ? 'video/webm' : 'video/mp4'
+    const range = /bytes=(\d+)-(\d*)/.exec(request.request().headers()['range'] ?? '')
+    if (!range) return request.fulfill({ status: 200, body, headers: { 'content-type': type, 'accept-ranges': 'bytes', 'content-length': String(body.length) } })
+    const start = Number(range[1])
+    const end = range[2] ? Number(range[2]) : body.length - 1
+    return request.fulfill({
+      status: 206,
+      body: body.subarray(start, end + 1),
+      headers: { 'content-type': type, 'accept-ranges': 'bytes', 'content-range': `bytes ${start}-${end}/${body.length}`, 'content-length': String(end - start + 1) },
+    })
+  })
+}
+
 /** Estados do rodapé: resposta simulada de `/api/activity` (a fixture nunca vai para o site). */
 async function mockActivity(page, state) {
   await page.route('**/api/activity', async (request) => {
@@ -166,13 +197,15 @@ try {
     const page = await context.newPage()
     for (const route of routes) {
       // Rotas com `scheme: 'dark'` emulam prefers-color-scheme (tema "noite"); as demais ficam no claro.
-      await page.emulateMedia({ colorScheme: route.scheme ?? 'light' })
+      await page.emulateMedia({ colorScheme: route.scheme ?? 'light', reducedMotion: route.motion ? 'no-preference' : 'reduce' })
       await page.unroute('**/api/activity')
       // Site novo: sempre com a fixture (padrão "fresh"). Sem ela, o `wrangler dev` sem D1 migrado às vezes
       // segura `/api/activity` e o networkidle da rota seguinte estoura (visto no 404 do passo 15).
       if (route.activity || !buildDir) await mockActivity(page, route.activity ?? 'fresh')
       // Página em branco entre rotas: ir de `/` para `/` restauraria a rolagem no rodapé e dispararia a
       // atividade antes da hora (no estado "carregando", a requisição pendurada seguraria o networkidle).
+      await page.unroute(/\/media\/farol-ciclo\./)
+      if (route.video !== undefined) await serveVideoWithRanges(page)
       await page.goto('about:blank')
       await page.goto(base + route.path, { waitUntil: 'networkidle' })
       await page.evaluate(async () => {
@@ -183,19 +216,35 @@ try {
         }
         window.scrollTo(0, 0)
       })
-      if (route.activity) {
-        await page.locator('[data-activity-state]').scrollIntoViewIfNeeded()
-        const expected = route.activity === 'empty' ? 'fresh' : route.activity
-        await page.locator(`[data-activity-state="${expected}"]`).waitFor({ timeout: 10_000 })
+      // A atividade só aparece no HUD da home (saiu do rodapé no passo 17): espera a leitura terminar.
+      if (route.activity && (route.path === '/' || route.path === '/en/')) {
+        await page.locator('[data-hud-phase="done"]').waitFor({ timeout: 10_000 })
       }
       if (route.click) {
         const target = page.locator(route.click.selector)
         await target.waitFor()
         for (let i = 0; i < route.click.count; i += 1) await target.click()
       }
+      if (route.video !== undefined) {
+        // 404: para o vídeo do ciclo num instante fixo (a cor do texto acompanha a hora do céu).
+        await page.locator('.nf video').waitFor({ state: 'attached', timeout: 15_000 })
+        await page.locator('.nf video').evaluate(async (el, t) => {
+          if (el.readyState < 1) await new Promise((resolve) => el.addEventListener('loadedmetadata', resolve, { once: true }))
+          el.pause()
+          el.currentTime = t
+          await new Promise((resolve) => el.addEventListener('seeked', resolve, { once: true }))
+        }, route.video)
+        await page.waitForTimeout(1800)
+      }
+      if (route.scroll !== undefined) {
+        await page.evaluate((f) => window.scrollTo(0, (document.documentElement.scrollHeight - window.innerHeight) * f), route.scroll)
+        await page.waitForTimeout(600)
+      }
+      if (route.element) await page.locator(route.element).scrollIntoViewIfNeeded()
       await page.waitForTimeout(300)
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
-      const png = route.element ? await page.locator(route.element).screenshot() : await page.screenshot({ fullPage: true })
+      const viewportOnly = route.scroll !== undefined || route.video !== undefined
+      const png = route.element ? await page.locator(route.element).screenshot() : await page.screenshot({ fullPage: !viewportOnly })
       let image = sharp(png)
       const { height } = await image.metadata()
       if (height > maxHeight) image = image.extract({ left: 0, top: 0, width: viewport.width, height: maxHeight })

@@ -71,5 +71,5 @@ test('rota inexistente devolve 404 real com página própria', async ({ request,
   const navigation = await page.goto('/en/nothing-here/')
   expect(navigation?.status()).toBe(404)
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Page not found')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('404 Page not found')
 })

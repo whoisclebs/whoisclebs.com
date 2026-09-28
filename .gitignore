@@ -159,3 +159,8 @@ C:*
 design/explorations/v3/**/*.png
 design/explorations/v3/refs/
 design/explorations/v3/sky/ref-*
+
+# Brutos grandes da exploração v3 (a saída final da 404 está em static/media; ficam só locais)
+design/explorations/v3/cycle/
+design/explorations/v3/prototype/
+design/explorations/v3/prototype-sky/

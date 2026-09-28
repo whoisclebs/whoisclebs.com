@@ -204,8 +204,38 @@
     inset: auto 0 100% auto;
     width: min(60%, 44rem);
     height: 72px;
-    background: radial-gradient(60% 100% at 100% 100%, rgb(232 166 82 / 0.32), rgb(232 166 82 / 0) 72%);
+    background: radial-gradient(60% 100% at 100% 100%, rgb(242 230 160 / 0.32), rgb(242 230 160 / 0) 72%);
     pointer-events: none;
+  }
+
+  /*
+   * Onde a faixa de luz do vídeo encosta no horizonte: um ponto quente no fio e um reflexo curto abaixo
+   * dele. Decorativo; o fio continua sendo o limite da noite. Pulsa devagar só com movimento permitido.
+   */
+  .hud::after {
+    content: '';
+    position: absolute;
+    inset: -1px 0 auto auto;
+    width: min(46%, 36rem);
+    height: 1px;
+    background: linear-gradient(to right, rgb(242 230 160 / 0), rgb(250 244 210 / 0.95) 72%, rgb(242 230 160 / 0.4));
+    box-shadow: 0 0 12px 1px rgb(242 230 160 / 0.55);
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hud::after {
+      animation: horizon-glint 7s ease-in-out infinite alternate;
+    }
+  }
+
+  @keyframes horizon-glint {
+    from {
+      opacity: 0.55;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   .hud__list {

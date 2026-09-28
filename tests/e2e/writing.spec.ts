@@ -230,17 +230,18 @@ test.describe('comentários (Giscus)', () => {
 })
 
 test.describe('home: ritmo editorial', () => {
-  test('o que eu faço e a história na aurora; projetos, agentes e escrita no dia; Agora datado', async ({ page }) => {
+  test('jornada escura: arquitetura logo abaixo do hero, depois história, projetos, agentes, agora e escrita', async ({ page }) => {
     await page.goto('/')
-    const aurora = page.locator('[data-band="aurora"]')
-    await expect(aurora.getByRole('heading', { level: 3 })).toHaveText(['Sistemas distribuídos', 'Backend de alta performance', 'IA agêntica'])
-    await expect(aurora.getByRole('heading', { level: 2 })).toHaveText(['O que eu faço', 'Como cheguei aqui'])
+    const journey = page.locator('[data-band="aurora"]')
+    await expect(journey.locator('#arquitetura').getByRole('heading', { level: 3 })).toHaveText(['Sistemas distribuídos', 'Backend de alta performance', 'IA agêntica'])
     await expect(page.locator('section.manifesto')).toHaveCount(0)
-    // Ordem dos capítulos (passo 15): hero → o que eu faço → história → projetos → agentes → escrita.
+    // Ordem dos capítulos (passo 17): hero → arquitetura → história → projetos → agentes → agora → escrita.
     const order = await page.locator('main h2').allTextContents()
-    const expected = ['O que eu faço', 'Como cheguei aqui', 'Projetos', 'Agentes de IA', 'Escrita e notas']
-    expect(expected.map((title) => order.indexOf(title))).toEqual([...expected.map((title) => order.indexOf(title))].sort((x, y) => x - y))
-    expect(order.indexOf('O que eu faço')).toBeGreaterThanOrEqual(0)
+    expect(order).toEqual(['Arquitetura', 'Como cheguei aqui', 'Projetos', 'Agentes de IA', 'Agora', 'Escrita e notas'])
+    // Cada capítulo abre com a hora da jornada em mono (decorativa: o título continua no <h2>).
+    const marks = await journey.locator('.mark').allTextContents()
+    expect(marks.map((mark) => mark.trim().slice(0, 5))).toEqual(['04:40', '05:10', '05:30', '05:50', '06:10', '06:30'])
+    await expect(journey.locator('.mark').first()).toHaveAttribute('aria-hidden', 'true')
     const rows = page.locator('.writing .writing-list > li')
     await expect(rows).toHaveCount(5)
     await expect(rows.first().locator('time')).toHaveAttribute('datetime', /^\d{4}-\d{2}-\d{2}$/)

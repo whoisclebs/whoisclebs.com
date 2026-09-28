@@ -1,5 +1,5 @@
 <!--
-  Luz rasante do hero (vídeo Higgsfield, Prompt A v2). Decorativa (`aria-hidden`) e nunca o LCP:
+  Luz rasante do hero (vídeo Higgsfield v3, na paleta da noite do farol; `scripts/build-hero-light.mjs`). Decorativa (`aria-hidden`) e nunca o LCP:
   - no HTML prerenderizado não há imagem nem vídeo, só a noite e um fio de luz em CSS (degradê não é
     candidato a LCP);
   - depois do `load`, num momento ocioso e só com o hero visível, entra o pôster (movimento reduzido ou
@@ -15,9 +15,9 @@
 <script lang="ts">
   import { onMount } from 'svelte'
 
-  const POSTER = '/media/hero-light-v2-poster.webp'
-  const WEBM = '/media/hero-light-v2.webm'
-  const MP4 = '/media/hero-light-v2.mp4'
+  const POSTER = '/media/hero-light-v3-poster.webp'
+  const WEBM = '/media/hero-light-v3.webm'
+  const MP4 = '/media/hero-light-v3.mp4'
   const WIDTH = 1280
   const HEIGHT = 720
 
@@ -148,7 +148,7 @@
     pointer-events: none;
     /* Sem mídia: um fio de luz em CSS no mesmo ângulo da faixa do vídeo (degradê não é candidato a LCP). */
     background:
-      linear-gradient(162deg, rgb(232 166 82 / 0) 30%, rgb(232 166 82 / 0.13) 44%, rgb(232 166 82 / 0) 58%),
+      linear-gradient(162deg, rgb(242 230 160 / 0) 30%, rgb(242 230 160 / 0.13) 44%, rgb(242 230 160 / 0) 58%),
       var(--p-night);
   }
 
@@ -161,11 +161,23 @@
     object-fit: cover;
     object-position: 60% 40%;
     opacity: 0;
+    /*
+     * Versão 3 (passo 17, paleta da noite do farol): superfície azul-noite e uma faixa de luz pálida da lâmpada
+     * que entra pelo alto e desce até o canto direito, onde encosta no fio do horizonte (o HUD). A metade
+     * esquerda do quadro é escura, então o vídeo entra sem giro: a faixa já passa à direita do título.
+     */
     transition: opacity 900ms var(--ease-out);
   }
 
   .light[data-shown] .light__media {
-    opacity: 0.62;
+    opacity: 0.92;
+  }
+
+  /* Celular e tablet: o texto ocupa quase toda a largura; a faixa sobe para o alto, à direita (medida no e2e). */
+  @media (max-width: 959px) {
+    .light__media {
+      transform: translate(12%, -12%);
+    }
   }
 
   /* A fonte dos quadros: presente e tocando, mas com 1 px e fora da vista (não é candidata a LCP). */
@@ -191,12 +203,13 @@
       linear-gradient(to right, rgb(14 20 29 / 0.85) 0%, rgb(14 20 29 / 0.5) 40%, rgb(14 20 29 / 0) 70%);
   }
 
+  /* Desktop: o véu fica só onde está o texto (embaixo à esquerda); à direita a luz desce inteira até o fio. */
   @media (min-width: 960px) {
     .light__veil {
       background:
-        linear-gradient(to bottom, rgb(14 20 29 / 1) 0%, rgb(14 20 29 / 0) 16%),
-        linear-gradient(to top, rgb(14 20 29 / 0.96) 0%, rgb(14 20 29 / 0.7) 38%, rgb(14 20 29 / 0) 72%),
-        linear-gradient(to right, rgb(14 20 29 / 0.9) 0%, rgb(14 20 29 / 0.72) 38%, rgb(14 20 29 / 0) 66%);
+        linear-gradient(to bottom, rgb(14 20 29 / 1) 0%, rgb(14 20 29 / 0) 12%),
+        radial-gradient(75% 95% at 0% 100%, rgb(14 20 29 / 0.94) 0%, rgb(14 20 29 / 0.78) 45%, rgb(14 20 29 / 0) 100%),
+        linear-gradient(to right, rgb(14 20 29 / 0.85) 0%, rgb(14 20 29 / 0.6) 36%, rgb(14 20 29 / 0) 60%);
     }
   }
 </style>

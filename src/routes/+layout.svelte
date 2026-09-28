@@ -38,7 +38,7 @@
 {/if}
 
 <SiteHeader {locale} currentPath={page.url.pathname} alternates={page.error ? undefined : seo?.alternates} home={isHome} />
-<main id="conteudo" class={isHome ? 'main--bleed' : 'page'} tabindex="-1">
+<main id="conteudo" class={isHome || page.status === 404 ? 'main--bleed' : 'page'} tabindex="-1">
   {@render children()}
 </main>
-<SiteFooter {locale} currentPath={page.url.pathname} />
+<SiteFooter {locale} currentPath={page.url.pathname} scene={!page.error} />
