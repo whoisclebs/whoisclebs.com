@@ -1,23 +1,13 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test, type Page, type Route } from '@playwright/test'
-import { activityBody } from '../fixtures/activity-fixtures.mjs'
+import { expect, test, type Page } from '@playwright/test'
 
 /**
  * Passos 11 e 17 — rodapé (convite, perfis, leitura, navegação secundária, noite do farol) e `/contato/`.
- * A atividade pública saiu do rodapé no passo 17 (decisão do proprietário); só o HUD do hero usa
- * `/api/activity`, interceptado com `page.route` para não depender do D1 do e2e.
+ * A atividade pública saiu do rodapé e do HUD no passo 17 (decisões 101 e 102): nenhuma página chama
+ * `/api/activity`.
  */
 
 test.use({ timezoneId: 'America/Fortaleza' })
-
-async function mockActivity(page: Page) {
-  const calls: number[] = []
-  await page.route('**/api/activity', async (route: Route) => {
-    calls.push(Date.now())
-    return route.fulfill({ status: 200, json: activityBody('fresh', new Date()) })
-  })
-  return calls
-}
 
 /** Abre a página e rola até o rodapé (a camada animada da cena entra perto dele). */
 async function openFooter(page: Page, path = '/') {
@@ -29,40 +19,22 @@ async function openFooter(page: Page, path = '/') {
   return footer
 }
 
-test('o rodapé não tem região de atividade pública (PT e EN)', async ({ page }) => {
-  const calls = await mockActivity(page)
+test('o rodapé não tem região de atividade pública e nenhuma página chama a API (PT e EN)', async ({ page }) => {
+  const calls: string[] = []
+  page.on('request', (request) => {
+    if (new URL(request.url()).pathname.startsWith('/api/activity')) calls.push(request.url())
+  })
   for (const path of ['/sobre/', '/en/']) {
     const footer = await openFooter(page, path)
     await expect(footer.getByRole('region', { name: /Atividade pública|Public activity/ })).toHaveCount(0)
     await expect(footer.locator('[data-activity-state]')).toHaveCount(0)
     await expect(footer).not.toContainText(/Atividade pública|Public activity/)
   }
-  // Fora da home ninguém mais chama a API (o HUD só existe na home).
-  await page.goto('/sobre/')
-  await page.getByRole('contentinfo').scrollIntoViewIfNeeded()
   await page.waitForTimeout(500)
-  expect(calls).toHaveLength(1) // a única chamada veio do HUD de /en/
-})
-
-test('na home, o HUD faz uma única chamada à API, depois do load', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 })
-  const calls = await mockActivity(page)
-  await page.goto('/')
-  await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
-  await page.getByRole('contentinfo').scrollIntoViewIfNeeded()
-  await page.waitForTimeout(500)
-  expect(calls).toHaveLength(1)
-  // A requisição começa depois do fim do evento load da navegação (o LCP é o H1, não a atividade).
-  const timing = await page.evaluate(() => {
-    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
-    const api = performance.getEntriesByType('resource').find((entry) => entry.name.endsWith('/api/activity'))
-    return { loadEnd: nav.loadEventEnd, fetchStart: api?.startTime ?? -1 }
-  })
-  expect(timing.fetchStart).toBeGreaterThanOrEqual(timing.loadEnd)
+  expect(calls).toEqual([])
 })
 
 test('inglês: rótulos em inglês e páginas só em português sinalizadas', async ({ page }) => {
-  await mockActivity(page)
   const footer = await openFooter(page, '/en/')
   await expect(footer.getByRole('heading', { name: 'Contact', exact: true })).toBeVisible()
   const notes = footer.getByRole('navigation', { name: 'More' }).getByRole('link', { name: 'Notes' })
@@ -110,7 +82,6 @@ test.describe('rodapé sem JS', () => {
 })
 
 test('teclado: os links do rodapé seguem a ordem visual e têm foco visível', async ({ page }) => {
-  await mockActivity(page)
   const footer = await openFooter(page)
   const expected = await footer.locator('a').evaluateAll((els) => els.map((el) => el.getAttribute('href')))
   await footer.locator('a').first().focus()
@@ -155,7 +126,6 @@ for (const scheme of ['light', 'dark'] as const) {
   test(`axe sem critical/serious no rodapé e na 404 (${scheme})`, async ({ page }) => {
     test.setTimeout(60_000)
     await page.emulateMedia({ colorScheme: scheme })
-    await mockActivity(page)
     for (const path of axeRoutes) {
       await openFooter(page, path)
       const results = await new AxeBuilder({ page }).analyze()
@@ -168,7 +138,6 @@ for (const scheme of ['light', 'dark'] as const) {
 for (const width of [390, 768, 1440]) {
   test(`sem overflow horizontal com o rodapé carregado em ${width} px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
-    await mockActivity(page)
     for (const path of ['/', '/contato/', '/escrita/github-actions-como-fazer-deploy/', '/privacy-policy/', '/en/']) {
       await openFooter(page, path)
       await expect.poll(() => page.locator('footer .scene__image').evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true)

@@ -1,6 +1,5 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
-import { activityBody } from '../fixtures/activity-fixtures.mjs'
 
 /**
  * Passo 14 — o que faltava do portão final nas rotas-chave:
@@ -33,10 +32,6 @@ const keyRoutes = [
 ]
 const NOT_FOUND = '/rota-inexistente/'
 
-/** `/api/activity` responde a fixture "fresh": o estado do rodapé não depende do D1 do e2e. */
-async function mockActivity(page: Page) {
-  await page.route('**/api/activity', (route) => route.fulfill({ status: 200, json: activityBody('fresh', new Date()) }))
-}
 
 /** Rola até o fim em passos de uma tela (dispara IntersectionObserver do rodapé e do horizonte) e volta ao topo. */
 async function scrollThrough(page: Page) {
@@ -54,7 +49,6 @@ test.describe('console e rede limpos', () => {
   for (const path of keyRoutes) {
     test(`sem erro de console nem 4xx/5xx inesperado em ${path}`, async ({ page }) => {
       const problems: string[] = []
-      await mockActivity(page)
       page.on('pageerror', (error) => problems.push(`exceção: ${error.message}`))
       page.on('console', (message) => {
         if (message.type() !== 'error' && message.type() !== 'warning') return
@@ -84,7 +78,6 @@ test.describe('prefers-reduced-motion', () => {
 
   for (const path of keyRoutes) {
     test(`sem animação decorativa em ${path}`, async ({ page }) => {
-      await mockActivity(page)
       // Registra, desde o primeiro script, toda animação CSS e toda transição que começar na página.
       await page.addInitScript(() => {
         const started: string[] = []
@@ -145,7 +138,6 @@ test.describe('axe-core nas rotas-chave restantes', () => {
   for (const scheme of ['light', 'dark'] as const) {
     for (const path of ['/sobre/', '/livros/', '/hobbies/', NOT_FOUND]) {
       test(`sem violações critical/serious em ${path} (${scheme})`, async ({ page }) => {
-        await mockActivity(page)
         await page.emulateMedia({ colorScheme: scheme })
         await page.goto(path)
         const results = await new AxeBuilder({ page }).analyze()

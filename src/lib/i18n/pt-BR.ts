@@ -112,7 +112,7 @@ export const ptBR = {
     emailNote: 'Chega direto a mim.',
     profilesLabel: 'Perfis públicos',
     profileNotes: {
-      GitHub: 'Código aberto e a atividade pública que o topo da home resume.',
+      GitHub: 'Código aberto que mantenho e o histórico de cada projeto.',
       LinkedIn: 'Trajetória profissional.',
       Substack: 'Newsletter e textos longos.',
       YouTube: 'Vídeos.',
@@ -211,26 +211,6 @@ export const ptBR = {
   hud: {
     label: 'Estado do site',
     noData: 'sem dado',
-    loading: 'lendo',
-    noJs: 'Sem JavaScript, só o build aparece aqui. A atividade pública fica no',
-    noJsLink: 'perfil do GitHub',
-    activity: {
-      label: 'atividade pública',
-      one: '1 evento',
-      many: '{n} eventos',
-      unavailable: 'atividade indisponível',
-      tip: 'Eventos públicos da conta whoisclebs no GitHub, lidos por /api/activity. É o que está no cache do site agora, no máximo 10; não é um total.',
-    },
-    sync: {
-      label: 'último sync',
-      stale: 'desatualizada desde {date}',
-      tip: 'Última vez que o site buscou a atividade no GitHub. A barra perde um segmento a cada 6 minutos e fica cinza acima de 1 h.',
-    },
-    latency: {
-      label: 'latência /api/activity',
-      value: '{n} ms',
-      tip: 'Tempo que o seu navegador levou na última chamada a /api/activity. Cada segmento da barra vale 100 ms, de 0 a 1000 ms.',
-    },
     build: {
       label: 'build',
       tip: 'Commit publicado neste site. O link abre o commit no GitHub.',
@@ -334,15 +314,15 @@ export const ptBR = {
   },
   privacy: {
     title: 'Política de Privacidade',
-    description: 'Como o whoisclebs.com trata dados: hospedagem na Cloudflare, registros técnicos, comentários só por clique, atividade pública do GitHub e contato por e-mail.',
+    description: 'Como o whoisclebs.com trata dados: hospedagem na Cloudflare, registros técnicos, comentários só por clique e contato por e-mail.',
     updated: 'Última atualização: 27 de setembro de 2026',
     sections: [
       { title: 'Resumo', paragraphs: ['O whoisclebs.com é um site pessoal e editorial mantido por Clebson A. Fonseca. Você lê tudo sem cadastro. O site não define cookies próprios, não guarda nada no armazenamento do seu navegador e não usa ferramenta de análise de audiência nem publicidade. Dados pessoais só chegam a mim se você escrever por e-mail, e só chegam a terceiros se você escolher usar um serviço deles (comentários, newsletter ou links externos).'] },
       { title: 'Dados que podem ser tratados', paragraphs: ['Dependendo de como você usa o site, podem ser tratados:'], bullets: ['registros técnicos de cada requisição (endereço IP, user agent, página pedida, data e hora), tratados pela Cloudflare, que hospeda e entrega o site, para operar e proteger o serviço;', 'o endereço e o conteúdo das mensagens que você me enviar por e-mail;', 'o e-mail que você informar ao assinar a newsletter pelo formulário dos artigos, enviado diretamente ao Substack;', 'dados da sua conta do GitHub, se você carregar os comentários e comentar pelo Giscus;', 'dados técnicos recebidos pela Amazon quando a página Livros exibe capas hospedadas por ela.'] },
       { title: 'Finalidades', paragraphs: ['Os dados são usados para operar e proteger o site, responder contatos e publicar os comentários que você fizer. Não vendo dados pessoais e não crio perfil de visitantes.'] },
       { title: 'Cookies e armazenamento local', paragraphs: ['O site não define cookies próprios e não usa localStorage, sessionStorage nem IndexedDB. O idioma vem só do endereço da página (/en/ para inglês), sem preferência salva no navegador. Os comentários do Giscus só carregam quando você clica em "Carregar comentários": antes disso, nenhuma requisição vai para o Giscus ou o GitHub. Depois do clique, e no formulário do Substack, esses serviços podem usar cookies e armazenamento próprios, conforme as políticas deles. A Cloudflare pode usar cookies técnicos de segurança.'] },
-      { title: 'Atividade pública do GitHub', paragraphs: ['O painel de estado no topo da home conta os eventos públicos recentes da conta whoisclebs no GitHub, como commits enviados, releases e pull requests, e mostra a idade da última sincronização. Um processo agendado lê a API pública do GitHub e guarda num banco de dados da própria hospedagem só o tipo do evento, um título, o link público e a data. Seu navegador pede esses dados ao próprio site, em /api/activity, e não ao GitHub; essa rota não recebe nem guarda dados sobre quem visita, além dos registros técnicos da hospedagem descritos acima.'] },
-      { title: 'Serviços de terceiros', paragraphs: ['Cloudflare (hospedagem em Cloudflare Workers, banco de dados da atividade pública e proteção); Giscus e GitHub (comentários, só depois do clique); Substack (newsletter, se você assinar); Amazon (capas na página Livros). Os links externos, como GitHub, LinkedIn, YouTube e links afiliados de livros, só enviam dados a esses serviços se você clicar. Cada serviço trata dados conforme a própria política.'] },
+      { title: 'Atividade pública do GitHub', paragraphs: ['O site não busca mais a atividade pública do GitHub e não mostra eventos da conta whoisclebs. A rota /api/activity continua publicada, mas sem dados novos: nenhum processo lê o GitHub e nenhuma página chama essa rota. Ela não recebe nem guarda dados sobre quem visita, além dos registros técnicos da hospedagem descritos acima.'] },
+      { title: 'Serviços de terceiros', paragraphs: ['Cloudflare (hospedagem em Cloudflare Workers e proteção); Giscus e GitHub (comentários, só depois do clique); Substack (newsletter, se você assinar); Amazon (capas na página Livros). Os links externos, como GitHub, LinkedIn, YouTube e links afiliados de livros, só enviam dados a esses serviços se você clicar. Cada serviço trata dados conforme a própria política.'] },
       { title: 'Base legal e direitos', paragraphs: ['Quando aplicável (Lei nº 13.709/2018, LGPD), o tratamento se apoia em consentimento, na execução de uma solicitação feita por você, no legítimo interesse de segurança e operação e no cumprimento de obrigações legais. Você pode pedir acesso, correção ou exclusão de dados relacionados ao seu contato com este site pelo e-mail hello@whoisclebs.com.'] },
       { title: 'Segurança', paragraphs: ['As páginas são geradas no build e servidas como arquivos estáticos; a única rota dinâmica pública é /api/activity, somente leitura. As dependências são auditadas e há um canal público de reporte em /.well-known/security.txt. O objetivo é expor o mínimo possível e manter um caminho claro para reportes.'] },
       { title: 'Contato', paragraphs: ['Para dúvidas de privacidade, envie e-mail para hello@whoisclebs.com.'] },
@@ -350,7 +330,7 @@ export const ptBR = {
   },
   terms: {
     title: 'Termos de Uso',
-    description: 'Regras de uso do whoisclebs.com: conteúdo editorial, código de exemplo, comentários, atividade pública, links externos e contato.',
+    description: 'Regras de uso do whoisclebs.com: conteúdo editorial, código de exemplo, comentários, links externos e contato.',
     updated: 'Última atualização: 27 de setembro de 2026',
     sections: [
       { title: 'Aceitação', paragraphs: ['Ao acessar o whoisclebs.com, você concorda com estes termos. Se não concordar, não utilize o site. Estes termos podem ser atualizados; a data acima indica a versão em vigor.'] },
@@ -358,7 +338,6 @@ export const ptBR = {
       { title: 'Propriedade intelectual', paragraphs: ['Textos, imagens autorais, código e demais materiais publicados pertencem ao autor, salvo indicação em contrário. Você pode compartilhar links para o conteúdo. Reprodução integral ou redistribuição comercial exige autorização. Código de repositórios públicos segue a licença de cada repositório.'] },
       { title: 'Código, exemplos e simulações', paragraphs: ['Exemplos de código são referência educacional, sem garantia de funcionamento, adequação, segurança ou compatibilidade com ambientes específicos. Simulações, como a do estudo de caso do tuxedo, usam dados sintéticos e estão rotuladas como tal. Revise, teste e adapte qualquer trecho antes de usar em produção.'] },
       { title: 'Comentários e comunidade', paragraphs: ['Os comentários são feitos pelo Giscus, com conta do GitHub, e só carregam quando você clica. Ao comentar, mantenha respeito, evite spam, não publique dados sensíveis e não viole direitos de terceiros. Comentários abusivos podem ser ocultados ou removidos.'] },
-      { title: 'Atividade pública', paragraphs: ['A atividade exibida no topo da home reflete eventos públicos do GitHub, sempre com fonte e data. Ela pode ficar desatualizada ou indisponível; quando isso acontece, o site diz isso em texto, em vez de mostrar dado antigo como atual.'] },
       { title: 'Links externos e afiliados', paragraphs: ['O site contém links externos e links afiliados. Não sou responsável pelo conteúdo, disponibilidade, segurança ou políticas desses serviços. Links afiliados podem gerar comissão sem custo adicional para você.'] },
       { title: 'Contato e newsletter', paragraphs: ['Ao escrever por e-mail, você autoriza o uso dos dados da mensagem para responder. A newsletter é do Substack: o formulário dos artigos envia seu e-mail diretamente para lá, e o cancelamento segue o mecanismo do Substack. Este site não tem formulário de contato próprio.'] },
       { title: 'Limitação de responsabilidade', paragraphs: ['O site é fornecido no estado em que se encontra. Na máxima extensão permitida pela lei, não há garantia de disponibilidade contínua, ausência de erros ou adequação do conteúdo a uma finalidade específica.'] },

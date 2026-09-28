@@ -2,7 +2,6 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Browser, type Page } from '@playwright/test'
 import { readFileSync } from 'node:fs'
 import sharp from 'sharp'
-import { activityBody } from '../fixtures/activity-fixtures.mjs'
 
 /**
  * Passo 17 — "v1, só que melhor": depois do hero, um céu noturno índigo (estrelas, via láctea que gira com a
@@ -18,9 +17,6 @@ import { activityBody } from '../fixtures/activity-fixtures.mjs'
 
 test.use({ timezoneId: 'America/Fortaleza' })
 
-async function mockActivity(page: Page) {
-  await page.route('**/api/activity', (route) => route.fulfill({ status: 200, json: activityBody('fresh', new Date()) }))
-}
 
 function luminance(r: number, g: number, b: number) {
   const lin = (c: number) => {
@@ -119,7 +115,6 @@ async function reducedContext(browser: Browser, width: number) {
 
 test.describe('jornada escura da home', () => {
   test('a via láctea gira com a rolagem (scroll-driven) e fica parada com movimento reduzido', async ({ page, browser }) => {
-    await mockActivity(page)
     await page.goto('/')
     const light = page.locator('.journey__light')
     const style = await light.evaluate((el) => {
@@ -140,7 +135,6 @@ test.describe('jornada escura da home', () => {
 
     const context = await reducedContext(browser, 1440)
     const reduced = await context.newPage()
-    await mockActivity(reduced)
     await reduced.goto('/')
     expect(await reduced.locator('.journey__light').evaluate((el) => getComputedStyle(el).animationName)).toBe('none')
     await context.close()
@@ -150,7 +144,6 @@ test.describe('jornada escura da home', () => {
     test(`contraste AA do texto sobre o céu com a via láctea (${width} px)`, async ({ browser }) => {
       const context = await reducedContext(browser, width)
       const page = await context.newPage()
-      await mockActivity(page)
       await page.goto('/')
       const sections = ['#arquitetura', '.story', '.projects', '.agents-call', '.now', '.writing']
       for (const section of sections) {
@@ -165,7 +158,6 @@ test.describe('jornada escura da home', () => {
   }
 
   test('arquitetura: três frentes com problema, entrega e evidência pública; convite para conversar', async ({ page }) => {
-    await mockActivity(page)
     await page.goto('/')
     const offer = page.locator('#arquitetura')
     await expect(offer.locator('.offer__item')).toHaveCount(3)
@@ -181,7 +173,6 @@ test.describe('jornada escura da home', () => {
   })
 
   test('linhas-alvo: cantos e fio no foco do teclado, sem animação de deslocamento com movimento reduzido', async ({ page }) => {
-    await mockActivity(page)
     await page.goto('/')
     const link = page.locator('.project .project__name a').first()
     await link.focus()
@@ -209,7 +200,6 @@ test.describe('rodapé: a noite do farol', () => {
   })
 
   test('com movimento: a ilha só carrega perto do rodapé, roda visível e pausa fora da tela', async ({ page }) => {
-    await mockActivity(page)
     const chunks: string[] = []
     page.on('response', (response) => {
       if (/\/_app\/immutable\/chunks\/.*\.js$/.test(response.url())) chunks.push(response.url())
@@ -240,7 +230,6 @@ test.describe('rodapé: a noite do farol', () => {
   test('movimento reduzido: um quadro estático, facho parado e nenhum erro', async ({ browser }) => {
     const context = await reducedContext(browser, 1440)
     const page = await context.newPage()
-    await mockActivity(page)
     const errors: string[] = []
     page.on('pageerror', (error) => errors.push(String(error)))
     page.on('console', (message) => message.type() === 'error' && errors.push(message.text()))
@@ -262,7 +251,6 @@ test.describe('rodapé: a noite do farol', () => {
     test(`texto direto no céu com contraste AA (${width} px)`, async ({ browser }) => {
       const context = await reducedContext(browser, width)
       const page = await context.newPage()
-      await mockActivity(page)
       await page.goto('/sobre/')
       const image = page.locator('footer .scene__image')
       await image.scrollIntoViewIfNeeded()
@@ -374,7 +362,6 @@ test.describe('404: o ciclo do farol', () => {
 test.describe('axe: home com a jornada, rodapé com a cena e 404', () => {
   for (const path of ['/', '/en/', '/sobre/', '/nao-existe-mesmo/']) {
     test(`sem violações critical/serious em ${path}`, async ({ page }) => {
-      await mockActivity(page)
       await page.goto(path)
       await page.locator('footer').scrollIntoViewIfNeeded()
       await page.waitForTimeout(300)

@@ -291,7 +291,6 @@ function limitsSection(): string {
     `- Os status de projetos foram conferidos nas datas indicadas (a mais recente: ${AGENTS_CHECKED_AT}) e podem ter mudado desde então. O código público é a fonte; este texto é uma leitura dele.`,
     '- Nenhum projeto de agentes tem uso em produção demonstrado, e o site não publica números de benchmark: os resultados existentes não cumprem os critérios de reprodução listados acima.',
     '- A simulação do case tuxedo usa dados sintéticos e está rotulada como simulação; não é medição de produção.',
-    '- A atividade pública do GitHub resumida no topo da home vem de uma API em tempo de execução e não faz parte deste arquivo.',
     '- Cases, o capítulo de agentes, as notas e a página de contato existem só em português; o inglês cobre home, sobre, projetos (fichas), escrita e páginas legais.',
     '- Artigos antigos contam eventos datados (hackathons, versões anteriores do site); valem para a data em que foram publicados.',
     '- Opiniões e exemplos são educacionais, sem garantia, conforme os Termos de Uso.',

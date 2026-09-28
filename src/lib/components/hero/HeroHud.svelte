@@ -1,193 +1,72 @@
 <!--
-  HUD da home: uma linha de estado sobre o fio âmbar do horizonte, no fim do hero. Aceno a jogos de
-  estratégia, só com telemetria real e rótulo em texto em todos os itens:
-  - atividade pública: quantos eventos há agora no cache do site (os mesmos que o rodapé lista), ou o estado;
-  - último sync: idade da última sincronização com o GitHub, barra de 10 segmentos que esvazia com a idade;
-  - latência /api/activity: medida pelo navegador do visitante, em ms;
-  - build: SHA curto do commit publicado, com link, gravado no build.
-  Sem JS: o build e um link para o perfil do GitHub; o resto fica em "sem dado", nunca inventado.
-  A busca começa depois do `load` (o LCP é o H1) e é a mesma do rodapé (`activity-store.ts`).
-  Dicas: abrem no hover (ponteiro fino), no foco do teclado e no toque (botão); Esc fecha.
+  HUD da home: uma linha de estado sobre o fio do horizonte, no fim do hero. Aceno a jogos de estratégia, só
+  com dado real e rótulo em texto. Desde o passo 17 fica só o build (SHA curto do commit publicado, com link,
+  gravado no build): a fonte GitHub Events foi desativada, e a atividade pública, o último sync e a latência
+  de `/api/activity` saíram (decisions.md 102). A home não chama mais a API. O item fica à direita, onde a
+  luz do vídeo encosta no fio.
+  Dica: abre no hover (ponteiro fino), no foco do teclado e no toque (botão); Esc fecha.
 -->
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { relativeTime, type ActivityResult } from '$lib/activity/activity-client'
-  import { requestActivity } from '$lib/activity/activity-store'
-  import { activityBar, EMPTY_BAR, HUD_SEGMENTS, latencyBar, readings, syncBar, type Bar } from '$lib/activity/hud'
   import { buildInfo } from '$lib/build-info'
-  import { format, getMessages, type Locale } from '$lib/i18n'
+  import { getMessages, type Locale } from '$lib/i18n'
 
-  let { locale, profileUrl }: { locale: Locale; profileUrl: string } = $props()
+  let { locale }: { locale: Locale } = $props()
 
   const t = $derived(getMessages(locale).hud)
   const build = buildInfo()
 
-  let phase = $state<'nojs' | 'waiting' | 'done'>('nojs')
-  let result = $state<ActivityResult | null>(null)
-  let latency = $state<number | null>(null)
-  let now = $state(new Date())
-
-  let open = $state<string | null>(null)
-  let dismissed = $state<string | null>(null)
-  let warm = $state(false)
-  let warmTimer: ReturnType<typeof setTimeout> | undefined
+  // `nojs` no HTML prerenderizado; `done` depois da hidratação (os testes esperam por ele).
+  let phase = $state<'nojs' | 'done'>('nojs')
+  let open = $state(false)
+  let dismissed = $state(false)
   let root: HTMLElement
 
-  const read = $derived(readings(result, latency))
-
-  function shortDate(iso: string) {
-    return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date(iso))
-  }
-
-  type Item = { key: string; label: string; tip: string; bar: Bar | null; value: string; href?: string; datetime?: string }
-
-  const items = $derived.by((): Item[] => {
-    const waiting = phase === 'waiting'
-    const noValue = waiting ? t.loading : t.noData
-
-    let activity: Item
-    if (phase === 'nojs') {
-      activity = { key: 'activity', label: t.activity.label, tip: `${t.noJs} ${t.noJsLink}.`, bar: EMPTY_BAR, value: t.noJsLink, href: profileUrl }
-    } else if (read.activity && 'unavailable' in read.activity) {
-      activity = { key: 'activity', label: t.activity.label, tip: t.activity.tip, bar: EMPTY_BAR, value: t.activity.unavailable }
-    } else if (read.activity) {
-      const n = read.activity.count
-      activity = { key: 'activity', label: t.activity.label, tip: t.activity.tip, bar: activityBar(n), value: n === 1 ? t.activity.one : format(t.activity.many, { n }) }
-    } else {
-      activity = { key: 'activity', label: t.activity.label, tip: t.activity.tip, bar: EMPTY_BAR, value: noValue }
-    }
-
-    const sync: Item = read.sync
-      ? {
-          key: 'sync',
-          label: t.sync.label,
-          tip: t.sync.tip,
-          bar: syncBar(read.sync.updatedAt, now, read.sync.status),
-          value: read.sync.status === 'stale' ? format(t.sync.stale, { date: shortDate(read.sync.updatedAt) }) : relativeTime(read.sync.updatedAt, now, locale),
-          datetime: read.sync.updatedAt,
-        }
-      : { key: 'sync', label: t.sync.label, tip: t.sync.tip, bar: EMPTY_BAR, value: phase === 'done' ? t.noData : noValue }
-
-    const latencyItem: Item =
-      read.latencyMs !== null
-        ? { key: 'latency', label: t.latency.label, tip: t.latency.tip, bar: latencyBar(read.latencyMs), value: format(t.latency.value, { n: read.latencyMs }) }
-        : { key: 'latency', label: t.latency.label, tip: t.latency.tip, bar: EMPTY_BAR, value: phase === 'done' ? t.noData : noValue }
-
-    // Commit não é grandeza: texto com link, sem barra.
-    const buildItem: Item = build
-      ? { key: 'build', label: t.build.label, tip: t.build.tip, bar: null, value: build.short, href: build.url }
-      : { key: 'build', label: t.build.label, tip: t.build.tip, bar: null, value: t.noData }
-
-    return [activity, sync, latencyItem, buildItem]
-  })
-
-  function afterLoad(): Promise<void> {
-    if (document.readyState === 'complete') return Promise.resolve()
-    return new Promise((resolve) => window.addEventListener('load', () => resolve(), { once: true }))
-  }
-
   onMount(() => {
-    phase = 'waiting'
-    let cancelled = false
-    void (async () => {
-      await afterLoad()
-      // Uma volta do laço de eventos: a busca começa depois do handler de load, fora do caminho do LCP.
-      await new Promise((resolve) => setTimeout(resolve, 0))
-      const snapshot = await requestActivity()
-      if (cancelled) return
-      result = snapshot.result
-      latency = snapshot.latencyMs
-      now = new Date()
-      phase = 'done'
-    })()
-
+    phase = 'done'
     const closeOutside = (event: PointerEvent) => {
-      if (open && !root.contains(event.target as Node)) open = null
+      if (open && !root.contains(event.target as Node)) open = false
     }
+    const onKeydown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      dismissed = true
+      open = false
+    }
+    const reset = () => (dismissed = false)
     document.addEventListener('pointerdown', closeOutside)
-    // Delegação no contêiner: hover e foco de cada item controlam a abertura instantânea das vizinhas.
-    const keyOf = (event: Event) => (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-hud]')?.dataset.hud
-    const enter = (event: Event) => keyOf(event) && shown()
-    const leave = (event: Event) => {
-      const key = keyOf(event)
-      const next = (event as MouseEvent | FocusEvent).relatedTarget as HTMLElement | null
-      if (key && next?.closest<HTMLElement>('[data-hud]')?.dataset.hud !== key) hidden(key)
-    }
-    root.addEventListener('mouseover', enter)
-    root.addEventListener('focusin', enter)
-    root.addEventListener('mouseout', leave)
-    root.addEventListener('focusout', leave)
     root.addEventListener('keydown', onKeydown)
+    root.addEventListener('focusout', reset)
+    root.addEventListener('mouseleave', reset)
     return () => {
-      cancelled = true
-      clearTimeout(warmTimer)
       document.removeEventListener('pointerdown', closeOutside)
-      root.removeEventListener('mouseover', enter)
-      root.removeEventListener('focusin', enter)
-      root.removeEventListener('mouseout', leave)
-      root.removeEventListener('focusout', leave)
       root.removeEventListener('keydown', onKeydown)
+      root.removeEventListener('focusout', reset)
+      root.removeEventListener('mouseleave', reset)
     }
   })
-
-  /** Depois da primeira dica, as vizinhas abrem sem animação (o visitante já está lendo o HUD). */
-  function shown() {
-    clearTimeout(warmTimer)
-    warmTimer = setTimeout(() => (warm = true), 160)
-  }
-
-  function hidden(key: string) {
-    if (dismissed === key) dismissed = null
-    clearTimeout(warmTimer)
-    warmTimer = setTimeout(() => (warm = false), 500)
-  }
-
-  function onKeydown(event: KeyboardEvent) {
-    if (event.key !== 'Escape') return
-    const item = (event.target as HTMLElement).closest<HTMLElement>('[data-hud]')
-    dismissed = item?.dataset.hud ?? open
-    open = null
-  }
 </script>
 
-<div class="hud" bind:this={root} data-hud-phase={phase} data-warm={warm || undefined} role="group" aria-label={t.label}>
+<div class="hud" bind:this={root} data-hud-phase={phase} role="group" aria-label={t.label}>
   <div class="page">
-  <ul class="hud__list">
-    {#each items as item (item.key)}
-      <li
-        class="hud__item"
-        data-hud={item.key}
-        data-open={open === item.key || undefined}
-        data-dismissed={dismissed === item.key || undefined}
-      >
+    <ul class="hud__list">
+      <li class="hud__item" data-hud="build" data-open={open || undefined} data-dismissed={dismissed || undefined}>
         <button
           type="button"
           class="hud__label"
-          aria-describedby={`hud-tip-${item.key}`}
+          aria-describedby="hud-tip-build"
           onclick={() => {
-            dismissed = null
-            open = open === item.key ? null : item.key
-            if (open) shown()
-          }}>{item.label}</button
+            dismissed = false
+            open = !open
+          }}>{t.build.label}</button
         >
-        {#if item.bar}
-          <span class="hud__bar" data-tone={item.bar.tone} aria-hidden="true">
-            {#each { length: HUD_SEGMENTS }, index (index)}
-              <span class="hud__seg" data-on={index < (item.bar?.filled ?? 0) || undefined}></span>
-            {/each}
-          </span>
-        {/if}
-        {#if item.href}
-          <a class="hud__value" href={item.href} rel="noopener noreferrer">{item.value}</a>
-        {:else if item.datetime}
-          <time class="hud__value" datetime={item.datetime}>{item.value}</time>
+        {#if build}
+          <a class="hud__value" href={build.url} rel="noopener noreferrer">{build.short}</a>
         {:else}
-          <span class="hud__value">{item.value}</span>
+          <span class="hud__value">{t.noData}</span>
         {/if}
-        <span class="hud__tip" role="tooltip" id={`hud-tip-${item.key}`}>{item.tip}</span>
+        <span class="hud__tip" role="tooltip" id="hud-tip-build">{t.build.tip}</span>
       </li>
-    {/each}
-  </ul>
+    </ul>
   </div>
 </div>
 
@@ -238,21 +117,13 @@
     }
   }
 
+  /* Um item só, à direita, onde a luz do vídeo toca o fio. */
   .hud__list {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-3) var(--space-4);
+    display: flex;
+    justify-content: flex-end;
     margin: 0;
-    padding: var(--space-3) 0 var(--space-4);
+    padding: var(--space-2) 0;
     list-style: none;
-  }
-
-  @media (min-width: 960px) {
-    .hud__list {
-      grid-template-columns: repeat(4, auto);
-      justify-content: space-between;
-      padding-block: var(--space-3);
-    }
   }
 
   .hud__item {
@@ -278,27 +149,6 @@
     text-decoration: underline dotted var(--color-text-faint);
     text-underline-offset: 0.3em;
     cursor: help;
-  }
-
-  .hud__bar {
-    display: inline-flex;
-    gap: 2px;
-  }
-
-  .hud__seg {
-    width: 6px;
-    height: 10px;
-    box-shadow: inset 0 0 0 1px var(--color-rule);
-  }
-
-  .hud__bar[data-tone='live'] .hud__seg[data-on] {
-    background: var(--color-sun);
-    box-shadow: none;
-  }
-
-  .hud__bar[data-tone='dim'] .hud__seg[data-on] {
-    background: var(--color-text-faint);
-    box-shadow: none;
   }
 
   .hud__value {
@@ -365,34 +215,14 @@
     transform: translateY(-4px) rotate(45deg);
   }
 
-  /* Metade direita: a dica se ancora pela direita e não sai da tela. */
-  .hud__item:nth-child(even) .hud__tip {
+  /* O item fica à direita: a dica se ancora pela direita e não sai da tela. */
+  .hud__tip {
     inset-inline: auto 0;
     transform-origin: calc(100% - 16px) calc(100% + 8px);
   }
 
-  .hud__item:nth-child(even) .hud__tip::after {
+  .hud__tip::after {
     inset-inline: auto 14px;
-  }
-
-  @media (min-width: 960px) {
-    .hud__item:nth-child(2) .hud__tip {
-      inset-inline: 0 auto;
-      transform-origin: 16px calc(100% + 8px);
-    }
-
-    .hud__item:nth-child(2) .hud__tip::after {
-      inset-inline: 14px auto;
-    }
-
-    .hud__item:nth-child(3) .hud__tip {
-      inset-inline: auto 0;
-      transform-origin: calc(100% - 16px) calc(100% + 8px);
-    }
-
-    .hud__item:nth-child(3) .hud__tip::after {
-      inset-inline: auto 14px;
-    }
   }
 
   .hud__item:is(:focus-within, [data-open]) .hud__tip {
@@ -414,10 +244,6 @@
   .hud__item[data-dismissed] .hud__tip {
     opacity: 0;
     visibility: hidden;
-  }
-
-  .hud[data-warm] .hud__tip {
-    transition-duration: 0s;
   }
 
   @media (prefers-reduced-motion: reduce) {

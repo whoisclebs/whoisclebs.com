@@ -1,7 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test, type Page, type Route } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 import sharp from 'sharp'
-import { activityBody, unavailableBody } from '../fixtures/activity-fixtures.mjs'
 
 /**
  * Passo 15 — "amanhecer por rolagem": faixas noite → aurora → dia → noite, HUD com telemetria real no
@@ -11,15 +10,6 @@ import { activityBody, unavailableBody } from '../fixtures/activity-fixtures.mjs
 
 test.use({ timezoneId: 'America/Fortaleza' })
 
-type Mode = 'fresh' | 'stale' | 'unavailable' | 'abort'
-
-async function mockActivity(page: Page, mode: Mode) {
-  await page.route('**/api/activity', async (route: Route) => {
-    if (mode === 'abort') return route.abort('failed')
-    if (mode === 'unavailable') return route.fulfill({ status: 503, json: unavailableBody })
-    return route.fulfill({ status: 200, json: activityBody(mode, new Date()) })
-  })
-}
 
 const hudItem = (page: Page, key: string) => page.locator(`[data-hud="${key}"]`)
 
@@ -35,7 +25,6 @@ const ratio = (a: number, b: number) => (Math.max(a, b) + 0.05) / (Math.min(a, b
 
 test.describe('faixas do amanhecer', () => {
   test('home: noite no hero, céu índigo com estrelas depois dele, noite do farol no rodapé', async ({ page }) => {
-    await mockActivity(page, 'fresh')
     await page.goto('/')
     const bg = (selector: string) => page.locator(selector).first().evaluate((el) => getComputedStyle(el).backgroundColor)
     expect(await bg('section.hero')).toBe('rgb(11, 17, 32)')
@@ -63,97 +52,68 @@ test.describe('faixas do amanhecer', () => {
 })
 
 test.describe('HUD no horizonte', () => {
-  test('sem JS: build em texto com link para o commit, link para o GitHub e o resto em "sem dado"', async ({ browser }) => {
+  test('sem JS: só o build, em texto com link para o commit, e nenhum número de atividade', async ({ browser }) => {
     const context = await browser.newContext({ javaScriptEnabled: false })
     const page = await context.newPage()
     await page.goto('/')
     const hud = page.getByRole('group', { name: 'Estado do site' })
     await expect(hud).toBeVisible()
     await expect(hud).toHaveAttribute('data-hud-phase', 'nojs')
+    await expect(hud.locator('[data-hud]')).toHaveCount(1)
     const build = hudItem(page, 'build').locator('a.hud__value')
     await expect(build).toHaveText(/^[0-9a-f]{7}$/)
     await expect(build).toHaveAttribute('href', /^https:\/\/github\.com\/whoisclebs\/whoisclebs\.com\/commit\/[0-9a-f]{40}$/)
     expect((await build.getAttribute('href'))?.split('/').pop()?.startsWith((await build.textContent()) ?? '-')).toBe(true)
-    await expect(hudItem(page, 'activity').getByRole('link', { name: 'perfil do GitHub' })).toHaveAttribute('href', 'https://github.com/whoisclebs')
-    await expect(hudItem(page, 'sync').locator('.hud__value')).toHaveText('sem dado')
-    await expect(hudItem(page, 'latency').locator('.hud__value')).toHaveText('sem dado')
-    // Nenhum segmento aceso sem dado; nenhum número inventado.
-    await expect(hud.locator('.hud__seg[data-on]')).toHaveCount(0)
-    expect(await hud.innerText()).not.toMatch(/\d+\s*(ms|eventos|minutos)/)
+    expect(await hud.innerText()).not.toMatch(/atividade|sync|latência|\d+\s*(ms|eventos|minutos)/)
     await context.close()
   })
 
-  test('com dado: contagem do cache (a mesma do rodapé), idade do sync, latência medida e build', async ({ page }) => {
-    await mockActivity(page, 'fresh')
-    await page.goto('/')
-    await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
-    await expect(hudItem(page, 'activity').locator('.hud__value')).toHaveText('6 eventos')
-    await expect(hudItem(page, 'activity').locator('.hud__seg[data-on]')).toHaveCount(6)
-    await expect(hudItem(page, 'sync').locator('time')).toHaveText('há 12 minutos')
-    await expect(hudItem(page, 'sync').locator('.hud__seg[data-on]')).toHaveCount(8)
-    await expect(hudItem(page, 'latency').locator('.hud__value')).toHaveText(/^\d+ ms$/)
-    await expect(hudItem(page, 'build').locator('a.hud__value')).toHaveText(/^[0-9a-f]{7}$/)
+  test('a home não faz nenhuma requisição a /api/activity (a atividade foi desligada)', async ({ page }) => {
+    const calls: string[] = []
+    page.on('request', (request) => {
+      if (new URL(request.url()).pathname.startsWith('/api/activity')) calls.push(request.url())
+    })
+    for (const path of ['/', '/en/']) {
+      await page.goto(path, { waitUntil: 'networkidle' })
+      await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
+      await page.getByRole('contentinfo').scrollIntoViewIfNeeded()
+      await page.waitForTimeout(800)
+    }
+    expect(calls).toEqual([])
+    // O HUD fica com um item só, à direita, sobre o fio do horizonte.
+    await expect(page.locator('.hud [data-hud]')).toHaveCount(1)
+    const [list, item] = await Promise.all([page.locator('.hud__list').boundingBox(), page.locator('.hud__item').boundingBox()])
+    expect(Math.abs(list!.x + list!.width - (item!.x + item!.width))).toBeLessThanOrEqual(2)
   })
 
-  test('sync desatualizado: texto com a data e barra cinza', async ({ page }) => {
-    await mockActivity(page, 'stale')
-    await page.goto('/')
-    await expect(hudItem(page, 'sync').locator('.hud__value')).toContainText('desatualizada desde')
-    await expect(hudItem(page, 'sync').locator('.hud__bar')).toHaveAttribute('data-tone', 'dim')
-  })
-
-  test('API falhando (503): atividade indisponível, sync sem dado, latência da resposta que chegou', async ({ page }) => {
-    await mockActivity(page, 'unavailable')
+  test('dica: abre no foco do teclado, fecha com Esc e cabe na tela; o rótulo continua em texto', async ({ page }) => {
     await page.goto('/')
     await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
-    await expect(hudItem(page, 'activity').locator('.hud__value')).toHaveText('atividade indisponível')
-    await expect(hudItem(page, 'sync').locator('.hud__value')).toHaveText('sem dado')
-    await expect(hudItem(page, 'latency').locator('.hud__value')).toHaveText(/^\d+ ms$/)
-    await expect(hudItem(page, 'activity').locator('.hud__seg[data-on]')).toHaveCount(0)
-  })
-
-  test('rede caída: nada de latência inventada', async ({ page }) => {
-    await mockActivity(page, 'abort')
-    await page.goto('/')
-    await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
-    await expect(hudItem(page, 'activity').locator('.hud__value')).toHaveText('atividade indisponível')
-    await expect(hudItem(page, 'latency').locator('.hud__value')).toHaveText('sem dado')
-  })
-
-  test('dicas: abrem no foco do teclado, fecham com Esc; o rótulo continua em texto', async ({ page }) => {
-    await mockActivity(page, 'fresh')
-    await page.goto('/')
-    await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
-    const label = hudItem(page, 'latency').getByRole('button', { name: 'latência /api/activity' })
-    const tip = hudItem(page, 'latency').getByRole('tooltip')
+    const label = hudItem(page, 'build').getByRole('button', { name: 'build' })
+    const tip = hudItem(page, 'build').getByRole('tooltip')
     await expect(tip).toBeHidden()
     await label.focus()
     await expect(tip).toBeVisible()
-    await expect(label).toHaveAttribute('aria-describedby', 'hud-tip-latency')
-    await expect(tip).toContainText('100 ms')
+    await expect(label).toHaveAttribute('aria-describedby', 'hud-tip-build')
+    await expect(tip).toContainText('Commit publicado')
     // Foco de "unidade selecionada": anel de 2 px + cantos.
     const focus = await label.evaluate((el) => ({ outline: getComputedStyle(el).outlineStyle, corners: getComputedStyle(el, '::after').backgroundImage }))
     expect(focus.outline).toBe('solid')
     expect(focus.corners).toContain('linear-gradient')
+    const box = await tip.boundingBox()
+    const width = page.viewportSize()?.width ?? 0
+    expect(box && box.x >= 0 && box.x + box.width <= width).toBe(true)
     await page.keyboard.press('Escape')
     await expect(tip).toBeHidden()
-    // A dica cabe na tela nas duas pontas do HUD.
-    for (const key of ['activity', 'build']) {
-      await hudItem(page, key).getByRole('button').focus()
-      const box = await hudItem(page, key).getByRole('tooltip').boundingBox()
-      const width = page.viewportSize()?.width ?? 0
-      expect(box && box.x >= 0 && box.x + box.width <= width).toBe(true)
-    }
   })
 
   test('dicas no toque: um toque abre, outro fora fecha (sem depender de hover)', async ({ browser }) => {
     const context = await browser.newContext({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } })
     const page = await context.newPage()
-    await mockActivity(page, 'fresh')
     await page.goto('/')
     await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
-    const tip = hudItem(page, 'sync').getByRole('tooltip')
-    await hudItem(page, 'sync').getByRole('button').tap()
+    const tip = hudItem(page, 'build').getByRole('tooltip')
+    await hudItem(page, 'build').getByRole('button').tap()
     await expect(tip).toBeVisible()
     await page.locator('h1').tap()
     await expect(tip).toBeHidden()
@@ -165,7 +125,6 @@ test.describe('HUD no horizonte', () => {
 
 test.describe('vídeo da luz rasante', () => {
   test('carrega depois do load, toca mudo e sem controles, e nunca é o LCP', async ({ page }) => {
-    await mockActivity(page, 'fresh')
     const media: { url: string; at: number }[] = []
     page.on('request', (request) => {
       if (/\/media\/hero-light-v3\.(webm|mp4)/.test(request.url())) media.push({ url: request.url(), at: Date.now() })
@@ -218,7 +177,6 @@ test.describe('vídeo da luz rasante', () => {
   test('movimento reduzido: só o pôster, nenhum byte de vídeo', async ({ browser }) => {
     const context = await browser.newContext({ reducedMotion: 'reduce' })
     const page = await context.newPage()
-    await mockActivity(page, 'fresh')
     const media: string[] = []
     page.on('request', (request) => {
       if (/\/media\/hero-light-v3\.(webm|mp4)/.test(request.url())) media.push(request.url())
@@ -250,7 +208,6 @@ test.describe('vídeo da luz rasante', () => {
       // O pôster é o primeiro quadro do loop, com a faixa no estado final: o mais claro dos 97 quadros.
       const context = await browser.newContext({ reducedMotion: 'reduce', viewport, deviceScaleFactor: 1 })
       const page = await context.newPage()
-      await mockActivity(page, 'fresh')
       await page.goto('/', { waitUntil: 'load' })
       await expect(page.locator('.light')).toHaveAttribute('data-shown', 'true')
       await page.waitForTimeout(1200) // fim do fade de opacidade do pôster
@@ -293,7 +250,6 @@ test.describe('vídeo da luz rasante', () => {
 
 test.describe('lang do <html> na navegação pelo cliente', () => {
   test('/en/ → Notas (pt-BR) pelo roteador do cliente → voltar', async ({ page }) => {
-    await mockActivity(page, 'fresh')
     await page.goto('/en/')
     await expect(page.locator('html')).toHaveAttribute('lang', 'en')
     // Confirma que é navegação no cliente: o marcador sobrevive se não houver HTML novo.
@@ -312,11 +268,10 @@ test.describe('axe na home com o HUD carregado', () => {
   for (const scheme of ['light', 'dark'] as const) {
     for (const path of ['/', '/en/']) {
       test(`sem violações critical/serious em ${path} com dica aberta (${scheme})`, async ({ page }) => {
-        await mockActivity(page, 'fresh')
         await page.emulateMedia({ colorScheme: scheme })
         await page.goto(path)
         await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
-        await hudItem(page, 'sync').getByRole('button').focus()
+        await hudItem(page, 'build').getByRole('button').focus()
         const results = await new AxeBuilder({ page }).analyze()
         const blocking = results.violations
           .filter((violation) => violation.impact === 'critical' || violation.impact === 'serious')

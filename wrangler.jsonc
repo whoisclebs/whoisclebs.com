@@ -25,10 +25,11 @@
       "migrations_dir": "migrations"
     }
   ],
-  // Sincroniza a atividade pública do GitHub a cada 30 minutos (handler `scheduled` em src/worker.ts).
-  "triggers": {
-    "crons": ["*/30 * * * *"]
-  },
+  // Cron desligado (passo 17, decisions.md 102): a fonte GitHub Events foi desativada e sempre voltava vazia, e
+  // a interface não mostra mais atividade. O handler `scheduled` em src/worker.ts, os casos de uso, a porta, o
+  // adaptador D1 e `GET /api/activity` continuam no código. Para religar: troque a fonte em
+  // src/lib/server/compose.ts (ver docs/redesign/portability.md) e volte com
+  //   "triggers": { "crons": ["*/30 * * * *"] },
   "vars": {
     "GITHUB_USERNAME": "whoisclebs",
     // Até quanto tempo depois da última sincronização bem-sucedida a atividade conta como `fresh`.

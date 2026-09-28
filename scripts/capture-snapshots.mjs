@@ -14,8 +14,7 @@
  *   node scripts/capture-snapshots.mjs 00-baseline dist
  *
  * Variáveis opcionais: SNAPSHOT_ROUTES (JSON [{ name, path, scheme?, click?, element?, motion?, scroll?, video? }]) substitui as rotas
- * padrão; `activity` ('fresh' | 'stale' | 'empty' | 'unavailable' | 'loading') intercepta `/api/activity` com os
- * corpos de `tests/fixtures/activity-fixtures.mjs` (estados do HUD da home); `click: { selector, count }` clica N vezes antes da captura (estados do simulador) e `element`
+ * padrão; `click: { selector, count }` clica N vezes antes da captura (estados do simulador) e `element`
  * captura só aquele elemento em vez da página inteira; SNAPSHOT_WIDTHS ("390,1440") limita as larguras;
  * SNAPSHOT_LOCALE troca o locale do navegador (padrão en-US: o site novo não pode depender dele).
  * Passo 17: `motion: true` libera o movimento (o padrão é reduzido); `scroll` (0–1) captura só a viewport naquela
@@ -28,7 +27,6 @@ import { mkdirSync, readFileSync, existsSync, statSync } from 'node:fs'
 import { join, extname, normalize } from 'node:path'
 import { chromium } from '@playwright/test'
 import sharp from 'sharp'
-import { activityBody, unavailableBody } from '../tests/fixtures/activity-fixtures.mjs'
 
 const outName = process.argv[2]
 if (!outName) {
@@ -51,11 +49,11 @@ const legacyRoutes = [
   { name: '404', path: '/rota-inexistente/' },
   { name: 'en-home', path: '/en/' },
 ]
-// Rotas-chave do portão final (passo 14) + tema escuro das principais. Nas homes, `/api/activity` responde a
-// fixture "fresh" para o HUD do hero e o rodapé aparecerem com dado (passo 15).
+// Rotas-chave do portão final (passo 14) + tema escuro das principais. Desde o passo 17 nenhuma página chama
+// `/api/activity`, então não há fixture a interceptar.
 const siteRoutes = [
-  { name: 'home', path: '/', activity: 'fresh' },
-  { name: 'home-escuro', path: '/', scheme: 'dark', activity: 'fresh' },
+  { name: 'home', path: '/' },
+  { name: 'home-escuro', path: '/', scheme: 'dark' },
   { name: 'projetos', path: '/projetos/' },
   { name: 'projeto-tuxedo', path: '/projetos/tuxedo/' },
   { name: 'projeto-tuxedo-escuro', path: '/projetos/tuxedo/', scheme: 'dark' },
@@ -72,13 +70,13 @@ const siteRoutes = [
   { name: 'livros', path: '/livros/' },
   { name: 'hobbies', path: '/hobbies/' },
   { name: '404', path: '/rota-inexistente/' },
-  { name: 'en-home', path: '/en/', activity: 'fresh' },
+  { name: 'en-home', path: '/en/' },
   // Passo 17: a home na viewport no topo, a 35 % e a 70 % da rolagem (com a luz da jornada em movimento), o
   // rodapé com a cena (quadro estático, movimento reduzido) e a 404 em dois momentos do ciclo do farol.
-  { name: 'home-topo', path: '/', activity: 'fresh', motion: true, scroll: 0 },
-  { name: 'home-35', path: '/', activity: 'fresh', motion: true, scroll: 0.35 },
-  { name: 'home-70', path: '/', activity: 'fresh', motion: true, scroll: 0.7 },
-  { name: 'rodape', path: '/', activity: 'fresh', element: 'footer' },
+  { name: 'home-topo', path: '/', motion: true, scroll: 0 },
+  { name: 'home-35', path: '/', motion: true, scroll: 0.35 },
+  { name: 'home-70', path: '/', motion: true, scroll: 0.7 },
+  { name: 'rodape', path: '/', element: 'footer' },
   { name: '404-noite', path: '/rota-inexistente/', motion: true, video: 1 },
   { name: '404-dia', path: '/rota-inexistente/', motion: true, video: 20 },
 ]
@@ -173,16 +171,6 @@ async function serveVideoWithRanges(page) {
   })
 }
 
-/** Estados do rodapé: resposta simulada de `/api/activity` (a fixture nunca vai para o site). */
-async function mockActivity(page, state) {
-  await page.route('**/api/activity', async (request) => {
-    if (state === 'loading') return // nunca responde: o rodapé fica em "carregando" até o timeout
-    if (state === 'unavailable') return request.fulfill({ status: 503, json: unavailableBody })
-    const body = activityBody(state === 'stale' ? 'stale' : 'fresh', new Date(), { empty: state === 'empty' })
-    return request.fulfill({ status: 200, json: body })
-  })
-}
-
 const { base, stop } = buildDir ? await startStatic() : await startWrangler()
 
 mkdirSync(outDir, { recursive: true })
@@ -198,12 +186,6 @@ try {
     for (const route of routes) {
       // Rotas com `scheme: 'dark'` emulam prefers-color-scheme (tema "noite"); as demais ficam no claro.
       await page.emulateMedia({ colorScheme: route.scheme ?? 'light', reducedMotion: route.motion ? 'no-preference' : 'reduce' })
-      await page.unroute('**/api/activity')
-      // Site novo: sempre com a fixture (padrão "fresh"). Sem ela, o `wrangler dev` sem D1 migrado às vezes
-      // segura `/api/activity` e o networkidle da rota seguinte estoura (visto no 404 do passo 15).
-      if (route.activity || !buildDir) await mockActivity(page, route.activity ?? 'fresh')
-      // Página em branco entre rotas: ir de `/` para `/` restauraria a rolagem no rodapé e dispararia a
-      // atividade antes da hora (no estado "carregando", a requisição pendurada seguraria o networkidle).
       await page.unroute(/\/media\/farol-ciclo\./)
       if (route.video !== undefined) await serveVideoWithRanges(page)
       await page.goto('about:blank')
@@ -216,8 +198,8 @@ try {
         }
         window.scrollTo(0, 0)
       })
-      // A atividade só aparece no HUD da home (saiu do rodapé no passo 17): espera a leitura terminar.
-      if (route.activity && (route.path === '/' || route.path === '/en/')) {
+      // Home: espera o HUD hidratar (desde o passo 17 ele não busca mais atividade).
+      if (route.path === '/' || route.path === '/en/') {
         await page.locator('[data-hud-phase="done"]').waitFor({ timeout: 10_000 })
       }
       if (route.click) {

@@ -365,8 +365,8 @@
   @media (min-width: 960px) {
     .sky__content {
       min-height: 56.25vw;
-      /* +5.5rem repõe a altura que a coluna de atividade ocupava: o farol fica no mesmo lugar aprovado (lâmpada abaixo do fio). */
-      padding-block-end: calc(24vw + 5.5rem);
+      /* Disposição aprovada pelo proprietário: a lâmpada fica logo abaixo do e-mail, sobre o fio. */
+      padding-block-end: 24vw;
       text-shadow: 0 1px 0 rgb(8 13 25 / 0.9);
     }
 

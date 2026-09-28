@@ -10,7 +10,7 @@
   import HeroLight from '$lib/components/hero/HeroLight.svelte'
   import WritingList from '$lib/components/writing/WritingList.svelte'
   import ProjectStatus from './ProjectStatus.svelte'
-  import { contactEmail, socialLinks } from '$lib/content/library'
+  import { contactEmail } from '$lib/content/library'
   import { formatDate, getMessages } from '$lib/i18n'
   import { pagePath, pagePathOrDefault, pages } from '$lib/routing/paths'
   import type { homeData } from '$lib/server/pages'
@@ -20,7 +20,6 @@
   const t = $derived(getMessages(data.locale))
   const copy = $derived(t.home)
   const feedHref = $derived(data.locale === 'en' ? '/rss/blog-en.xml' : '/rss/blog.xml')
-  const githubProfile = socialLinks.find((link) => link.label === 'GitHub')?.href ?? 'https://github.com/whoisclebs'
   // Agentes só existe em pt-BR: no inglês o link leva hreflang.
   const agentsHreflang = $derived(data.locale === 'en' ? ('pt-BR' as const) : undefined)
   const architectureId = $derived(data.locale === 'en' ? 'architecture' : 'arquitetura')
@@ -51,7 +50,7 @@
       </p>
     </div>
   </div>
-  <HeroHud locale={data.locale} profileUrl={githubProfile} />
+  <HeroHud locale={data.locale} />
 </section>
 
 <div class="journey band-aurora" data-band="aurora">
