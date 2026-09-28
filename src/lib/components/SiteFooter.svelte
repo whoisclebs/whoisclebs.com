@@ -253,8 +253,8 @@
   .invite {
     display: grid;
     gap: var(--space-5);
+    /* Sem fio entre o convite e as colunas (pedido do proprietário). */
     padding-block: var(--space-8) var(--space-7);
-    border-block-end: var(--border-hairline) solid var(--color-rule);
   }
 
   /* Menor que o H1 da home (--step-5): o convite fecha a página, não compete com a tese. */
@@ -366,7 +366,7 @@
     .sky__content {
       min-height: 56.25vw;
       /* Disposição aprovada pelo proprietário: a lâmpada fica logo abaixo do e-mail, sobre o fio. */
-      padding-block-end: 24vw;
+      padding-block-end: 17vw;
       text-shadow: 0 1px 0 rgb(8 13 25 / 0.9);
     }
 

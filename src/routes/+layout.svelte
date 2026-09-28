@@ -41,4 +41,7 @@
 <main id="conteudo" class={isHome || page.status === 404 ? 'main--bleed' : 'page'} tabindex="-1">
   {@render children()}
 </main>
-<SiteFooter {locale} currentPath={page.url.pathname} scene={!page.error} />
+<!-- A 404 é só o ciclo do farol: sem rodapé de contato (pedido do proprietário). -->
+{#if page.status !== 404}
+  <SiteFooter {locale} currentPath={page.url.pathname} scene={!page.error} />
+{/if}

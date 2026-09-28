@@ -363,7 +363,8 @@ test.describe('axe: home com a jornada, rodapé com a cena e 404', () => {
   for (const path of ['/', '/en/', '/sobre/', '/nao-existe-mesmo/']) {
     test(`sem violações critical/serious em ${path}`, async ({ page }) => {
       await page.goto(path)
-      await page.locator('footer').scrollIntoViewIfNeeded()
+      // A 404 não tem rodapé (pedido do proprietário); nas outras rotas o axe roda com o rodapé em vista.
+      if (await page.locator('footer').count()) await page.locator('footer').scrollIntoViewIfNeeded()
       await page.waitForTimeout(300)
       const results = await new AxeBuilder({ page }).analyze()
       const blocking = results.violations

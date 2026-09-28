@@ -121,9 +121,9 @@ test('Política de Privacidade e Termos descrevem o site novo (PT e EN)', async 
   await expect(page.getByRole('main')).toContainText('This site has no contact form of its own.')
 })
 
-const axeRoutes = ['/', '/contato/', '/privacy-policy/', '/en/privacy-policy/', '/terms-of-use/', '/nao-existe/']
+const axeRoutes = ['/', '/contato/', '/privacy-policy/', '/en/privacy-policy/', '/terms-of-use/']
 for (const scheme of ['light', 'dark'] as const) {
-  test(`axe sem critical/serious no rodapé e na 404 (${scheme})`, async ({ page }) => {
+  test(`axe sem critical/serious no rodapé (${scheme})`, async ({ page }) => {
     test.setTimeout(60_000)
     await page.emulateMedia({ colorScheme: scheme })
     for (const path of axeRoutes) {
@@ -134,6 +134,13 @@ for (const scheme of ['light', 'dark'] as const) {
     }
   })
 }
+
+test('a 404 não tem rodapé de contato: só o ciclo do farol (pedido do proprietário)', async ({ page }) => {
+  const response = await page.goto('/nao-existe/')
+  expect(response?.status()).toBe(404)
+  await expect(page.getByRole('contentinfo')).toHaveCount(0)
+  await expect(page.getByText('hello@whoisclebs.com')).toHaveCount(0)
+})
 
 for (const width of [390, 768, 1440]) {
   test(`sem overflow horizontal com o rodapé carregado em ${width} px`, async ({ page }) => {
