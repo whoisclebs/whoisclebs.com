@@ -1,4 +1,5 @@
 /**
+ * A fonte fica só local (design/explorations/ não é versionado); a saída em static/ é versionada.
  * scripts/build-footer-scene.mjs
  *
  * Gera as versões responsivas da noite do farol do rodapé a partir de

@@ -162,7 +162,7 @@
     object-position: 60% 40%;
     opacity: 0;
     /*
-     * Versão 3 (passo 17, paleta da noite do farol): superfície azul-noite e uma faixa de luz pálida da lâmpada
+     * Versão 3: superfície azul-noite e uma faixa de luz pálida da lâmpada
      * que entra pelo alto e desce até o canto direito, onde encosta no fio do horizonte (o HUD). A metade
      * esquerda do quadro é escura, então o vídeo entra sem giro: a faixa já passa à direita do título.
      */

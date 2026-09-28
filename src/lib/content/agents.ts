@@ -1,5 +1,5 @@
 /**
- * Capítulo "IA agêntica" (passo 09). Só pt-BR, como os cases: texto novo, sem tradução revisada.
+ * Capítulo "IA agêntica". Só pt-BR, como os cases: texto novo, sem tradução revisada.
  *
  * Verdade editorial: todo projeto tem um status da lista fechada abaixo; "produção" e "protótipo" exigem
  * código público (validado em `agentProjectIssues`, coberto por teste). Nenhum número de benchmark aparece

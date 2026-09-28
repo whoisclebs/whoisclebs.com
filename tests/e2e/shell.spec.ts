@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
 
 /**
- * Passo 05 — casca editorial e hero (o Mapa de Decisões saiu no passo 15): teclado, sem JS, overflow e axe.
+ * casca editorial e hero: teclado, sem JS, overflow e axe.
  */
 
 const keyRoutes = [

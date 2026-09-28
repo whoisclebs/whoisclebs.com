@@ -2,9 +2,9 @@
  * scripts/check-island-budget.mjs
  *
  * Mede os chunks das ilhas carregadas por import dinâmico no build do cliente e falha acima do budget (gzip):
- * - simulador do tuxedo (passo 08), achado pelo texto do botão ("Avançar um passo"): 15 KiB;
- * - noite do farol no rodapé (passo 17, `footer/scene.ts`), achada pela cor do brilho da lâmpada: 8 KiB;
- * - ciclo do farol na 404 (passo 17, `notfound/cycle.ts`), achado pelo codec do WebM: 4 KiB.
+ * - simulador do tuxedo, achado pelo texto do botão ("Avançar um passo"): 15 KiB;
+ * - noite do farol no rodapé, achada pela cor do brilho da lâmpada: 8 KiB;
+ * - ciclo do farol na 404, achado pelo codec do WebM: 4 KiB.
  * O runtime do Svelte, compartilhado por todas as páginas, não entra na conta — só o que cada ilha baixa a mais.
  *
  * Uso: npm run build && node scripts/check-island-budget.mjs

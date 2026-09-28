@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
 
 /**
- * Passo 09 — capítulo de IA agêntica: dois níveis sem JS, teclado, status verdadeiro, Mapa → capítulo,
+ * capítulo de IA agêntica: dois níveis sem JS, teclado, status verdadeiro, Mapa → capítulo,
  * home (capítulo 4) e axe claro/escuro.
  */
 

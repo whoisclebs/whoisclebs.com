@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs'
 import sharp from 'sharp'
 
 /**
- * Passo 17 — "v1, só que melhor": depois do hero, um céu noturno índigo (estrelas, via láctea que gira com a
+ * "v1, só que melhor": depois do hero, um céu noturno índigo (estrelas, via láctea que gira com a
  * rolagem) com a arquitetura logo abaixo do hero, passagem contínua para a noite do farol no rodapé (ilha
  * canvas) e o ciclo do farol na 404, legível em qualquer hora sem véu nem halo.
  *
@@ -95,7 +95,7 @@ async function worstContrast(page: Page, selectors: string[], options: { percent
     }
     if (!values.length) continue
     values.sort((a, b) => a - b)
-    // Fundo claro de propósito (a torre branca do farol no rodapé, aceita pelo proprietário): a linha sai da conta.
+    // Fundo claro de propósito (a torre branca do farol no rodapé, decisão de design): a linha sai da conta.
     // Critério: mais de 1 % dos pixels atrás da linha acima do limite (a linha cruza a torre; uma estrela pintada
     // tem ~12 px e não chega a isso).
     if (options.skipBrightBackground !== undefined && values[Math.floor(values.length * 0.99)]! > options.skipBrightBackground) continue
@@ -260,7 +260,7 @@ test.describe('rodapé: a noite do farol', () => {
       for (const part of ['.invite', '.col--contact', '.col--read', '.colophon']) {
         await page.locator(`footer ${part}`).evaluate((el) => el.scrollIntoView({ block: 'center' }))
         await page.waitForTimeout(100)
-        // Decisão do proprietário (decisions.md 98): o texto do rodapé pode passar por cima do farol. As linhas com o
+        // Decisão de design: o texto do rodapé pode passar por cima do farol. As linhas com o
         // fundo claro (mais de 1 % dos pixels acima de 0,45 de luminância: a linha cruza a torre branca) não entram na conta; todo o texto sobre o céu, sim.
         const worst = await worstContrast(page, [`footer ${part} h2`, `footer ${part} p`, `footer ${part} li`, `footer ${part} a`], { percentile: 0.98, skipBrightBackground: 0.45 })
         console.log(`${width} px rodapé ${part}: ${worst.ratio.toFixed(2)}:1`)
@@ -363,7 +363,7 @@ test.describe('axe: home com a jornada, rodapé com a cena e 404', () => {
   for (const path of ['/', '/en/', '/sobre/', '/nao-existe-mesmo/']) {
     test(`sem violações critical/serious em ${path}`, async ({ page }) => {
       await page.goto(path)
-      // A 404 não tem rodapé (pedido do proprietário); nas outras rotas o axe roda com o rodapé em vista.
+      // A 404 não tem rodapé ; nas outras rotas o axe roda com o rodapé em vista.
       if (await page.locator('footer').count()) await page.locator('footer').scrollIntoViewIfNeeded()
       await page.waitForTimeout(300)
       const results = await new AxeBuilder({ page }).analyze()

@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
 
 /**
- * Passo 07 — estudos de caso: navegação home → case → código, fontes por seção, índice de projetos,
+ * estudos de caso: navegação home → case → código, fontes por seção, índice de projetos,
  * sem JS e axe claro/escuro.
  */
 
@@ -84,7 +84,7 @@ test('análise do autor aparece rotulada no case', async ({ page }) => {
 
 test('/projetos/ é um índice com status, linguagem, último commit datado e link do código', async ({ page }) => {
   await page.goto('/projetos/')
-  // Uma lista só, do commit mais recente ao mais antigo (passo 15); os dois cases levam o link do estudo.
+  // Uma lista só, do commit mais recente ao mais antigo; os dois cases levam o link do estudo.
   const entries = page.locator('.case-entry')
   expect(await entries.count()).toBe(4)
   const dates = await entries.evaluateAll((els) => els.map((el) => el.querySelector('dd time')?.getAttribute('datetime') ?? ''))

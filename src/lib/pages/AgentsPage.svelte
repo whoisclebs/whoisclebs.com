@@ -1,5 +1,5 @@
 <!--
-  Capítulo "IA agêntica" (passo 09, só pt-BR). Dois níveis de leitura, os dois visíveis sem JS e na mesma
+  Capítulo "IA agêntica". Dois níveis de leitura, os dois visíveis sem JS e na mesma
   ordem para todo mundo: (1) visão geral do laço em cinco partes; (2) detalhes técnicos. Entre eles, os
   projetos com status verdadeiro. Sem abas: nada a esconder, nada a sincronizar, e a página inteira funciona
   com Ctrl+F e leitor de tela.

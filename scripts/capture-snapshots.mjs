@@ -17,7 +17,7 @@
  * padrão; `click: { selector, count }` clica N vezes antes da captura (estados do simulador) e `element`
  * captura só aquele elemento em vez da página inteira; SNAPSHOT_WIDTHS ("390,1440") limita as larguras;
  * SNAPSHOT_LOCALE troca o locale do navegador (padrão en-US: o site novo não pode depender dele).
- * Passo 17: `motion: true` libera o movimento (o padrão é reduzido); `scroll` (0–1) captura só a viewport naquela
+ * `motion: true` libera o movimento (o padrão é reduzido); `scroll` (0–1) captura só a viewport naquela
  * fração da rolagem; `video` (segundos) para o vídeo da 404 naquele instante e captura só a viewport.
  */
 
@@ -49,7 +49,7 @@ const legacyRoutes = [
   { name: '404', path: '/rota-inexistente/' },
   { name: 'en-home', path: '/en/' },
 ]
-// Rotas-chave do portão final (passo 14) + tema escuro das principais. Desde o passo 17 nenhuma página chama
+// Rotas-chave do portão final + tema escuro das principais. Hoje nenhuma página chama
 // `/api/activity`, então não há fixture a interceptar.
 const siteRoutes = [
   { name: 'home', path: '/' },
@@ -71,7 +71,7 @@ const siteRoutes = [
   { name: 'hobbies', path: '/hobbies/' },
   { name: '404', path: '/rota-inexistente/' },
   { name: 'en-home', path: '/en/' },
-  // Passo 17: a home na viewport no topo, a 35 % e a 70 % da rolagem (com a luz da jornada em movimento), o
+  // a home na viewport no topo, a 35 % e a 70 % da rolagem (com a luz da jornada em movimento), o
   // rodapé com a cena (quadro estático, movimento reduzido) e a 404 em dois momentos do ciclo do farol.
   { name: 'home-topo', path: '/', motion: true, scroll: 0 },
   { name: 'home-35', path: '/', motion: true, scroll: 0.35 },
@@ -87,7 +87,7 @@ const allWidths = [
   { width: 768, height: 1024 },
   { width: 1440, height: 900 },
 ]
-// SNAPSHOT_WIDTHS="390,1440" limita as larguras (ex.: estados do simulador no passo 08).
+// SNAPSHOT_WIDTHS="390,1440" limita as larguras (ex.: estados do simulador).
 const onlyWidths = process.env.SNAPSHOT_WIDTHS?.split(',').map(Number)
 const widths = onlyWidths ? allWidths.filter((viewport) => onlyWidths.includes(viewport.width)) : allWidths
 const maxHeight = 16000 // limite do WebP é 16383 px
@@ -198,7 +198,7 @@ try {
         }
         window.scrollTo(0, 0)
       })
-      // Home: espera o HUD hidratar (desde o passo 17 ele não busca mais atividade).
+      // Home: espera o HUD hidratar (ele não busca mais atividade).
       if (route.path === '/' || route.path === '/en/') {
         await page.locator('[data-hud-phase="done"]').waitFor({ timeout: 10_000 })
       }

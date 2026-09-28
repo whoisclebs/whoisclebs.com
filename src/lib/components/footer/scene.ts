@@ -1,5 +1,5 @@
 /**
- * Ilha da noite do farol (rodapé, passo 17). Canvas 2D próprio, sem dependência, carregado por import dinâmico
+ * Ilha da noite do farol (rodapé). Canvas 2D próprio, sem dependência, carregado por import dinâmico
  * só quando o rodapé se aproxima da viewport (`SiteFooter.svelte`). Desenha por cima da ilustração:
  * - o facho do farol girando a partir da lâmpada (dois fachos opostos; o que aponta para quem olha acende a
  *   lâmpada); a lâmpada é achada em coordenadas relativas da imagem e acompanha o `object-fit: cover` e o

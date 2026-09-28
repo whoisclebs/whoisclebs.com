@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
 
 /**
- * Passo 14 — o que faltava do portão final nas rotas-chave:
+ * o que faltava do portão final nas rotas-chave:
  * - sem erro de console, sem exceção de página e sem request 4xx/5xx inesperado (página inteira percorrida,
  *   rodapé com a atividade carregada);
  * - `prefers-reduced-motion`: nenhuma animação CSS e nenhuma transição de deslocamento/tamanho dispara ao
@@ -65,7 +65,7 @@ test.describe('console e rede limpos', () => {
       const response = await page.goto(path, { waitUntil: 'networkidle' })
       expect(response?.status()).toBe(path === NOT_FOUND ? 404 : 200)
       await scrollThrough(page)
-      // Só o HUD da home busca a atividade (o rodapé não tem mais essa região, passo 17).
+      // Só o HUD da home busca a atividade (o rodapé não tem mais essa região).
       if (path === '/' || path === '/en/') await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
       await page.waitForLoadState('networkidle')
       expect(problems).toEqual([])
@@ -99,7 +99,7 @@ test.describe('prefers-reduced-motion', () => {
       })
       await page.goto(path, { waitUntil: 'networkidle' })
       await scrollThrough(page)
-      // Só o HUD da home busca a atividade (o rodapé não tem mais essa região, passo 17).
+      // Só o HUD da home busca a atividade (o rodapé não tem mais essa região).
       if (path === '/' || path === '/en/') await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
       const motion = await page.evaluate(() => ({
         started: (window as unknown as { __motion: string[] }).__motion,

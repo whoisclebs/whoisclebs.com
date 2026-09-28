@@ -1,8 +1,8 @@
 <!--
   HUD da home: uma linha de estado sobre o fio do horizonte, no fim do hero. Aceno a jogos de estratégia, só
-  com dado real e rótulo em texto. Desde o passo 17 fica só o build (SHA curto do commit publicado, com link,
+  com dado real e rótulo em texto. Hoje fica só o build (SHA curto do commit publicado, com link,
   gravado no build): a fonte GitHub Events foi desativada, e a atividade pública, o último sync e a latência
-  de `/api/activity` saíram (decisions.md 102). A home não chama mais a API. O item fica à direita, onde a
+  de `/api/activity` saíram. A home não chama mais a API. O item fica à direita, onde a
   luz do vídeo encosta no fio.
   Dica: abre no hover (ponteiro fino), no foco do teclado e no toque (botão); Esc fecha.
 -->

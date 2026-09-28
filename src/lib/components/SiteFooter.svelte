@@ -212,7 +212,7 @@
     max-width: none;
     object-fit: cover;
     object-position: 68% 100%;
-    /* Preto uniforme de 12 % sobre a imagem inteira (decisão do proprietário, decisions.md 98): equivale a
+    /* Preto uniforme de 12 % sobre a imagem inteira (decisão de design): equivale a
        `brightness(0.88)` e acompanha a máscara, sem borda. A camada canvas (facho, estrelas, vaga-lumes) fica acima. */
     filter: brightness(0.88);
     -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 92%, transparent 100%);
@@ -253,7 +253,7 @@
   .invite {
     display: grid;
     gap: var(--space-5);
-    /* Sem fio entre o convite e as colunas (pedido do proprietário). */
+    /* Sem fio entre o convite e as colunas . */
     padding-block: var(--space-8) var(--space-7);
   }
 
@@ -359,13 +359,13 @@
   /*
    * Desktop: exatamente o layout de largura total do rodapé em fundo liso ("Contato" gigante nas colunas 1–6,
    * texto + e-mail nas 7–12; fio de largura cheia; Perfis 1–3 | Ler e acompanhar + Mais do site 4–6; a atividade
-   * pública saiu do rodapé a pedido do proprietário), por cima da ilustração. O texto pode passar sobre o farol (decisão do
-   * proprietário, decisions.md 98): uma sombra escura de 1 px, sem desfoque, ajuda sobre o branco da torre.
+   * pública saiu do rodapé por decisão de design), por cima da ilustração. O texto pode passar sobre o farol (decisão do
+   * decisão de design): uma sombra escura de 1 px, sem desfoque, ajuda sobre o branco da torre.
    */
   @media (min-width: 960px) {
     .sky__content {
       min-height: 56.25vw;
-      /* Disposição aprovada pelo proprietário: a lâmpada fica logo abaixo do e-mail, sobre o fio. */
+      /* Disposição escolhida: a lâmpada fica logo abaixo do e-mail, sobre o fio. */
       padding-block-end: 17vw;
       text-shadow: 0 1px 0 rgb(8 13 25 / 0.9);
     }
@@ -376,7 +376,7 @@
       padding-block-start: var(--space-8);
     }
 
-    /* Texto e e-mail embaixo do título "Contato", na mesma coluna (pedido do proprietário). */
+    /* Texto e e-mail embaixo do título "Contato", na mesma coluna . */
     .invite__title {
       grid-column: 1 / span 6;
     }

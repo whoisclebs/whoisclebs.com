@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 import { canonicalIssue, dynamicEndpointFor, extractJsonLd, extractPageFacts, graphNodes, internalLinks, jsonLdIssues, llmsIndexIssues, SITE_ORIGIN, sitemapLocs } from '../../src/lib/publishing/checks'
 
 /**
- * Camada legível por agentes (spec §5, passo 12) contra o build servido pelo Worker local:
+ * Camada legível por agentes (spec §5) contra o build servido pelo Worker local:
  * JSON-LD coerente com o que a página mostra, canonical, Open Graph, /resume.json, /llms*.txt,
  * /sitemap.xml e /robots.txt.
  */

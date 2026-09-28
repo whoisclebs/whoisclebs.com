@@ -1,4 +1,5 @@
 /**
+ * A fonte fica só local (design/explorations/ não é versionado); a saída em static/ é versionada.
  * scripts/build-cycle-video.mjs
  *
  * Monta o vídeo da página 404: o ciclo do Farol do Cabo Branco (noite → amanhecer → dia → entardecer → noite)

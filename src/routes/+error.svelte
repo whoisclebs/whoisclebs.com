@@ -1,5 +1,5 @@
 <!--
-  404 (passo 17): o ciclo do Farol do Cabo Branco em loop lento, em tela cheia, com o "404" em HTML por cima.
+  404: o ciclo do Farol do Cabo Branco em loop lento, em tela cheia, com o "404" em HTML por cima.
   - No HTML: o pôster da noite (AVIF/WebP) e o texto. Sem JS, com movimento reduzido ou com `saveData`, fica só
     o pôster.
   - Com movimento permitido, a ilha `notfound/cycle.ts` (import dinâmico) cria o <video> mudo em loop e marca a

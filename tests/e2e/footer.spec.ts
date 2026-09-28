@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test'
 
 /**
  * Passos 11 e 17 — rodapé (convite, perfis, leitura, navegação secundária, noite do farol) e `/contato/`.
- * A atividade pública saiu do rodapé e do HUD no passo 17 (decisões 101 e 102): nenhuma página chama
+ * A atividade pública saiu do rodapé e do HUD: nenhuma página chama
  * `/api/activity`.
  */
 
@@ -135,7 +135,7 @@ for (const scheme of ['light', 'dark'] as const) {
   })
 }
 
-test('a 404 não tem rodapé de contato: só o ciclo do farol (pedido do proprietário)', async ({ page }) => {
+test('a 404 não tem rodapé de contato: só o ciclo do farol ', async ({ page }) => {
   const response = await page.goto('/nao-existe/')
   expect(response?.status()).toBe(404)
   await expect(page.getByRole('contentinfo')).toHaveCount(0)

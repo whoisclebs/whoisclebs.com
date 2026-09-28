@@ -1,7 +1,7 @@
 /**
  * scripts/check-budgets.mjs
  *
- * Budgets do portão final (passo 14), medidos sobre o build do adapter-cloudflare (`.svelte-kit/cloudflare`):
+ * Budgets do portão final, medidos sobre o build do adapter-cloudflare (`.svelte-kit/cloudflare`):
  *
  * 1. JS de entrada da home: todo módulo que a navegação inicial de `/` carrega — `modulepreload` + `import()`
  *    do script inline de boot + a árvore de imports estáticos de cada um (imports dinâmicos dentro dos chunks,

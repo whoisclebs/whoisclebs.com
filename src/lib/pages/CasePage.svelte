@@ -17,7 +17,7 @@
     study: RenderedCaseStudy
     project: Project
     other?: { name: string; slug: string; question: string }
-    /** Conteúdo extra no fim da seção "Código e demo" (o simulador do passo 08). */
+    /** Conteúdo extra no fim da seção "Código e demo" (o simulador). */
     demo?: Snippet
   }
 

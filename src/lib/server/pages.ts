@@ -192,7 +192,7 @@ export async function projectData(slug: string, locale: Locale) {
     project: { ...project, description },
     caseStudy,
     otherCase: caseStudy ? otherCaseFor(project.slug) : undefined,
-    /** Passo 08: o simulador vive no case tuxedo (o cliente não tem nova tentativa). Cenário padrão pré-calculado no build. */
+    /** o simulador vive no case tuxedo (o cliente não tem nova tentativa). Cenário padrão pré-calculado no build. */
     simulation: caseStudy && project.slug === 'tuxedo' ? precomputedScenario() : undefined,
     /** No inglês: o case existe só em português. */
     caseHref: study && locale === 'en' ? projectPath(project.slug, 'pt-BR') : undefined,

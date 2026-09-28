@@ -1,5 +1,5 @@
 <!--
-  Home como jornada (passo 17): o hero (noite, luz rasante, HUD no horizonte) e, depois dele, um céu noturno
+  Home como jornada: o hero (noite, luz rasante, HUD no horizonte) e, depois dele, um céu noturno
   só (índigo quase preto, estrelas sutis, via láctea que gira devagar com a rolagem) que desce sem corte até a
   noite do farol no rodapé. Cada capítulo abre num fio âmbar (o horizonte) com a hora em mono, no estilo do
   HUD: arquitetura (o que ofereço) logo abaixo do hero, depois história, projetos, agentes, agora e escrita.

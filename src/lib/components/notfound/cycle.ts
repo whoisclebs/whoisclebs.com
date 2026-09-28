@@ -1,5 +1,5 @@
 /**
- * Ilha da 404 (passo 17): o ciclo do Farol do Cabo Branco em loop lento (~48 s, `scripts/build-cycle-video.mjs`).
+ * Ilha da 404: o ciclo do Farol do Cabo Branco em loop lento (~48 s, `scripts/build-cycle-video.mjs`).
  * Carregada por import dinâmico na página de erro, só sem movimento reduzido e sem `saveData` (senão fica o
  * pôster da noite). Cria o <video> (`muted`, `playsinline`, `loop`, `aria-hidden`, sem controles), mostra-o
  * quando começa a tocar e marca o céu da hora no contêiner (`data-sky`, informativo: o texto já é legível em

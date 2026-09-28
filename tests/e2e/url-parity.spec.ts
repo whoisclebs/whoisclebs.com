@@ -2,11 +2,11 @@ import { readFileSync } from 'node:fs'
 import { expect, test, type APIResponse } from '@playwright/test'
 
 /**
- * Paridade de URLs: toda URL do inventário do site antigo (docs/redesign/url-inventory.json)
+ * Paridade de URLs: toda URL do inventário do site antigo (tests/fixtures/url-inventory.json)
  * responde 200 ou redireciona com 301/308 direto para o destino novo esperado.
- * Mapa legível: docs/redesign/url-map.md. Fonte do mapa no código: src/lib/routing/redirects.ts.
+ * Fonte do mapa de redirects: src/lib/routing/redirects.ts.
  */
-const inventory: string[] = JSON.parse(readFileSync('docs/redesign/url-inventory.json', 'utf8'))
+const inventory: string[] = JSON.parse(readFileSync('tests/fixtures/url-inventory.json', 'utf8'))
 
 const expectedRedirects: Record<string, string> = {
   '/about/': '/sobre/',

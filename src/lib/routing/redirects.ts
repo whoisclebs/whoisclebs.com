@@ -1,6 +1,6 @@
 /**
- * Mapa único de URLs legadas (site React, inventário do passo 00) → rotas novas.
- * Aplicado em `src/hooks.server.ts` com 301; documentado em docs/redesign/url-map.md.
+ * Mapa único de URLs legadas (site React, inventário de URLs) → rotas novas.
+ * Aplicado em `src/hooks.server.ts` com 301.
  */
 type Rule = { from: RegExp; to: (slug?: string) => string }
 

@@ -40,7 +40,7 @@
 
 @layer base {
   /* A estabilidade na troca de fonte vem das faces "… Fallback" com size-adjust/ascent-override
-     (fonts.css). `font-size-adjust` foi retirado no passo 05: ele reescalaria o fallback já ajustado
+     (fonts.css). `font-size-adjust` foi retirado: ele reescalaria o fallback já ajustado
      pela altura-x e desfaria o casamento de largura (mesmas quebras de linha = CLS ≈ 0). */
   html {
     background: var(--color-bg);
@@ -133,7 +133,7 @@
   }
 
   /*
-   * Linha-alvo (passo 17): listas editoriais da home e da escrita. No hover (ponteiro fino) ou com o foco do
+   * Linha-alvo: listas editoriais da home e da escrita. No hover (ponteiro fino) ou com o foco do
    * teclado num link da linha, quatro cantos travam na linha e um fio âmbar percorre o topo, como a seleção
    * de uma unidade no HUD. Cantos e fio são decorativos; o foco continua no anel do link.
    */
@@ -483,7 +483,7 @@
   }
 }
 
-/* ---------- Artigo e nota (passo 06) ---------- */
+/* ---------- Artigo e nota ---------- */
 @layer components {
   .entry {
     display: grid;

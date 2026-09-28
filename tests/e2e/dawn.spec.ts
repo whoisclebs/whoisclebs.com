@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test'
 import sharp from 'sharp'
 
 /**
- * Passo 15 — "amanhecer por rolagem": faixas noite → aurora → dia → noite, HUD com telemetria real no
+ * "amanhecer por rolagem": faixas noite → aurora → dia → noite, HUD com telemetria real no
  * horizonte do hero, vídeo da luz rasante (nunca o LCP, nunca baixado com movimento reduzido ou saveData),
  * contraste do H1 e do apoio sobre o quadro mais claro, `lang` na navegação pelo cliente.
  */
@@ -213,7 +213,7 @@ test.describe('vídeo da luz rasante', () => {
       await page.waitForTimeout(1200) // fim do fade de opacidade do pôster
       const targets = { h1: '.hero__title', apoio: '.hero__support' }
       // Caixas das linhas de texto (Range.getClientRects), não a caixa do elemento: a faixa de luz passa à
-      // direita do título (passo 17) e a caixa de 20ch do H1 incluiria luz que não fica atrás de nenhuma letra.
+      // direita do título e a caixa de 20ch do H1 incluiria luz que não fica atrás de nenhuma letra.
       const info = await page.evaluate((selectors) => {
         const out: Record<string, { rects: { x: number; y: number; w: number; h: number }[]; color: string }> = {}
         for (const [name, selector] of Object.entries(selectors)) {

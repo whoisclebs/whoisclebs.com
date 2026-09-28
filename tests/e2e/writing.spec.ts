@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test'
 
 /**
- * Passo 06 — Escrita/Notas, RSS, metadados e comentários (o manifesto virou "O que eu faço" no passo 15).
+ * Escrita/Notas, RSS, metadados e comentários (o manifesto virou "O que eu faço").
  * Tudo contra o build real (wrangler dev), com URLs tiradas do sitemap para não fixar a lista à mão.
  */
 
@@ -235,7 +235,7 @@ test.describe('home: ritmo editorial', () => {
     const journey = page.locator('[data-band="aurora"]')
     await expect(journey.locator('#arquitetura').getByRole('heading', { level: 3 })).toHaveText(['Sistemas distribuídos', 'Backend de alta performance', 'IA agêntica'])
     await expect(page.locator('section.manifesto')).toHaveCount(0)
-    // Ordem dos capítulos (passo 17): hero → arquitetura → história → projetos → agentes → agora → escrita.
+    // Ordem dos capítulos: hero → arquitetura → história → projetos → agentes → agora → escrita.
     const order = await page.locator('main h2').allTextContents()
     expect(order).toEqual(['Arquitetura', 'Como cheguei aqui', 'Projetos', 'Agentes de IA', 'Agora', 'Escrita e notas'])
     // Cada capítulo abre com a hora da jornada em mono (decorativa: o título continua no <h2>).

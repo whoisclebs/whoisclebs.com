@@ -27,7 +27,7 @@
 
 <svelte:head>
   <!-- Críticas: Anton (H1, LCP) e Newsreader 400 (texto acima da dobra). Com só a Anton, a troca Georgia →
-       Newsreader acrescentava uma linha ao dek de /agentes/ no celular (CLS 0,032 no Lighthouse, passo 14).
+       Newsreader acrescentava uma linha ao dek de /agentes/ no celular (CLS 0,032 no Lighthouse).
        Mono, itálico e 600 continuam sem preload, com fallbacks de métricas ajustadas (fonts.css). -->
   <link rel="preload" href={antonUrl} as="font" type="font/woff2" crossorigin="anonymous" />
   <link rel="preload" href={newsreaderUrl} as="font" type="font/woff2" crossorigin="anonymous" />
@@ -41,7 +41,7 @@
 <main id="conteudo" class={isHome || page.status === 404 ? 'main--bleed' : 'page'} tabindex="-1">
   {@render children()}
 </main>
-<!-- A 404 é só o ciclo do farol: sem rodapé de contato (pedido do proprietário). -->
+<!-- A 404 é só o ciclo do farol: sem rodapé de contato. -->
 {#if page.status !== 404}
   <SiteFooter {locale} currentPath={page.url.pathname} scene={!page.error} />
 {/if}

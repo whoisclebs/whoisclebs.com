@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
 
 /**
- * Passo 08 — simulador determinístico no case tuxedo: teclado de ponta a ponta, reiniciar, reprodução,
+ * simulador determinístico no case tuxedo: teclado de ponta a ponta, reiniciar, reprodução,
  * reduced motion, JS desligado (tabela) e axe claro/escuro. O cenário padrão (semente 170) abre o disjuntor
  * no passo 3, fica meio-aberto no passo 8 e fecha no passo 9 (testado também em src/lib/sim/sim.test.ts).
  */

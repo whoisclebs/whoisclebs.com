@@ -1,7 +1,8 @@
 /**
+ * A fonte fica só local (design/explorations/ não é versionado); a saída em static/ é versionada.
  * scripts/build-hero-light.mjs
  *
- * Luz do hero, versão 3 (passo 17, paleta da noite do farol): a partir do vídeo gerado na Higgsfield
+ * Luz do hero, versão 3: a partir do vídeo gerado na Higgsfield
  * (`design/explorations/higgsfield/hero-light-v3-source.mp4`, Seedance 2.5, 1280×720, 24 fps, 5 s), monta um
  * loop por vai-e-volta (o trecho inteiro seguido dele mesmo invertido, 10 s): a faixa de luz entra pelo alto,
  * desce até o canto inferior direito e volta, sem corte na emenda. Exporta WebM (VP9) + MP4 (H.264, faststart),

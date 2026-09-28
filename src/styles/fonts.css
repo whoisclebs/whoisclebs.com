@@ -1,6 +1,6 @@
 /*
  * Fontes locais em WOFF2, subset latin (cobre pt-BR e en), SIL OFL 1.1 — ver src/lib/assets/fonts/OFL.txt.
- * Decisão: docs/redesign/decisions.md (item 9). Preload só da fonte do LCP (Anton 400, H1 da home); as outras entram com font-display: swap.
+ * Preload só da fonte do LCP (Anton 400, H1 da home); as outras entram com font-display: swap.
  */
 @font-face {
   font-family: 'Anton';
@@ -51,7 +51,7 @@
 }
 
 /*
- * Fallbacks com métricas ajustadas (passo 05, CLS ≈ 0 na troca de fonte). Valores medidos com fontkit nos
+ * Fallbacks com métricas ajustadas. Valores medidos com fontkit nos
  * WOFF2 acima e nos TTF do sistema (Impact, Georgia, Courier New do Windows):
  *   size-adjust     = largura média ponderada (a–z + espaço) da web font ÷ a do fallback
  *   ascent/descent  = métrica hhea da web font (÷ unitsPerEm) ÷ size-adjust; line-gap 0 nas duas.

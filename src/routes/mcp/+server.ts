@@ -9,7 +9,7 @@ import type { RequestHandler } from './$types'
 export const prerender = false
 export const trailingSlash = 'never'
 
-// Por isolate: o catálogo é montado uma vez (conteúdo do build) e o limite é best-effort (decisão 72).
+// Por isolate: o catálogo é montado uma vez (conteúdo do build) e o limite é best-effort.
 let catalog: ContentCatalog | undefined
 const handle = createMcpHandler({
   catalog: () => (catalog ??= createContentCatalog(buildCatalogEntries())),

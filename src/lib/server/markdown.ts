@@ -12,7 +12,7 @@ const languages = ['bash', 'css', 'dockerfile', 'html', 'javascript', 'js', 'jso
 /**
  * Temas escolhidos por contraste AA medido contra as superfícies reais do bloco (`--color-surface`:
  * #FCFAF5 no claro, #19233A no escuro): `github-light` reprovava verde/vermelho (4,4:1) e `github-dark`
- * reprovava comentários (3,3:1). Ver decisions.md (passo 06).
+ * reprovava comentários (3,3:1).
  */
 const LIGHT_THEME = 'github-light-high-contrast'
 const DARK_THEME = 'github-dark-default'

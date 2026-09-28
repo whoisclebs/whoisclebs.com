@@ -7,7 +7,7 @@ import { expect, test } from '@playwright/test'
 const pages: Array<{ path: string; lang: 'pt-BR' | 'en'; title: RegExp; hreflangEn?: string }> = [
   { path: '/', lang: 'pt-BR', title: /^WHOISCLEBS – Clebson Augusto, engenheiro de software$/, hreflangEn: '/en/' },
   { path: '/projetos/', lang: 'pt-BR', title: /^Projetos – /, hreflangEn: '/en/projects/' },
-  // Case (pt-BR) e ficha (en) não são tradução uma da outra: sem hreflang (decisão do passo 12).
+  // Case (pt-BR) e ficha (en) não são tradução uma da outra: sem hreflang.
   { path: '/projetos/tuxedo/', lang: 'pt-BR', title: /^tuxedo: estudo de caso – / },
   { path: '/escrita/', lang: 'pt-BR', title: /^Escrita – /, hreflangEn: '/en/writing/' },
   { path: '/escrita/github-actions-como-fazer-deploy/', lang: 'pt-BR', title: /^GitHub Actions/, hreflangEn: '/en/writing/github-actions-como-fazer-deploy/' },

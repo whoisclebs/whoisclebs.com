@@ -1,12 +1,12 @@
 /*
- * WHOISCLEBS — tokens do design system "Amanhecer por rolagem" (passo 15, direção C), com a paleta da noite do
- * farol (passo 17): azuis noturnos, creme das paredes, branco-estrela e o amarelo-pálido da lâmpada como acento.
- * Framework-agnóstico: só custom properties. Decisões e motivos em docs/redesign/decisions.md.
+ * WHOISCLEBS — tokens do design system "Amanhecer por rolagem", com a paleta da noite do
+ * farol: azuis noturnos, creme das paredes, branco-estrela e o amarelo-pálido da lâmpada como acento.
+ * Framework-agnóstico: só custom properties.
  * Contraste de cada par real (dia, escuro, noite, aurora e o hero sobre o vídeo) verificado por
  * scripts/check-contrast.mjs (AA).
  *
  * A página segue o nascer do sol visto do ponto mais oriental das Américas, em faixas que passam uma para a
- * outra por degradês (passo 17):
+ * outra por degradês:
  *   noite  → hero, topo das páginas internas e rodapé (`.band-night`; o rodapé soma `.band-sky`);
  *   aurora → a home depois do hero (`.band-aurora`): céu noturno índigo com estrelas e via láctea;
  *   dia    → leitura longa (projetos, escrita, artigos): o tema padrão, sem classe.
@@ -17,7 +17,7 @@
 @layer tokens {
   :root {
     /* ---------- Primitivos: dia (papel frio, não creme) ---------- */
-    --p-paper: #eceef1;          /* papel frio, levemente azulado (passo 17: paleta da noite do farol) */
+    --p-paper: #eceef1;          /* papel frio, levemente azulado */
     --p-paper-raised: #f6f7f9;
     --p-paper-deep: #dfe3e9;
     --p-ink: #16181d;
