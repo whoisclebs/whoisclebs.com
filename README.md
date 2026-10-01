@@ -73,3 +73,10 @@ tool `search_content`. Aceita requisições sem `Origin` ou do próprio domínio
 claude mcp add --transport http whoisclebs https://whoisclebs.com/mcp        # depois do deploy
 claude mcp add --transport http whoisclebs-local http://127.0.0.1:8787/mcp   # com npm run preview
 ```
+
+## Deploy
+
+O site é um Worker do Cloudflare (`wrangler.jsonc`): assets prerenderizados, D1 e o servidor MCP na mesma entrada.
+O workflow `.github/workflows/deploy.yml` verifica cada PR (tipos, lint, testes, build, e2e, contraste, orçamentos) e,
+na `main`, aplica as migrações do D1 e roda `wrangler deploy`. Secrets do repositório: `CLOUDFLARE_API_TOKEN`
+(Workers Scripts: Edit e D1: Edit) e `CLOUDFLARE_ACCOUNT_ID`. Deploy manual: `npm run build && npx wrangler deploy`.

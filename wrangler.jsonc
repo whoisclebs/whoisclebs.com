@@ -19,9 +19,9 @@
     {
       "binding": "DB",
       "database_name": "whoisclebs",
-      // Placeholder: local (`--local`, `wrangler dev`, `vite dev`) funciona com ele. Antes do primeiro
-      // deploy, rode `wrangler d1 create whoisclebs` e troque pelo UUID devolvido (não é secret).
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      // Banco de produção (conta VAREO, criado em 2026-10-01 com `wrangler d1 create whoisclebs`). O UUID não é
+      // secret. O desenvolvimento local (`--local`, `wrangler dev`, `vite dev`) usa um D1 simulado, não este.
+      "database_id": "7410134f-e726-4959-9654-e0f9c1f50b6c",
       "migrations_dir": "migrations"
     }
   ],
