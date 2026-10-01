@@ -80,3 +80,11 @@ O site é um Worker do Cloudflare (`wrangler.jsonc`): assets prerenderizados, D1
 O workflow `.github/workflows/deploy.yml` verifica cada PR (tipos, lint, testes, build, e2e, contraste, orçamentos) e,
 na `main`, aplica as migrações do D1 e roda `wrangler deploy`. Secrets do repositório: `CLOUDFLARE_API_TOKEN`
 (Workers Scripts: Edit e D1: Edit) e `CLOUDFLARE_ACCOUNT_ID`. Deploy manual: `npm run build && npx wrangler deploy`.
+
+### Domínio
+
+`whoisclebs.com` é um Custom Domain do Worker (`routes` no `wrangler.jsonc`): a Cloudflare cria e mantém o registro DNS
+do apex, e o `wrangler deploy` o reaplica. Os demais registros da zona (e-mail, subdomínios do servidor) não fazem parte
+do Worker. O `www` redireciona para a raiz por uma Redirect Rule da zona (os arquivos prerenderizados são servidos antes
+do Worker, então o redirecionamento não pode viver no código). Para recriá-la:
+`CLOUDFLARE_API_TOKEN=... node scripts/cloudflare-www-redirect.mjs` (precisa de Zone Rulesets: Edit na zona).

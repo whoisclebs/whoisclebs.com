@@ -11,6 +11,12 @@
   },
   "compatibility_date": "2026-09-01",
   "compatibility_flags": ["nodejs_als"],
+  // Domínio de produção: o Worker responde em whoisclebs.com (registro DNS criado pela Cloudflare ao fazer o deploy).
+  // O `www` redireciona para a raiz por uma Redirect Rule da zona (ver README, seção Deploy).
+  "routes": [{ "pattern": "whoisclebs.com", "custom_domain": true }],
+  // Só o domínio próprio: sem *.workers.dev nem URLs de preview.
+  "workers_dev": false,
+  "preview_urls": false,
   "assets": {
     "binding": "ASSETS",
     "directory": ".svelte-kit/cloudflare"
