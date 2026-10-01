@@ -96,6 +96,7 @@ playwright-report/
 # SvelteKit / Cloudflare
 .svelte-kit/
 .wrangler/
+wrangler.dev.jsonc
 .dev.vars
 
 # Gatsby files

@@ -32,9 +32,11 @@ export default defineConfig({
       // `/__scheduled` para disparar o cron; a fonte GitHub aponta para o servidor de fixture.
       command: [
         'test -f .svelte-kit/cloudflare/_worker.js || npm run build',
+        // Sem as rotas de produção (ver scripts/wrangler-dev-config.mjs).
+        'node scripts/wrangler-dev-config.mjs',
         'rm -rf .wrangler/e2e-state',
-        'npx wrangler d1 migrations apply DB --local --persist-to .wrangler/e2e-state',
-        `npx wrangler dev --port ${port} --ip 127.0.0.1 --log-level warn --persist-to .wrangler/e2e-state --test-scheduled --var GITHUB_API_BASE:http://127.0.0.1:8790`,
+        'npx wrangler d1 migrations apply DB --config wrangler.dev.jsonc --local --persist-to .wrangler/e2e-state',
+        `npx wrangler dev --config wrangler.dev.jsonc --port ${port} --ip 127.0.0.1 --log-level warn --persist-to .wrangler/e2e-state --test-scheduled --var GITHUB_API_BASE:http://127.0.0.1:8790`,
       ].join(' && '),
       env: { CI: '1' },
       url: `http://127.0.0.1:${port}/`,

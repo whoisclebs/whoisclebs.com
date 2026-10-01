@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "node scripts/validate-editorial.mjs && node scripts/verify-locale-parity.mjs && node scripts/build-og.mjs && vite build && node scripts/optimize-images.mjs .svelte-kit/cloudflare && node scripts/verify-publishing.mjs .svelte-kit/cloudflare",
-    "preview": "wrangler dev --port 8787",
+    "preview": "node scripts/wrangler-dev-config.mjs && wrangler dev --config wrangler.dev.jsonc --port 8787",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --fail-on-warnings && tsc --noEmit -p tsconfig.json",
     "lint": "eslint .",
     "test": "vitest run",
