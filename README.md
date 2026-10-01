@@ -35,7 +35,7 @@ Checagens extras: `check:contrast` (pares de cor AA), `check:budgets` (peso de J
 src/content/            artigos e notas em Markdown
 src/lib/content/        schemas e dados (projetos, cases, perfil)
 src/lib/pages/          páginas
-src/lib/components/     componentes (hero, rodapé, 404, simulador…)
+src/lib/components/     componentes (hero, rodapé, 404, diagrama dos cases…)
 src/lib/server/         domínio, portas, adaptadores, publicação e MCP
 src/routes/             rotas do SvelteKit
 static/                 assets servidos como estão (marca, mídia, cena do rodapé)

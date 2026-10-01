@@ -44,7 +44,7 @@ describe('buildCatalogEntries (catálogo MCP a partir da camada de conteúdo)', 
   it('cases trazem o estudo inteiro e toda URL é canônica do site', () => {
     for (const study of caseStudies) {
       const entry = entries.find((candidate) => candidate.uri === projectUri(study.slug))
-      expect(entry?.text).toContain(study.question)
+      expect(entry?.text).toContain(study.dek)
       expect(entry?.url).toBe(`${SITE_URL}/projetos/${study.slug}/`)
     }
     for (const entry of entries) {

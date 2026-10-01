@@ -124,7 +124,7 @@ export function softwareSourceCodeNode(project: Project, description: string, lo
   }
 }
 
-/** Case: um `TechArticle` (título = H1, revisão = data em que as fontes foram conferidas) sobre o código. */
+/** Case: um `TechArticle` (título = H1, `dateModified` = última vez que conferi o texto contra o código) sobre o código. */
 export function caseStudyNodes(study: CaseStudy, project: Project, path: string): JsonLd[] {
   const url = absoluteUrl(path)
   const t = getMessages('pt-BR')

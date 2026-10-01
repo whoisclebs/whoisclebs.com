@@ -2,18 +2,17 @@
   import { formatDate, getMessages } from '$lib/i18n'
   import { pages } from '$lib/routing/paths'
   import type { projectData } from '$lib/server/pages'
-  import type { Snippet } from 'svelte'
   import CasePage from './CasePage.svelte'
   import ProjectStatus from './ProjectStatus.svelte'
 
-  let { data, demo }: { data: Awaited<ReturnType<typeof projectData>>; demo?: Snippet } = $props()
+  let { data }: { data: Awaited<ReturnType<typeof projectData>> } = $props()
 
   const t = $derived(getMessages(data.locale))
   const project = $derived(data.project)
 </script>
 
 {#if data.caseStudy}
-  <CasePage study={data.caseStudy} {project} other={data.otherCase} {demo} />
+  <CasePage study={data.caseStudy} {project} other={data.otherCase} />
 {:else}
 <header class="page-header">
   <div class="page">

@@ -4,7 +4,7 @@
  * Validação editorial antes do build: front matter de artigos e notas contra os schemas Zod de
  * `src/lib/content/schema.ts` (os mesmos usados no carregamento do site), idioma explícito,
  * coerência idioma × nome do arquivo e pares de tradução; estudos de caso contra `caseStudySchema`
- * (toda seção com fonte, fontes só em github.com/whoisclebs.com, trechos com permalink fixado).
+ * (links só em github.com/whoisclebs.com, trechos com permalink fixado, diagrama e trechos em uma seção).
  *
  * Uso: node scripts/validate-editorial.mjs   (Node ≥ 22.18: importa TypeScript por type stripping)
  */

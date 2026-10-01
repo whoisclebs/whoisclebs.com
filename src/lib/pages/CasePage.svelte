@@ -1,11 +1,9 @@
 <!--
-  Template de estudo de caso (só pt-BR). Ordem fixa: Contexto → Restrições → Decisão → Arquitetura →
-  Alternativas recusadas → Resultado observado → O que eu mudaria → Código e demo.
-  Cada seção mostra as próprias fontes ao lado (desktop) ou logo abaixo (celular). Seções que são leitura
-  minha do código, sem histórico escrito no repositório, levam o rótulo "Análise minha".
+  Estudo de caso (só pt-BR): texto meu, em primeira pessoa, com títulos de seção escolhidos por case.
+  Links para o código ficam dentro do texto. Cada seção pode mostrar depois do texto o diagrama, os
+  trechos de código ou as medições que eu rodei (`figures`). A revisão lida fica no rodapé.
 -->
 <script lang="ts">
-  import type { Snippet } from 'svelte'
   import ArchitectureDiagram from '$lib/components/case/ArchitectureDiagram.svelte'
   import { formatDate } from '$lib/i18n'
   import { pages, projectPath } from '$lib/routing/paths'
@@ -16,39 +14,35 @@
   interface Props {
     study: RenderedCaseStudy
     project: Project
-    other?: { name: string; slug: string; question: string }
-    /** Conteúdo extra no fim da seção "Código e demo" (o simulador). */
-    demo?: Snippet
+    other?: { name: string; slug: string; dek: string }
   }
 
-  let { study, project, other, demo }: Props = $props()
+  let { study, project, other }: Props = $props()
 
   const shortSha = $derived(study.revision.sha.slice(0, 7))
+  /** Ambiente e data das medições: uma nota só quando todas foram rodadas juntas. */
+  const runContext = $derived.by(() => {
+    const keys = new Set(study.measurements.map((measurement) => `${measurement.environment}|${measurement.date}`))
+    const first = study.measurements[0]
+    return keys.size === 1 && first ? { environment: first.environment, date: first.date } : undefined
+  })
 </script>
 
 <header class="page-header">
   <div class="page case__head">
     <div class="case__intro">
-    <p class="eyebrow case__crumb"><a href={pages.projects['pt-BR']}>Projetos</a> <span aria-hidden="true">/</span> Estudo de caso</p>
+    <p class="eyebrow case__crumb"><a href={pages.projects['pt-BR']}>Projetos</a> <span aria-hidden="true">/</span> {project.name}</p>
     <h1 class="case__title">{study.title}</h1>
     <p class="case__dek">{study.dek}</p>
     </div>
     <dl class="case__facts">
       <div>
         <dt>Status</dt>
-        <dd><ProjectStatus locale="pt-BR" status={project.status} checkedAt={project.statusCheckedAt} prefix={false} /></dd>
+        <dd><ProjectStatus locale="pt-BR" status={project.status} checkedAt={project.statusCheckedAt} prefix={false} date={false} /></dd>
       </div>
       <div>
         <dt>Linguagem</dt>
         <dd>{project.technologies.join(', ')}</dd>
-      </div>
-      <div>
-        <dt>Revisão lida</dt>
-        <dd><a href={study.revision.url} rel="noopener noreferrer"><code>{shortSha}</code></a>, de <time datetime={study.revision.date}>{formatDate(study.revision.date, 'pt-BR')}</time></dd>
-      </div>
-      <div>
-        <dt>Fontes conferidas em</dt>
-        <dd><time datetime={study.checkedAt}>{formatDate(study.checkedAt, 'pt-BR')}</time></dd>
       </div>
       <div>
         <dt>Código</dt>
@@ -62,7 +56,7 @@
 <article class="case">
 
   <nav class="case__toc" aria-labelledby="case-toc-title">
-    <h2 id="case-toc-title" class="eyebrow case__toc-title">Neste case</h2>
+    <h2 id="case-toc-title" class="eyebrow case__toc-title">Neste texto</h2>
     <ol class="list-reset">
       {#each study.sections as section (section.id)}
         <li><a href="#{section.id}">{section.title}</a></li>
@@ -74,87 +68,63 @@
     <section class="case-section" id={section.id} aria-labelledby="{section.id}-title">
       <div class="case-section__text">
         <h2 id="{section.id}-title">{section.title}</h2>
-        {#if section.voice === 'analise'}
-          <p class="case-section__voice">Análise minha, a partir do código ao lado. O repositório não registra esse raciocínio.</p>
-        {/if}
         {#each section.html as paragraph, index (index)}
-          <!-- eslint-disable-next-line svelte/no-at-html-tags -- texto do case escapado no build (renderInline); só crases viram <code> -->
+          <!-- eslint-disable-next-line svelte/no-at-html-tags -- texto do case escapado no build (renderCaseText): só crases viram <code> e [texto](url) vira link para github.com/whoisclebs.com -->
           <p>{@html paragraph}</p>
         {/each}
+        {#if section.sources.length > 0}
+          <p class="case-section__links">
+            {#each section.sources as source, index (source.url)}{#if index > 0}<span aria-hidden="true"> · </span>{/if}<a href={source.url} rel="noopener noreferrer">{source.label}</a>{/each}
+          </p>
+        {/if}
       </div>
 
-      <aside class="case-section__sources" aria-labelledby="{section.id}-sources">
-        <h3 id="{section.id}-sources" class="eyebrow case-section__sources-title">Fontes</h3>
-        <ul class="list-reset">
-          {#each section.sources as source (source.url)}
-            <li><a href={source.url} rel="noopener noreferrer">{source.label}</a></li>
-          {/each}
-        </ul>
-      </aside>
-
-      {#if section.id === 'arquitetura'}
-        <div class="case-section__wide">
-          <ArchitectureDiagram architecture={study.architecture} id="{study.slug}-arquitetura" />
-        </div>
-      {/if}
-
-      {#if section.id === 'resultado' && study.measurements.length > 0}
-        <div class="case-section__wide">
-          <!-- svelte-ignore a11y_no_noninteractive_tabindex (região rolável precisa de foco por teclado; axe scrollable-region-focusable) -->
-          <div class="measurements" role="region" aria-labelledby="{study.slug}-medicoes" tabindex="0">
-            <table>
-              <caption id="{study.slug}-medicoes">Medições que eu rodei (não são benchmarks)</caption>
-              <thead>
-                <tr>
-                  <th scope="col">O quê</th>
-                  <th scope="col">Comando</th>
-                  <th scope="col">Ambiente</th>
-                  <th scope="col">Data</th>
-                  <th scope="col">Resultado</th>
-                </tr>
-              </thead>
-              <tbody>
-                {#each study.measurements as measurement (measurement.command)}
-                  <tr>
-                    <th scope="row">{measurement.what}</th>
-                    <td><code>{measurement.command}</code></td>
-                    <td>{measurement.environment}</td>
-                    <td><time datetime={measurement.date}>{formatDate(measurement.date, 'pt-BR')}</time></td>
-                    <td>{measurement.result}</td>
-                  </tr>
-                {/each}
-              </tbody>
-            </table>
+      {#each section.figures as figure (figure)}
+        {#if figure === 'architecture'}
+          <div class="case-section__wide">
+            <ArchitectureDiagram architecture={study.architecture} id="{study.slug}-arquitetura" />
           </div>
-        </div>
-      {/if}
-
-      {#if section.id === 'codigo'}
-        <div class="case-section__wide snippets">
-          {#each study.snippets as snippet (snippet.url)}
-            <figure class="snippet">
-              <figcaption class="snippet__head">
-                <span class="snippet__title">{snippet.title}</span>
-                <a href={snippet.url} rel="noopener noreferrer">{snippet.file}, linhas {snippet.lines[0]}–{snippet.lines[1]}<span class="visually-hidden">, no GitHub</span></a>
-              </figcaption>
-              <!-- eslint-disable-next-line svelte/no-at-html-tags -- Shiki no build sobre código do próprio repositório -->
-              <div class="code-block">{@html snippet.html}</div>
-              <!-- eslint-disable-next-line svelte/no-at-html-tags -- legenda escapada no build (renderInline) -->
-              <p class="snippet__caption">{@html snippet.captionHtml}</p>
-            </figure>
-          {/each}
-          {#if demo}{@render demo()}{/if}
-        </div>
-      {/if}
+        {:else if figure === 'measurements' && study.measurements.length > 0}
+          <div class="case-section__text runs">
+            <ul class="list-reset">
+              {#each study.measurements as measurement (measurement.command)}
+                <!-- eslint-disable-next-line svelte/no-at-html-tags -- resultado escapado no build (renderInline) -->
+                <li>Rodei <code>{measurement.command}</code>: {@html measurement.resultHtml}.{#if !runContext}<span class="runs__context"> ({measurement.environment}, <time datetime={measurement.date}>{formatDate(measurement.date, 'pt-BR')}</time>)</span>{/if}</li>
+              {/each}
+            </ul>
+            {#if runContext}
+              <p class="runs__context">{runContext.environment}, em <time datetime={runContext.date}>{formatDate(runContext.date, 'pt-BR')}</time>.</p>
+            {/if}
+          </div>
+        {:else if figure === 'snippets'}
+          <div class="case-section__wide snippets">
+            {#each study.snippets as snippet (snippet.url)}
+              <figure class="snippet">
+                <figcaption class="snippet__head">
+                  <span class="snippet__title">{snippet.title}</span>
+                  <a href={snippet.url} rel="noopener noreferrer">{snippet.file}, linhas {snippet.lines[0]}–{snippet.lines[1]}<span class="visually-hidden">, no GitHub</span></a>
+                </figcaption>
+                <!-- eslint-disable-next-line svelte/no-at-html-tags -- Shiki no build sobre código do próprio repositório -->
+                <div class="code-block">{@html snippet.html}</div>
+                <!-- eslint-disable-next-line svelte/no-at-html-tags -- legenda escapada no build (renderInline) -->
+                <p class="snippet__caption">{@html snippet.captionHtml}</p>
+              </figure>
+            {/each}
+          </div>
+        {/if}
+      {/each}
     </section>
   {/each}
 
   <footer class="case__foot">
+    <p class="case__revision">
+      Código lido na revisão <a href={study.revision.url} rel="noopener noreferrer"><code>{shortSha}</code></a>, de <time datetime={study.revision.date}>{formatDate(study.revision.date, 'pt-BR')}</time>. Os links de linha apontam para ela.
+    </p>
     {#if other}
       <p class="case__next">
-        <span class="case__next-label">Outro case</span>
+        <span class="case__next-label">Outro projeto</span>
         <a href={projectPath(other.slug, 'pt-BR')}>{other.name}</a>
-        <span class="case__next-question">{other.question}</span>
+        <span class="case__next-dek">{other.dek}</span>
       </p>
     {/if}
     <p><a href={pages.projects['pt-BR']}>Todos os projetos</a></p>
@@ -239,8 +209,7 @@
     border-block-end: var(--border-hairline) solid var(--color-rule);
   }
 
-  .case__toc-title,
-  .case-section__sources-title {
+  .case__toc-title {
     font-family: var(--font-text);
   }
 
@@ -291,81 +260,33 @@
     overflow-wrap: anywhere;
   }
 
-  .case-section__voice {
-    justify-self: start;
-    padding: var(--space-1) var(--space-3);
-    border: var(--border-hairline) solid var(--color-rule);
-    border-radius: var(--radius-pill);
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    line-height: var(--leading-ui);
+  .case-section__text a {
+    overflow-wrap: anywhere;
+  }
+
+  .case-section__links {
+    font-size: var(--step-0);
     color: var(--color-text-soft);
   }
 
-  .case-section__sources {
-    display: grid;
-    align-content: start;
+  .runs {
     gap: var(--space-2);
-    padding-block-start: var(--space-3);
-    border-block-start: var(--border-hairline) solid var(--color-rule);
     font-size: var(--step-0);
     line-height: var(--leading-ui);
-    min-width: 0;
   }
 
-  .case-section__sources ul {
+  .runs ul {
     display: grid;
     gap: var(--space-2);
   }
 
-  .case-section__sources a {
-    overflow-wrap: anywhere;
+  .runs__context {
+    font-size: var(--step--1);
+    color: var(--color-text-faint);
   }
 
   .case-section__wide {
     min-width: 0;
-  }
-
-  .measurements {
-    overflow-x: auto;
-    border: var(--border-hairline) solid var(--color-rule);
-    background: var(--color-surface);
-  }
-
-  .measurements table {
-    width: 100%;
-    min-width: 44rem;
-    border-collapse: collapse;
-    font-size: var(--step-0);
-    line-height: var(--leading-ui);
-  }
-
-  .measurements caption {
-    padding: var(--space-3);
-    text-align: start;
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    color: var(--color-text-soft);
-    border-block-end: var(--border-hairline) solid var(--color-rule);
-  }
-
-  .measurements th,
-  .measurements td {
-    padding: var(--space-2) var(--space-3);
-    text-align: start;
-    vertical-align: top;
-    border-block-end: var(--border-hairline) solid var(--color-rule);
-  }
-
-  .measurements thead th {
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    font-weight: 400;
-    color: var(--color-text-faint);
-  }
-
-  .measurements tbody th {
-    font-weight: 600;
   }
 
   .snippets {
@@ -417,6 +338,16 @@
     padding-block-start: var(--space-7);
   }
 
+  .case__revision {
+    font-size: var(--step-0);
+    color: var(--color-text-soft);
+  }
+
+  .case__revision code {
+    padding: 0 0.2em;
+    background: var(--color-band);
+  }
+
   .case__next {
     display: grid;
     gap: var(--space-1);
@@ -440,7 +371,7 @@
     line-height: var(--leading-heading);
   }
 
-  .case__next-question {
+  .case__next-dek {
     color: var(--color-text-soft);
   }
 
@@ -468,10 +399,6 @@
 
     .case-section__text {
       grid-column: 1 / span 7;
-    }
-
-    .case-section__sources {
-      grid-column: 9 / span 4;
     }
 
     .case-section__wide {

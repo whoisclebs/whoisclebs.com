@@ -2,27 +2,13 @@
  * Schema Zod dos estudos de caso. Autocontido (só `zod` e `schema.ts`) para rodar também no
  * `scripts/validate-editorial.mjs` antes do build.
  *
- * Regra de verdade editorial: toda seção, todo nó do diagrama, todo trecho de código e toda medição
- * carrega uma fonte pública (https em github.com ou no próprio site). Seção sem fonte derruba o build.
+ * O case é texto meu, em primeira pessoa, com títulos de seção livres. O que o schema ainda garante:
+ * todo link (no corpo, nas fontes opcionais, no diagrama, nos trechos e nas medições) é https em
+ * github.com ou no próprio site; todo trecho de código tem permalink fixado na revisão do case, com as
+ * mesmas linhas; diagrama e trechos aparecem uma vez, numa seção que os chama em `figures`.
  */
 import { z } from 'zod'
 import { isoDateSchema, slugSchema } from './schema.ts'
-
-/** Ordem fixa do template: Contexto → Restrições → Decisão → Arquitetura → Alternativas recusadas →
- * Resultado observado → O que mudaria → Código/demo. */
-export const CASE_SECTION_IDS = ['contexto', 'restricoes', 'decisao', 'arquitetura', 'alternativas', 'resultado', 'mudaria', 'codigo'] as const
-export type CaseSectionId = (typeof CASE_SECTION_IDS)[number]
-
-export const CASE_SECTION_TITLES: Record<CaseSectionId, string> = {
-  contexto: 'Contexto',
-  restricoes: 'Restrições',
-  decisao: 'Decisão',
-  arquitetura: 'Arquitetura',
-  alternativas: 'Alternativas recusadas',
-  resultado: 'Resultado observado',
-  mudaria: 'O que eu mudaria',
-  codigo: 'Código e demo',
-}
 
 const ALLOWED_HOSTS = new Set(['github.com', 'whoisclebs.com'])
 
@@ -42,16 +28,36 @@ export const sourceUrlSchema = z.string().refine(isAllowedSourceUrl, 'fonte prec
 
 export const caseSourceSchema = z.object({ label: nonEmpty, url: sourceUrlSchema }).strict()
 
+/** Link embutido no corpo: `[texto](url)`. A URL passa pela mesma regra das fontes. */
+export const INLINE_LINK_RE = /\[([^\]]+)\]\(([^)\s]+)\)/g
+
+export function inlineLinks(text: string): Array<{ label: string; url: string }> {
+  return [...text.matchAll(INLINE_LINK_RE)].map((match) => ({ label: match[1] as string, url: match[2] as string }))
+}
+
+/** Peças que uma seção mostra depois do texto: o diagrama, os trechos de código ou as medições. */
+export const CASE_FIGURES = ['architecture', 'snippets', 'measurements'] as const
+export type CaseFigure = (typeof CASE_FIGURES)[number]
+
+const bodyParagraph = nonEmpty.superRefine((text, ctx) => {
+  for (const link of inlineLinks(text)) {
+    if (!isAllowedSourceUrl(link.url)) ctx.addIssue({ code: 'custom', message: `link "${link.label}" precisa ser https em github.com ou whoisclebs.com (${link.url})` })
+  }
+})
+
 export const caseSectionSchema = z
   .object({
-    id: z.enum(CASE_SECTION_IDS),
-    /** `fonte`: o texto repete o que está escrito no repositório. `analise`: leitura minha do código,
-     * em primeira pessoa, rotulada na página. As duas exigem fonte (o código analisado). */
-    voice: z.enum(['fonte', 'analise']),
-    body: z.array(nonEmpty).min(1),
-    sources: z.array(caseSourceSchema).min(1, 'toda seção precisa de pelo menos uma fonte (sources)'),
+    /** Âncora da seção (único no case). */
+    id: slugSchema,
+    /** Título livre, escolhido pelo case. */
+    title: nonEmpty,
+    body: z.array(bodyParagraph),
+    /** Links extras, fora do texto. Opcional. */
+    sources: z.array(caseSourceSchema).optional(),
+    figures: z.array(z.enum(CASE_FIGURES)).optional(),
   })
   .strict()
+  .refine((section) => section.body.length > 0 || (section.figures?.length ?? 0) > 0, 'seção precisa de texto ou de uma figura')
 
 export const architectureNodeSchema = z
   .object({
@@ -99,12 +105,11 @@ export const snippetSchema = z
 /** Medição que eu rodei: comando, ambiente, data e resultado. Sem isso, não entra. */
 export const measurementSchema = z
   .object({
-    what: nonEmpty,
     command: nonEmpty,
     environment: nonEmpty,
     date: isoDateSchema,
+    /** Continua a frase "Rodei `comando`: …". */
     result: nonEmpty,
-    source: caseSourceSchema,
   })
   .strict()
 
@@ -112,14 +117,13 @@ export const caseStudySchema = z
   .object({
     slug: slugSchema,
     title: nonEmpty,
+    /** Resumo em uma ou duas frases (meta description, /projetos/, llms.txt, MCP). Texto puro. */
     dek: nonEmpty,
-    /** A pergunta que o case responde, em uma frase (usada na home e em /projetos/). */
-    question: nonEmpty,
-    /** Quando as fontes foram conferidas. */
+    /** Quando conferi o texto contra o código (dateModified do JSON-LD e lastmod do sitemap). */
     checkedAt: isoDateSchema,
     /** Revisão do código lida para escrever o case (todas as linhas citadas são desta revisão). */
     revision: z.object({ sha, date: isoDateSchema, url: sourceUrlSchema }).strict(),
-    sections: z.array(caseSectionSchema),
+    sections: z.array(caseSectionSchema).min(1),
     architecture: z.object({ caption: nonEmpty, nodes: z.array(architectureNodeSchema).min(2) }).strict(),
     snippets: z.array(snippetSchema).min(1),
     measurements: z.array(measurementSchema),
@@ -127,8 +131,15 @@ export const caseStudySchema = z
   .strict()
   .superRefine((study, ctx) => {
     const ids = study.sections.map((section) => section.id)
-    if (ids.join() !== CASE_SECTION_IDS.join()) {
-      ctx.addIssue({ code: 'custom', path: ['sections'], message: `seções precisam ser exatamente ${CASE_SECTION_IDS.join(' → ')} (recebido: ${ids.join(' → ')})` })
+    for (const [index, id] of ids.entries()) {
+      if (ids.indexOf(id) !== index) ctx.addIssue({ code: 'custom', path: ['sections', index, 'id'], message: `id de seção repetido: ${id}` })
+    }
+    const figures = study.sections.flatMap((section) => section.figures ?? [])
+    const required: CaseFigure[] = ['architecture', 'snippets', ...(study.measurements.length > 0 ? (['measurements'] as const) : [])]
+    for (const figure of CASE_FIGURES) {
+      const count = figures.filter((item) => item === figure).length
+      const expected = required.includes(figure) ? 1 : 0
+      if (count !== expected) ctx.addIssue({ code: 'custom', path: ['sections'], message: `"${figure}" precisa aparecer em ${expected} seção(ões) (aparece em ${count})` })
     }
     for (const [index, snippet] of study.snippets.entries()) {
       if (!snippet.url.includes(`/blob/${study.revision.sha}/`)) {

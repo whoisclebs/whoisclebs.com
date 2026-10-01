@@ -1,7 +1,7 @@
 /**
- * Case golpher. Fontes conferidas em 2026-09-27 num clone da revisão 815b8d7 (merge da v0.1.0, último
- * commit de `main`) e na API pública do GitHub. As alternativas recusadas estão escritas no documento de
- * design do próprio repositório; "O que eu mudaria" é análise minha, rotulada.
+ * Case golpher, em primeira pessoa. Cada afirmação foi conferida em 2026-10-01 num clone da revisão
+ * 815b8d7 (merge da v0.1.0, último commit de `main`) e na issue #22. O porquê das decisões vem do
+ * documento de design da v0.1.0, que está no próprio repositório.
  */
 import type { CaseStudyInput } from '../case-schema.ts'
 import { golpherFreeze, golpherLazyBody, golpherReportError, golpherRouter } from './snippets.ts'
@@ -14,121 +14,79 @@ const at = (file: string, from?: number, to?: number) => {
   return `${REPO}/blob/${SHA}/${file}${plain}${from ? `#L${from}${to && to !== from ? `-L${to}` : ''}` : ''}`
 }
 const src = (label: string, file: string, from?: number, to?: number) => ({ label, url: at(file, from, to) })
+const commit = (sha: string) => `${REPO}/commit/${sha}`
 
-const readme = src('README.md', 'README.md')
-const release = { label: 'Release v0.1.0 (20 jul. 2026)', url: `${REPO}/releases/tag/v0.1.0` }
-const issue22 = { label: 'Issue #22 (aberta)', url: `${REPO}/issues/22` }
-const tree = { label: `Árvore da revisão ${SHA.slice(0, 7)}`, url: `${REPO}/tree/${SHA}` }
-const workflows = { label: '.github/workflows', url: `${REPO}/tree/${SHA}/.github/workflows` }
+const ENV = 'Go 1.26.4 linux/amd64, WSL2, clone da revisão 815b8d7'
 
 export const golpherCase: CaseStudyInput = {
   slug: 'golpher',
-  title: 'golpher: um microframework que não esconde o net/http',
-  dek: 'Roteamento e middleware no estilo Express e Fiber, e a aplicação continua sendo um http.Handler. O case segue a v0.1.0 e as decisões que o próprio repositório registra.',
-  question: 'Como dar ergonomia de framework a uma API em Go sem abandonar o http.Handler?',
-  checkedAt: '2026-09-27',
-  revision: { sha: SHA, date: '2026-07-20', url: `${REPO}/commit/${SHA}` },
+  title: 'golpher: um microframework HTTP em Go sobre o net/http',
+  dek: 'Comecei o golpher em março de 2025, com outro nome, e publiquei a v0.1.0 em julho de 2026. Ele tem rotas e middleware no estilo Express e Fiber, e a aplicação continua sendo um http.Handler.',
+  checkedAt: '2026-10-01',
+  revision: { sha: SHA, date: '2026-07-20', url: commit(SHA) },
   sections: [
     {
-      id: 'contexto',
-      voice: 'fonte',
+      id: 'de-onde-veio',
+      title: 'De onde veio',
       body: [
-        'O golpher existe desde março de 2025 e chegou à v0.1.0 em 20 de julho de 2026. O README avisa que ainda não há versão estável e recomenda Fiber, Gin ou o `net/http` direto para produção hoje.',
-        'O documento de design da v0.1.0 descreve o ponto de partida. No protótipo, o registro de rotas e middleware alterava mapas compartilhados sem sincronização enquanto `ServeHTTP` os lia (uma condição de corrida assim que o servidor subia), o handler de erro padrão devolvia `err.Error()` ao cliente, o body era lido inteiro de uma vez e `Listen` chamava `log.Fatal`.',
-      ],
-      sources: [readme, release, src('design.md, linhas 1–12', DESIGN, 1, 12)],
-    },
-    {
-      id: 'restricoes',
-      voice: 'fonte',
-      body: [
-        'A restrição principal está no `docs/principles.md`: `*golpher.App` implementa `http.Handler`, e todo recurso novo precisa continuar compatível com `http.Server`, `http.ResponseWriter`, `*http.Request`, cancelamento por `context.Context` e o middleware padrão do Go.',
-        'Os não-objetivos estão escritos: nenhum runtime HTTP próprio, nenhuma camada de banco, autenticação ou templates, e nada de HTTP/3 no núcleo.',
-        'Para a v0.1.0, o design fixa o Go 1.23.6 e proíbe módulos de terceiros. O `go.mod` não tem nenhum `require`.',
-      ],
-      sources: [src('principles.md, linhas 5–36', 'docs/principles.md', 5, 36), src('design.md, linhas 28–35', DESIGN, 28, 35), src('go.mod', 'go.mod')],
-    },
-    {
-      id: 'decisao',
-      voice: 'fonte',
-      body: [
-        'Congelar a aplicação no primeiro request. O registro de rotas e middleware passa por um mutex; o primeiro `ServeHTTP` marca a aplicação como congelada e, dali em diante, nenhuma requisição pega trava. Registrar rota depois disso gera `panic`.',
-        'Mascarar erro desconhecido e observá-lo uma vez. Um `ErrorGolpher` vira status e mensagem para o cliente; qualquer outro erro vira um 500 genérico. A causa original vai só para o `ErrorObserver`, chamado exatamente uma vez, e nada é renderizado se a resposta já começou a ser escrita.',
-        'Limitar o body sem lê-lo antes da hora. O limite padrão é 1 MiB, aplicado com `http.MaxBytesReader` só na primeira leitura.',
-      ],
-      sources: [
-        src('design.md, D2 (linhas 59–65)', DESIGN, 59, 65),
-        src('golpher.go, linhas 128–143', 'golpher.go', 128, 143),
-        src('design.md, D4 (linhas 94–110)', DESIGN, 94, 110),
-        src('error.go, linhas 34–61', 'error.go', 34, 61),
-        src('design.md, D7 (linhas 130–151)', DESIGN, 130, 151),
-        src('golpher.go, linhas 77–80', 'golpher.go', 77, 80),
+        `O primeiro commit, de 16 de março de 2025, cria uma biblioteca chamada rush. Em 27 de abril de 2026 troquei o nome para golpher ([d6578ae](${commit('d6578ae8a3c073d5d5c240d693bcb07d72a0f2ef')})) e, no mesmo dia, entrou a API montada sobre o \`net/http\`.`,
+        `Usei o golpher na API do meepledecks, outro projeto meu, que rodava em Fiber. Anotei o que faltou em [\`docs/meepledecks-integration-gaps.md\`](${at('docs/meepledecks-integration-gaps.md')}): middleware por prefixo, grupos aninhados, o padrão da rota casada para as métricas e middleware pronto de request ID, log e CORS. Durante a integração entrou só o \`Request.SetContext\`. O resto continua na lista de próximos passos do [ROADMAP](${at('ROADMAP.md', 25, 35)}).`,
+        `O [README](${at('README.md', 13, 14)}) avisa que ainda não há versão estável e manda quem precisa de produção hoje usar Fiber, Gin ou o \`net/http\` direto.`,
       ],
     },
     {
-      id: 'arquitetura',
-      voice: 'fonte',
+      id: 'a-regra',
+      title: 'A regra',
       body: [
-        'O ciclo de vida de uma requisição, como o `principles.md` descreve e o `router.go` implementa. Rotas estáticas ficam num mapa método → caminho e têm prioridade; rotas com parâmetros ficam numa árvore de segmentos. `Request` e `Response` são reaproveitados com `sync.Pool`.',
-      ],
-      sources: [src('principles.md, linhas 38–46', 'docs/principles.md', 38, 46), src('router.go, linhas 214–246', 'router.go', 214, 246), src('performance.md', 'docs/performance.md')],
-    },
-    {
-      id: 'alternativas',
-      voice: 'fonte',
-      body: [
-        'Estas recusas estão escritas no documento de design, cada uma com o motivo.',
-        '`sync.RWMutex` em todo registro e em todo `ServeHTTP`: correto, mas com disputa de trava no caminho de cada requisição e ainda permitindo registrar rota com o servidor no ar. Ficou o congelamento.',
-        'Getters que copiam a configuração: mais API e ainda deixam ver mutações no meio do caminho.',
-        'Chamar o observador depois do handler de erro: perderia os erros que acontecem depois de a resposta começar a ser escrita.',
-        'Ler o body inteiro de antemão, como fazia o protótipo: quebra handlers de streaming e cobra a leitura de toda requisição.',
-        'Uma lista fechada de métodos HTTP: mais simples, mas bloquearia métodos de extensão. A validação segue a sintaxe de token da RFC 9110.',
-      ],
-      sources: [
-        src('design.md, D1 (linha 57)', DESIGN, 57),
-        src('design.md, D2 (linha 65)', DESIGN, 65),
-        src('design.md, D4 (linha 110)', DESIGN, 110),
-        src('design.md, D7 (linha 151)', DESIGN, 151),
-        src('design.md, D8 (linha 171)', DESIGN, 171),
+        `\`*golpher.App\` implementa \`http.Handler\`. No [\`docs/principles.md\`](${at('docs/principles.md', 5, 21)}) deixei escrito que todo recurso novo precisa continuar funcionando com \`http.Server\`, \`http.ResponseWriter\`, \`*http.Request\`, cancelamento por \`context.Context\` e o middleware padrão do Go.`,
+        `No mesmo arquivo ficou o que [não entra](${at('docs/principles.md', 31, 36)}): servidor HTTP próprio, banco, autenticação, templates e HTTP/3 no núcleo. O [\`go.mod\`](${at('go.mod')}) não tem nenhum \`require\`.`,
       ],
     },
     {
-      id: 'resultado',
-      voice: 'fonte',
+      id: 'o-que-a-v010-consertou',
+      title: 'O que a v0.1.0 consertou',
       body: [
-        'A v0.1.0 saiu em 20 de julho de 2026 com as quebras de compatibilidade listadas no README (assinatura única de handler, `Listen` devolvendo erro, limite de body por padrão).',
-        'Rodei a suíte na revisão 815b8d7: passa também com o detector de corrida (`-race`), com 92,4% de cobertura de instruções. É medição minha, no ambiente da tabela; o projeto não publica esse número.',
-        'O repositório tem workflows de CI, lint, cobertura, CodeQL e govulncheck.',
-        'Não há benchmark publicado: o ROADMAP ainda lista benchmarks contra Gin, Fiber, Chi e Zinc como próximo passo, e o `docs/performance.md` descreve decisões de caminho quente, sem medições.',
-      ],
-      sources: [release, src('README.md, linhas 226–244', 'README.md', 226, 244), tree, workflows, src('ROADMAP.md, linha 34', 'ROADMAP.md', 34), src('performance.md', 'docs/performance.md')],
-    },
-    {
-      id: 'mudaria',
-      voice: 'analise',
-      body: [
-        'Faria 404 e 405 passarem pelo middleware global. Hoje o roteador responde direto, então logging, autenticação e métricas registrados com `app.Use` não veem essas respostas, o que contradiz a própria regra do `principles.md`. Está registrado na issue #22, aberta.',
-        'Atualizaria o `docs/router-design.md`. Ele ainda descreve três estilos de handler, inclusive com `*Ctx`, que a v0.1.0 removeu em favor de uma assinatura única.',
-        'Publicaria benchmarks reproduzíveis antes de qualquer afirmação de desempenho, que é o que o próprio ROADMAP já pede.',
-      ],
-      sources: [
-        issue22,
-        src('router.go, linhas 237–246', 'router.go', 237, 246),
-        src('principles.md, linha 53', 'docs/principles.md', 53),
-        src('router-design.md, linhas 35–45', 'docs/router-design.md', 35, 45),
-        src('context.go, linha 7', 'context.go', 7),
-        src('ROADMAP.md, linha 34', 'ROADMAP.md', 34),
+        `Antes da v0.1.0 escrevi um [documento de design](${at(DESIGN, 1, 12)}) com os problemas do protótipo. O registro de rotas e middleware mexia em mapas compartilhados sem sincronização enquanto \`ServeHTTP\` lia os mesmos mapas, uma condição de corrida assim que o servidor subia. O handler de erro padrão mandava \`err.Error()\` para o cliente, o body era lido inteiro de uma vez, conviviam quatro assinaturas de handler e \`Listen\` chamava \`log.Fatal\`.`,
+        `Agora o registro passa por um mutex e o [primeiro \`ServeHTTP\` congela a aplicação](${at('golpher.go', 128, 143)}). Depois disso cada requisição só lê um \`atomic.Bool\`, e registrar rota dá \`panic\`. Um \`sync.RWMutex\` em toda requisição também resolveria a corrida, mas eu pagaria a trava em cada request e ainda daria para registrar rota com o servidor no ar. Está no design, na [decisão D2](${at(DESIGN, 59, 65)}).`,
+        `Erro que não é \`ErrorGolpher\` vira um 500 genérico. A causa original vai para o \`ErrorObserver\`, uma vez só, e [nada é renderizado se a resposta já começou](${at('error.go', 52, 61)}).`,
+        `O body tem [limite padrão de 1 MiB](${at('golpher.go', 77, 80)}), aplicado com \`http.MaxBytesReader\` só na primeira leitura. Ler tudo antes, como o protótipo fazia, quebrava handler de streaming e cobrava a leitura de toda requisição ([D7](${at(DESIGN, 151)})).`,
+        `Sobrou uma assinatura de handler, [\`func(*Request, *Response) error\`](${at('context.go', 7)}). O método HTTP é validado pela sintaxe de token da RFC 9110, sem lista fechada, para não bloquear métodos de extensão ([D8](${at(DESIGN, 171)})). E entrou o método \`QUERY\` da RFC 10008, com [constante própria](${at('golpher.go', 11, 13)}) porque o \`net/http\` do Go 1.23.6 não tem uma. A lista do que quebrou para quem usava a versão anterior está no [README](${at('README.md', 226, 244)}).`,
       ],
     },
     {
-      id: 'codigo',
-      voice: 'fonte',
-      body: ['Os trechos abaixo são da revisão 815b8d7, cada um com link para o arquivo e as linhas exatas no GitHub.'],
-      sources: [tree],
+      id: 'como-uma-requisicao-passa',
+      title: 'Como uma requisição passa',
+      body: [
+        `\`App.ServeHTTP\` congela a aplicação e entrega ao roteador. [Rotas estáticas](${at('router.go', 218, 223)}) ficam num mapa de método e caminho e têm prioridade; [rotas com parâmetro](${at('router.go', 225, 235)}) ficam numa árvore de segmentos. \`Request\` e \`Response\` voltam para um \`sync.Pool\` no fim de cada requisição ([\`docs/performance.md\`](${at('docs/performance.md')})).`,
+      ],
+      figures: ['architecture'],
+    },
+    {
+      id: 'onde-ainda-falha',
+      title: 'Onde ainda falha',
+      body: [
+        `404 e 405 não passam pelo middleware global. O roteador [chama \`reportError\` direto](${at('router.go', 237, 246)}), então log, autenticação e métricas registrados com \`app.Use\` não veem essas respostas. Isso contraria uma [regra do meu próprio \`principles.md\`](${at('docs/principles.md', 53)}). Abri a [issue #22](${REPO}/issues/22) com a correção: tratar 404 e 405 como rotas internas e criar os ganchos \`app.NotFound\` e \`app.MethodNotAllowed\`. Ela continua aberta.`,
+        `O [\`docs/router-design.md\`](${at('docs/router-design.md', 35, 45)}) ainda descreve três estilos de handler, inclusive com \`*Ctx\`, que a v0.1.0 removeu.`,
+        `Não tenho benchmark publicado. O \`docs/performance.md\` lista as decisões do caminho quente sem números, e "benchmarks contra Gin, Fiber, Chi e Zinc" continua nos próximos passos do [ROADMAP](${at('ROADMAP.md', 34)}).`,
+      ],
+    },
+    {
+      id: 'testes',
+      title: 'Testes',
+      body: [
+        `São 140 funções de teste em dois arquivos. O GitHub Actions roda [CI, lint, cobertura, CodeQL e govulncheck](${REPO}/tree/${SHA}/.github/workflows).`,
+      ],
+      figures: ['measurements'],
+    },
+    {
+      id: 'trechos',
+      title: 'Trechos',
+      body: [],
+      figures: ['snippets'],
     },
   ],
   architecture: {
-    caption: 'Caminho de uma requisição no golpher v0.1.0. Célula tracejada: lacuna conhecida, registrada em issue aberta.',
+    caption: 'Caminho de uma requisição no golpher v0.1.0. A célula tracejada é o 404 e o 405 fora do middleware global, da issue #22.',
     nodes: [
       { label: 'App.ServeHTTP', detail: 'Congela a aplicação na primeira chamada e delega ao roteador.', state: 'solid', source: src('golpher.go:128–134', 'golpher.go', 128, 134) },
       { label: 'Rota estática', detail: 'Mapa método → caminho → índice; tem prioridade sobre parâmetros.', state: 'solid', source: src('router.go:218–223', 'router.go', 218, 223) },
@@ -147,7 +105,7 @@ export const golpherCase: CaseStudyInput = {
       lang: 'go',
       url: at('golpher.go', 128, 143),
       code: golpherFreeze,
-      caption: 'Depois do primeiro `ServeHTTP`, o caminho de cada requisição só lê um `atomic.Bool`.',
+      caption: 'Depois do primeiro `ServeHTTP`, cada requisição só lê um `atomic.Bool`.',
     },
     {
       title: 'Observar uma vez, renderizar só se nada foi escrito',
@@ -165,10 +123,10 @@ export const golpherCase: CaseStudyInput = {
       lang: 'go',
       url: at('router.go', 214, 246),
       code: golpherRouter,
-      caption: 'As linhas 237–246 chamam `reportError` direto: é a lacuna da issue #22.',
+      caption: 'As linhas 237–246 chamam `reportError` direto. É o problema da issue #22.',
     },
     {
-      title: 'Limite de body preguiçoso',
+      title: 'Limite de body na primeira leitura',
       file: 'request.go',
       lines: [119, 140],
       lang: 'go',
@@ -178,21 +136,8 @@ export const golpherCase: CaseStudyInput = {
     },
   ],
   measurements: [
-    {
-      what: 'Suíte com detector de corrida',
-      command: 'go test -race -count=1 ./...',
-      environment: 'Go 1.26.4 linux/amd64, WSL2 (Linux 6.18), clone da revisão 815b8d7',
-      date: '2026-09-27',
-      result: 'ok (140 funções de teste)',
-      source: tree,
-    },
-    {
-      what: 'Cobertura de instruções',
-      command: 'go test -count=1 -cover ./...',
-      environment: 'Go 1.26.4 linux/amd64, WSL2 (Linux 6.18), clone da revisão 815b8d7',
-      date: '2026-09-27',
-      result: '92,4%',
-      source: tree,
-    },
+    { command: 'go test -race -count=1 ./...', environment: ENV, date: '2026-10-01', result: 'passou, com o detector de corrida ligado' },
+    { command: 'go test -count=1 -cover ./...', environment: ENV, date: '2026-10-01', result: '92,4% de cobertura de instruções' },
+    { command: 'go vet ./...', environment: ENV, date: '2026-10-01', result: 'nenhum aviso' },
   ],
 }

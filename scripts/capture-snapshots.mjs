@@ -14,7 +14,7 @@
  *   node scripts/capture-snapshots.mjs 00-baseline dist
  *
  * Variáveis opcionais: SNAPSHOT_ROUTES (JSON [{ name, path, scheme?, click?, element?, motion?, scroll?, video? }]) substitui as rotas
- * padrão; `click: { selector, count }` clica N vezes antes da captura (estados do simulador) e `element`
+ * padrão; `click: { selector, count }` clica N vezes antes da captura e `element`
  * captura só aquele elemento em vez da página inteira; SNAPSHOT_WIDTHS ("390,1440") limita as larguras;
  * SNAPSHOT_LOCALE troca o locale do navegador (padrão en-US: o site novo não pode depender dele).
  * `motion: true` libera o movimento (o padrão é reduzido); `scroll` (0–1) captura só a viewport naquela
@@ -85,7 +85,7 @@ const allWidths = [
   { width: 768, height: 1024 },
   { width: 1440, height: 900 },
 ]
-// SNAPSHOT_WIDTHS="390,1440" limita as larguras (ex.: estados do simulador).
+// SNAPSHOT_WIDTHS="390,1440" limita as larguras.
 const onlyWidths = process.env.SNAPSHOT_WIDTHS?.split(',').map(Number)
 const widths = onlyWidths ? allWidths.filter((viewport) => onlyWidths.includes(viewport.width)) : allWidths
 const maxHeight = 16000 // limite do WebP é 16383 px
