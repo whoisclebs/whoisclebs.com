@@ -1,61 +1,85 @@
 ---
-name: Editorial Creme
+name: Grafite Editorial
+source: "Claude Design project 689fff68-7316-4e0b-9846-6bba6fee9412 (whoisclebs.dc.html)"
 colors:
-  paper: "#F7F3EA"
-  surface: "#FFFDF7"
-  ink: "#171717"
-  graphite: "#1B1B1F"
-  muted: "#4D4D4D"
-  soft: "#8B8B83"
-  line: "#2A2A2A"
-  hairline: "#C9C3B8"
-  accent: "#263CFF"
+  ink: "#141518"
+  inkDeep: "#0B0C10"
+  inkRaised: "#1B1C21"
+  rule: "#333334"
+  ruleSoft: "#2A2B2D"
+  cream: "#EFE9E0"
+  creamBody: "#D9D4CB"
+  creamSoft: "#B9B4AB"
+  creamFaint: "#8E8A82"
+  creamMute: "#6F6B64"
+  accent: "#5FD3E6"
+  hot: "#ED1AA0"
+  live: "#6FD39A"
+  button: "#FFFFFF"
+  onButton: "#111111"
+  print: "#F4F1EA"
+  printInk: "#2A2A2E"
+  shell: "#2B2D33"
+  shellKey: "#3A3C44"
+  shellDark: "#1A1B1F"
+  ember: "#E8603C"
+  emberDeep: "#8A331C"
+  brass: "#C9A24A"
 typography:
   display:
-    fontFamily: Anton
-    fontWeight: 400
-    fontSize: "clamp(3.75rem, 9vw, 4.625rem)"
-    lineHeight: 0.94
-    letterSpacing: "-0.02em"
+    fontFamily: Space Grotesk
+    fontWeight: 600
+    fontSize: "clamp(2.625rem, 1rem + 6.4vw, 5.75rem)"
+    lineHeight: 1
+    letterSpacing: "-0.03em"
   h1:
-    fontFamily: Anton
-    fontWeight: 400
-    fontSize: "clamp(2.5rem, 6vw, 3.625rem)"
-    lineHeight: 0.96
-    letterSpacing: "-0.02em"
+    fontFamily: Space Grotesk
+    fontWeight: 600
+    fontSize: "clamp(2.5rem, 1.2rem + 5.4vw, 4.75rem)"
+    lineHeight: 1
+    letterSpacing: "-0.03em"
   h2:
-    fontFamily: Anton
-    fontWeight: 400
-    fontSize: "clamp(1.75rem, 4vw, 2.5rem)"
-    lineHeight: 0.95
-    letterSpacing: "-0.02em"
+    fontFamily: Space Grotesk
+    fontWeight: 600
+    fontSize: "clamp(2.125rem, 1.4rem + 3vw, 3.25rem)"
+    lineHeight: 1
+    letterSpacing: "-0.01em"
+  articleH2:
+    fontFamily: Space Grotesk
+    fontWeight: 600
+    fontSize: "clamp(1.75rem, 1.2rem + 2vw, 2.375rem)"
+    lineHeight: 1.1
   body:
-    fontFamily: Newsreader
+    fontFamily: Inter Tight
+    fontWeight: 400
+    fontSize: "1.0625rem"
+    lineHeight: 1.6
+  article:
+    fontFamily: Inter Tight
     fontWeight: 400
     fontSize: "1.125rem"
-    lineHeight: 1.6
-  deck:
-    fontFamily: Newsreader
+    lineHeight: 1.75
+  lead:
+    fontFamily: Inter Tight
     fontWeight: 400
-    fontSize: "clamp(1.125rem, 2vw, 1.5rem)"
-    lineHeight: 1.22
-  meta:
-    fontFamily: Geist Mono
+    fontSize: "clamp(1.125rem, 0.95rem + 0.75vw, 1.375rem)"
+    lineHeight: 1.55
+  eyebrow:
+    fontFamily: Inter Tight
+    fontWeight: 500
+    fontSize: "0.75rem"
+    lineHeight: 1.35
+    letterSpacing: "0.08em"
+    textTransform: uppercase
+  mono:
+    fontFamily: JetBrains Mono
     fontWeight: 400
-    fontSize: "0.625rem"
-    lineHeight: 1.35
-    letterSpacing: "0.095em"
-    textTransform: uppercase
-  kicker:
-    fontFamily: Geist Mono
-    fontWeight: 700
-    fontSize: "0.625rem"
-    lineHeight: 1.35
-    letterSpacing: "0.12em"
-    textTransform: uppercase
+    fontSize: "0.875rem"
+    lineHeight: 1.7
 rounded:
   none: 0
-  icon: 50%
+  control: 2px
+  pill: 30px
 spacing:
   hairline: 1px
   xs: 4px
@@ -63,212 +87,221 @@ spacing:
   md: 16px
   lg: 24px
   xl: 32px
-  section: 48px
+  xxl: 48px
+  section: 72px
 layout:
   pageMaxWidth: 1440px
-  contentMaxWidth: 1296px
-  articleMaxWidth: 720px
-  mobilePadding: 16px
-  desktopPadding: 88px
-  gridMaxColumns: 3
+  pageGutter: "clamp(20px, 4vw, 48px)"
+  headerHeight: 56px
+  articleMeasure: "33.5em (604px at 18px)"
 effects:
-  shadow: none
-  gradients: none
-  blur: navbar-only
+  shadow: objects-only
+  gradients: hero-video-veil-only
+  blur: header-and-dialog-backdrop
 ---
 
 ## Overview
 
-Editorial Creme for a software engineering blog. The visual identity combines
-newsstand density, engineering precision and long-form reading comfort on a warm
-creme ground. It should feel like a personal technical magazine rather than a
-SaaS landing page or a documentation portal.
+Grafite Editorial is the visual system of whoisclebs.com, a bilingual (pt-BR and
+English) personal site of a software engineer: articles, notes, open source
+projects and a small layer for machine readers. It was designed in Claude Design
+and replaces both the earlier "Editorial Creme" spec and the lighthouse night
+theme that followed it.
 
-The page surface is intentionally flat: creme paper, deep ink, strict rules,
-large typography and photography. Visual hierarchy must come from type scale,
-hairline borders and editorial composition — never from shadows or decorative
-chrome.
+The page is one flat, dark graphite surface. Hierarchy comes from type scale,
+1px rules and spacing. The only full-bleed image is the home hero: a looping
+video of rain on a window with a laptop on a desk. Everything else is text.
 
-## Atmosphere
-
-The interface should evoke a printed broadsheet connected to the web: dense but
-controlled, typographically loud, restrained in color and optimized for reading.
-It should feel serious, editorial and opinionated without becoming sterile.
-
-Keywords:
-
-- editorial
-- printerly
-- technical
-- editorial creme
-- electric blue
-- high-contrast
-- restrained
-- dense
-- legible
-- flat
-- warm
+The implementation is plain CSS custom properties in `src/styles/tokens.css`
+and `src/styles/base.css`, with component-scoped styles in Svelte files. There
+is no Tailwind and no light theme.
 
 ## Colors
 
-The palette is built on a warm creme base with one electric blue interactive
-accent and a graphite ribbon for strong structural moments.
+One palette, dark only. `scripts/check-contrast.mjs` checks every real pair
+against WCAG AA and fails the build if a light theme reappears.
 
-- **Paper (#F7F3EA):** Primary page background. A warm creme that replaces pure
-  white for a more tactile, editorial feel.
-- **Surface (#FFFDF7):** Slightly lighter background for cards, margin notes and
-  inset surfaces.
-- **Ink (#171717):** Main text, headlines and strong borders. A deep almost-black
-  that keeps contrast high without reaching pure #000.
-- **Graphite (#1B1B1F):** Primary buttons, section ribbons and the strongest
-  editorial rules. Inverts with Paper.
-- **Muted (#4D4D4D):** Descriptions, summaries, secondary text and bylines.
-- **Soft (#8B8B83):** Dates, secondary metadata and weak captions. Intentionally
-  low-contrast for tertiary information.
-- **Line (#2A2A2A):** Structural borders — frames, row dividers and column rules.
-- **Hairline (#C9C3B8):** Quiet dividers when line borders would be too strong.
-  Used inside cards and margin notes.
-- **Accent (#263CFF):** Sole interactive color for links, hover states, kickers
-  and active navigation marks. Electric blue for a deliberate editorial pop.
+- **Ink (#141518):** page background, everywhere.
+- **Ink deep (#0B0C10):** the hero behind the video, code blocks, device
+  screens (terminal, pocket console).
+- **Ink raised (#1B1C21):** panels above the page (shortcut dialog, form cards).
+- **Rule (#333334) / rule soft (#2A2B2D):** 1px dividers. They are cream at 14%
+  and 10% over ink, stored as solid colors.
+- **Cream (#EFE9E0):** headings, links, strong text.
+- **Cream body (#D9D4CB):** long-form reading text.
+- **Cream soft (#B9B4AB):** supporting text, summaries, navigation.
+- **Cream faint (#8E8A82):** metadata. The lightest step that still passes AA
+  on the page background.
+- **Cream mute (#6F6B64):** decorative only (the "·" separators). It fails AA
+  for text, so never set words in it.
+- **Accent (#5FD3E6):** cyan. Uppercase labels, arrows, focus rings, link hover,
+  the current-page mark. Never a button fill.
+- **Hot (#ED1AA0):** pink, reserved for easter eggs (neon mode, the snake's
+  food, the Konami line). Never in body copy or chrome.
+- **Button (#FFFFFF on #111111):** the primary call to action is a white pill.
+  One per view.
+- **Object colors:** print paper (#F4F1EA, ink #2A2A2E) for the photo prints;
+  shell grays, ember and brass for the pocket console, cartridge and device
+  frames. These are physical objects sitting on the page and live outside the
+  interface palette on purpose.
 
-Do not introduce additional interface colors. If color is needed, it should come
-from photography, not UI chrome.
+Do not add interface colors. Color comes from the hero video, photos and
+syntax highlighting.
 
 ## Typography
 
-Typography is role-based and should not be mixed casually.
+Three families, each with one job. All are self-hosted variable WOFF2 (latin
+subset) with metric-adjusted fallbacks in `src/styles/fonts.css`. No requests
+to Google Fonts.
 
-- **Anton:** Display headlines, page titles, section labels and large editorial
-  statements. Anton is a condensed sans-serif display face — use it for h1, h2
-  and display roles only. It works well in all-caps and tight leading.
-- **Newsreader:** Body copy, decks, summaries and long-form reading. A serif
-  face designed for comfortable on-screen reading at text sizes.
-- **Geist Mono:** Kickers, categories, dates, pagination, navigation and
-  technical metadata. Always uppercase with positive tracking.
+- **Space Grotesk 600:** every heading. Sentence case, tight leading (1 to
+  1.1), negative tracking (-0.01em to -0.03em). Never uppercase.
+- **Inter Tight:** body text, interface, navigation, buttons, and the uppercase
+  cyan labels (12px, 0.08em tracking).
+- **JetBrains Mono:** code, ISO dates, counters, anything shown on a device
+  screen. Not for labels or paragraphs.
 
-Rules:
-
-- Display text should be large, tight and bold by weight of its presence.
-- Body text should be serifed, open and comfortable.
-- Mono text should be uppercase with positive tracking.
-- Avoid using mono for paragraphs.
-- Avoid using serif for navigation or buttons.
-- Avoid using Anton for body copy or long-form text.
+Reading text is 18px at 1.75 line height in a 604px column, about 75 characters
+per line.
 
 ## Layout
 
-The layout uses editorial grids, not floating cards. The design is built around
-a 1440px frame with generous 88px side padding for a spacious reading column.
-
-- Page frame width: `1440px`.
-- Content max width: `1296px` (inside 88px padding).
-- Article max width: `720px`.
-- Mobile padding: `16px`.
-- Desktop padding: `88px`.
-- Major sections should be separated by strong horizontal rules or graphite
-  ribbons.
-- Content groups may use graphite section ribbons with creme display labels.
-
-Grid behavior must adapt to content quantity:
-
-- 1 item: one column.
-- 2 items: two columns on desktop.
-- 3 or more items: three columns on desktop.
-
-Never leave visually empty columns just because a grid template expects more
-items than are available.
+- Page frame up to 1440px with a gutter of `clamp(20px, 4vw, 48px)`.
+- Fixed header, 56px tall, translucent with a 14px backdrop blur: brand
+  (terminal icon and wordmark), Artigos, Projetos, Sobre, and the PT/EN switch.
+  The home hero runs underneath it; every other page starts below it.
+- Sections are 72px apart and separated by 1px rules, not by background bands.
+- Editorial lists are rows, not cards: a label line (topic in cyan uppercase,
+  then metadata), a Space Grotesk title, and a summary in the second column.
+  Rows stack on narrow screens.
+- Two-column blocks use `repeat(auto-fit, minmax(min(100%, 300px), 1fr))` so
+  they collapse without breakpoints.
+- Footer: one row of secondary pages, then the wordmark on the left and legal
+  and profile links on the right.
 
 ## Shape and Depth
 
-The system is flat by default.
-
-- Rectangular surfaces use `border-radius: 0`.
-- Images use `border-radius: 0`.
-- Buttons and inputs use square corners.
-- Shadows are not part of the visual language.
-- Gradients are not part of the visual language.
-
-The only acceptable round shapes are circular icons or avatars. Do not round
-cards, images, content panels or article containers.
-
-## Borders and Rules
-
-Borders are structural, not decorative.
-
-- Use `1px` hairlines (#C9C3B8) to separate editorial items and columns.
-- Use `1px` line borders (#2A2A2A) for card frames and structural edges.
-- Use `2px` graphite (#1B1B1F) or ink (#171717) borders for strong interactive
-  affordances.
-- Prefer borders and whitespace over shadows.
-- Rules should feel like magazine column dividers.
+- Cards, images, code blocks and sections have square corners and no shadow.
+- Pills (30px radius) are for buttons, filter chips and tags only.
+- Shadows exist only on physical objects: photo prints, the cartridge, the
+  pocket console, the laptop and phone, the books and the die.
+- Interface surfaces have no gradients except the veils that keep the hero
+  text readable over the video. Physical objects (devices, books, the shelf,
+  the cartridge, the die) may use gradients for volume. The only blur is the
+  header and the dialog backdrop.
 
 ## Interaction
 
-Interactions should be minimal and fast.
+- Links are cream and turn cyan on hover (200ms color transition). Inside
+  running text they keep an underline so color is not the only cue.
+- A row's title turns cyan when the row is hovered or focused. No lift, no
+  corner brackets, no moving rules.
+- Buttons press to `scale(0.97)`. Filter chips fill with cream when active.
+- Focus is a 2px cyan outline with 3px offset on everything.
+- Motion is short (120 to 320ms) and respects `prefers-reduced-motion`: the
+  hero shows a still poster, the CSS rain stops, toasts fade without moving.
+- Touch targets are at least 44px.
 
-- Links hover to `#263CFF` (accent).
-- Active navigation items use an accent underline mark.
-- Editorial titles may underline on hover.
-- Buttons invert graphite/creme on hover.
-- Images should not lift or cast shadows.
-- Avoid playful easing, bounce or large transforms.
+## Home Composition
 
-Motion should be subtle enough to disappear into the reading experience.
+1. **Hero.** Full viewport height. Looping rain video painted on a canvas
+   (never a visible `<video>` or large `<img>`, which Chrome would report as
+   the LCP). Left column: cyan label, two-line Space Grotesk headline, support
+   paragraph, a white pill and a text link. A scroll cue sits bottom left.
+2. **Últimos artigos.** Heading with topic filter chips. The first item is a
+   featured two-column block; the rest are rows.
+3. **Ideias em construção.** Projects in a two-column grid: mono number, name,
+   description, arrow link.
+4. **Terminal / Aplicativos.** A device built in code (CSS 3D, no images). On
+   wide screens it is a closed laptop: a click opens the lid, a short boot
+   video plays on the screen, and a working terminal lists real site content.
+   On narrow screens it is a phone: a tap wakes the screen, the same boot
+   plays, and an app drawer links to every part of the site. No terminal on
+   the phone.
+5. **Quem está por aqui.** Heading on the left, a short paragraph and a link on
+   the right.
+
+## Devices
+
+The laptop and the phone are objects, so they follow object rules rather than
+interface rules.
+
+- Built from real faces with thickness: deck, lid, bevelled edges, keyboard,
+  trackpad. Aluminium is a non-uniform gradient lit from the upper right, with
+  a cyan rim on the right edge and a magenta rim at the lower right, the same
+  light as the hero video.
+- A flat frame with a stand reads as an illustration and was rejected. If a
+  device looks like an icon, it is not finished.
+- Text on a screen never sits under a 3D transform. The open pose lands the
+  screen on its layout rectangle and the terminal lives in a 2D layer over it.
+- The exception is content drawn over an object inside the hero video. The
+  laptop there is seen at an angle, so its screen content is a flat plane
+  mapped onto the four measured corners of the screen with a homography
+  (`src/lib/components/home/quad.ts`). A straight box clipped to the screen
+  shape leaves the text crooked against the device. That laptop only exists
+  on wide landscape viewports, where it is not behind the headline.
+- Video is only for the boot (`static/media/boot-v1.*`, abstract, no text).
+  Boot lines are drawn in code over it and show real counts from the site.
+- States: closed, opening, boot, on, closing. Every transition can be
+  interrupted. Reduced motion skips the lid swing and the video.
+
+## About Composition
+
+Label, headline, lead and a three-row definition list on the left. On the
+right, two paper prints (portrait and an event photo), rotated a few degrees,
+opaque, with captions on the paper margin, plus a game cartridge. Inserting the
+cartridge opens the pocket console with Snake.
+
+## Books and Hobbies
+
+- **Livros** is a shelf. Spines stand on a board; real books carry title and
+  author and can be pulled out, turned to the cover and opened to a page with
+  the details and the store link. Extra spines that fill the shelf carry no
+  text, are dimmed and do not react, and each real book added replaces one of
+  them. Never print an invented title on a spine.
+- **Hobbies** has a d20: an icosahedron projected in SVG with per-face light,
+  rolled with the browser's cryptographic generator, in normal, advantage and
+  disadvantage modes.
+
+## Easter Eggs
+
+They always need a gesture and load outside the entry bundle.
+
+- Konami code toggles neon mode (scanlines and a pink and cyan edge glow).
+- `?` opens the shortcut panel. `g` then `a`, `p`, `s` or `h` navigates.
+- Typing `clebs`, `sudo` or `rm -rf` anywhere answers with a toast.
+- Clicking the laptop in the hero wakes its screen.
+- Typing `cometa` (or the terminal command `hero cometa`) swaps the hero for
+  the earlier comet scene; `chuva` brings the rain back. The choice is stored
+  in `localStorage`.
+- Five taps on the footer wordmark.
+- Nothing shown is fake telemetry: anything that looks like a measurement is
+  measured in the browser or read from the site's own content.
 
 ## Content Voice
 
-The design supports engineering writing with editorial confidence. It should
-prioritize:
-
-- clear hierarchy
-- readable long-form articles
-- visible metadata
-- strong categorization through mono kickers
-- calm creme surfaces for technical examples
-
-The site should not look like generic documentation. It should feel like a
-personal technical publication.
-
-## Editorial Compositions
-
-The home layout follows a structured editorial composition derived from the
-design file:
-
-- **Hero (2 columns):** A main column with a mono kicker (accent), a large
-  Anton display headline (74px), a Newsreader deck (24px) and action buttons.
-  The right column contains the "AGORA" margin-note card — a surface-colored
-  inset with mono labels (accent), Newsreader descriptions and hairline
-  dividers, tracking current work, reading and study.
-- **Recent Writing bar:** A full-width graphite ribbon (72px tall) with an Anton
-  display label ("ESCRITA RECENTE") on the left and mono metadata on the right.
-- **Recent Layout (1264px):** A two-region grid — featured article (Anton
-  headline ~58px, Newsreader summary ~22px, mono metadata) and a side column of
-  secondary articles with geometric marks, Anton titles (~30px), Newsreader
-  summaries (~16px) and soft dates.
-- **Projects grid (2×2):** A framed section with a mono header ("PROJETOS"),
-  geometric brand marks (circles, tile grids) in accent and graphite, Anton
-  project titles, Newsreader descriptions and mono tags/chips on creme chips
-  with hairline borders.
-- **Navigation bar:** Mono uppercase items with positive tracking, active page
-  marked by an accent underline bar.
+Plain and direct, first person, in the author's own voice. No slogans, no
+triads, no em dashes inside sentences, no emoji, no invented facts about
+clients or employers. Interface labels are short and in sentence case. Every
+string exists in pt-BR and English.
 
 ## Implementation Guidance for Agents
 
-Use Tailwind utilities as the primary implementation mechanism. Keep custom CSS
-minimal and limited to global imports/base concerns.
-
-When creating new screens, preserve:
-
-- creme paper surface (#F7F3EA)
-- surface (#FFFDF7) for cards and inset panels
-- ink (#171717) text
-- electric blue accent (#263CFF)
-- graphite (#1B1B1F) ribbons and primary buttons
-- mono uppercase metadata (Geist Mono)
-- serif body copy (Newsreader)
-- Anton display headings
-- square corners
-- no shadows
-- responsive grids based on item count
-
-If a new visual choice conflicts with this document, this document wins.
+- Interface colors always come from the semantic tokens (`--color-*`), and so
+  do type and spacing (`--font-*`, `--step-*`, `--space-*`). Raw hex values
+  are allowed in two places only: canvas and SVG drawing code, and the
+  material of a physical object (aluminium, glass, wood, paper), declared as
+  scoped custom properties at the top of that object's component
+  (`--alu-*`, `--glass`, `--wood-*`). Object colors shared by more than one
+  component (`--p-shell*`, `--p-print*`, `--p-brass`, `--p-ember*`) live in
+  `tokens.css`.
+- Global classes live in `base.css`: `.page`, `.page-header`, `.eyebrow`,
+  `.meta`, `.lead`, `.button`, `.button--primary`, `.chip`, `.link-arrow`,
+  `.link-lit`, `.tags`, `.prose`, `.code-block`, `.entry*`, `.section`.
+  Everything else is scoped to its component.
+- Islands (terminal, pocket console, global easter eggs, hero video) load with
+  dynamic `import()` after the page is usable. The home entry bundle has a
+  90 KiB gzip budget.
+- Every `<img>` carries `width` and `height`.
+- When a visual choice conflicts with this document, this document wins. When
+  this document conflicts with the Claude Design source, update both.

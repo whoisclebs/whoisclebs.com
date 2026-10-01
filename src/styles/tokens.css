@@ -1,0 +1,163 @@
+/*
+ * WHOISCLEBS — tokens do design system. Paleta única, escura: grafite, creme e um acento ciano, vinda do
+ * projeto no Claude Design (whoisclebs.dc.html). Substitui a noite do farol (decisão 104).
+ * Framework-agnóstico: só custom properties. Não há tema claro nem alternância por `prefers-color-scheme`.
+ * Contraste de cada par real verificado por scripts/check-contrast.mjs (AA) e, sobre o vídeo do hero, no e2e.
+ *
+ * Superfícies:
+ *   página   → `--color-bg` (grafite #141518): todo o site;
+ *   funda    → `--color-band` (#0b0c10): o hero da home, blocos de código, telas (terminal, console de bolso);
+ *   elevada  → `--color-surface` (#1b1c21): painéis sobre a página (atalhos, cartões de formulário).
+ * O rosa (`--color-hot`) é só dos easter eggs (modo neon, comida da serpente): nunca em texto corrido.
+ *
+ * Camadas: primitivos (--p-*) → semânticos (--color-*, --font-*, --step-*, ...).
+ */
+@layer tokens {
+  :root {
+    /* ---------- Primitivos: grafite ---------- */
+    --p-ink: #141518;
+    --p-ink-deep: #0b0c10;
+    --p-ink-raised: #1b1c21;
+    --p-ink-line: #333334;       /* creme a 14 % sobre o grafite: fios e bordas */
+    --p-ink-line-soft: #2a2b2d;  /* creme a 10 %: fios internos de listas */
+
+    /* ---------- Primitivos: creme ---------- */
+    --p-cream: #efe9e0;          /* títulos, links, texto forte */
+    --p-cream-body: #d9d4cb;     /* corpo de leitura longa */
+    --p-cream-soft: #b9b4ab;     /* apoio, resumos, navegação */
+    --p-cream-faint: #8e8a82;    /* metadados; menor tom que passa AA sobre a página */
+    --p-cream-mute: #6f6b64;     /* só decorativo (separadores "·"): não passa AA para texto */
+    --p-white: #ffffff;
+    --p-black: #111111;
+
+    /* ---------- Primitivos: acentos ---------- */
+    --p-cyan: #5fd3e6;           /* acento: rótulos, setas, foco, hover de link */
+    --p-pink: #ed1aa0;           /* easter eggs */
+    --p-green: #6fd39a;          /* estado "ativo" */
+
+    /* ---------- Primitivos: objetos (fora da paleta de propósito: são papel e plástico) ---------- */
+    --p-print: #f4f1ea;          /* margem das fotos em papel */
+    --p-print-ink: #2a2a2e;      /* legenda sobre o papel */
+    --p-shell: #2b2d33;          /* carcaça do console de bolso e dos dispositivos */
+    --p-shell-key: #3a3c44;
+    --p-shell-dark: #1a1b1f;
+    --p-ember: #e8603c;          /* botão de ação do console */
+    --p-ember-deep: #8a331c;
+    --p-brass: #c9a24a;          /* contatos do cartucho */
+
+    /* ---------- Semânticos de cor ---------- */
+    color-scheme: dark;
+    --color-bg: var(--p-ink);
+    --color-page: var(--p-ink);
+    --color-surface: var(--p-ink-raised);
+    --color-band: var(--p-ink-deep);
+    --color-code: var(--p-ink-deep);
+    --color-text: var(--p-cream);
+    --color-text-body: var(--p-cream-body);
+    --color-text-soft: var(--p-cream-soft);
+    --color-text-faint: var(--p-cream-faint);
+    --color-text-mute: var(--p-cream-mute);
+    --color-rule: var(--p-ink-line);
+    --color-rule-soft: var(--p-ink-line-soft);
+    --color-grid: var(--p-ink-raised);
+    --color-link: var(--p-cream);
+    --color-link-hover: var(--p-cyan);
+    --color-accent: var(--p-cyan);
+    --color-on-accent: var(--p-ink);
+    --color-button: var(--p-white);       /* o CTA principal: pílula branca, uma por tela */
+    --color-on-button: var(--p-black);
+    --color-focus: var(--p-cyan);
+    --color-status-live: var(--p-green);
+    --color-mark: var(--p-cream);
+    --color-hot: var(--p-pink);
+    --color-print: var(--p-print);        /* fotos em papel: margem e legenda */
+    --color-print-ink: var(--p-print-ink);
+
+    /* ---------- Tipografia ---------- */
+    /* Licença SIL OFL 1.1; WOFF2 local variável, subset latin. */
+    --font-display: 'Space Grotesk', 'Space Grotesk Fallback', system-ui, sans-serif;
+    --font-text: 'Inter Tight', 'Inter Tight Fallback', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    --weight-display: 600;
+
+    /* Escala (do design): UI 13–17 px, leitura 18 px, títulos fluidos. */
+    --step--2: 0.75rem;                                         /* 12 px — rótulos em caixa alta, mono mínimo */
+    --step--1: 0.875rem;                                        /* 14 px — navegação, links de apoio */
+    --step-0: 1rem;                                             /* 16 px — UI, botões, resumos */
+    --step-body: 1.0625rem;                                     /* 17 px — texto padrão */
+    --step-1: 1.125rem;                                         /* 18 px — corpo de leitura */
+    --step-2: clamp(1.125rem, 0.95rem + 0.75vw, 1.375rem);      /* 18–22 — lead */
+    --step-3: clamp(1.75rem, 1.2rem + 2vw, 2.375rem);           /* 28–38 — H2 de artigo */
+    --step-4: clamp(2.125rem, 1.4rem + 3vw, 3.25rem);           /* 34–52 — H2 de seção */
+    --step-5: clamp(2.5rem, 1.2rem + 5.4vw, 4.75rem);           /* 40–76 — H1 de página */
+    --step-6: clamp(2.625rem, 1rem + 6.4vw, 5.75rem);           /* 42–92 — H1 da home */
+
+    --leading-display: 1;
+    --leading-heading: 1.1;
+    --leading-text: 1.6;
+    --leading-article: 1.75;
+    --leading-ui: 1.35;
+    --tracking-display: -0.02em;
+    --tracking-label: 0.08em;          /* rótulos em caixa alta */
+    --tracking-mono: 0;
+    --measure: 66ch;
+    --measure-article: 33.5em;         /* coluna de 604 px a 18 px (contêiner de 700 px do design) */
+    --measure-narrow: 44ch;
+
+    /* ---------- Espaço e grade (quadrícula de 8 px) ---------- */
+    --cell: 8px;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+    --space-8: 64px;
+    --space-9: 96px;
+    --space-10: 128px;
+    --space-section: 72px;             /* entre seções da home */
+    --page-max: 1440px;
+    --page-gutter: clamp(20px, 4vw, 48px);
+    --header-h: 56px;
+    --grid-columns: 4;                 /* < 640 px */
+    --grid-gap: clamp(20px, 3vw, 48px);
+
+    /* ---------- Forma ---------- */
+    --border-hairline: 1px;
+    --radius-0: 0;                     /* cartões, imagens, blocos de código */
+    --radius-control: 2px;
+    --radius-pill: 30px;               /* CTAs, filtros, etiquetas */
+    --focus-width: 2px;
+    --focus-offset: 3px;
+
+    /* ---------- Movimento ---------- */
+    --dur-press: 120ms;
+    --dur-tip: 140ms;
+    --dur-ui: 200ms;
+    --dur-scene: 320ms;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --press-scale: 0.97;
+  }
+
+  @media (min-width: 640px) {
+    :root {
+      --grid-columns: 6;
+    }
+  }
+
+  @media (min-width: 960px) {
+    :root {
+      --grid-columns: 12;
+    }
+  }
+
+  /* Movimento reduzido: sem deslocamento; opacidade e cor continuam. */
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --dur-scene: 0ms;
+      --press-scale: 1;
+    }
+  }
+}

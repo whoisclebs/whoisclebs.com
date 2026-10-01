@@ -1,0 +1,26 @@
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/media/*
+  Cache-Control: public, max-age=604800
+
+/rss/*
+  Cache-Control: public, max-age=3600
+
+# Versões Markdown de artigos e notas: tipo explícito e fora do índice dos buscadores (a página HTML é a canônica).
+/escrita/*.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex
+
+/en/writing/*.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex
+
+/notas/*.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex

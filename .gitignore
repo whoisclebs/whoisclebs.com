@@ -91,8 +91,12 @@ out
 .nuxt
 dist
 test-results/
-screenshots/output/
-public/rss/*.xml
+playwright-report/
+
+# SvelteKit / Cloudflare
+.svelte-kit/
+.wrangler/
+.dev.vars
 
 # Gatsby files
 .cache/
@@ -137,3 +141,20 @@ public/rss/*.xml
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+.yandecode/
+
+# Playwright MCP snapshots/screenshots
+.playwright-mcp/
+
+# Imagens Open Graph geradas no build (scripts/build-og.mjs)
+static/og/
+
+# Lighthouse CI (npm run lhci): relatórios locais
+.lighthouseci/
+
+# Perfis temporários do Chrome criados pelo Lighthouse no WSL
+C:*
+
+# Material de trabalho local (rascunhos, referências, capturas e notas de processo): não é versionado
+design/
+docs/redesign/

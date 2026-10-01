@@ -1,0 +1,39 @@
+// Configuração do Worker de produção. Sem secrets: o token opcional do GitHub entra por
+// `wrangler secret put GITHUB_TOKEN` (produção) ou `.dev.vars` (local, ignorado pelo git).
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "whoisclebs",
+  // Entrada própria: delega `fetch` ao Worker gerado pelo adapter-cloudflare e trata `scheduled` (cron).
+  // O adapter lê `wrangler.sveltekit.jsonc` (ver svelte.config.js) para saber onde gerar `_worker.js`.
+  "main": "src/worker.ts",
+  "alias": {
+    "sveltekit-worker": "./.svelte-kit/cloudflare/_worker.js"
+  },
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_als"],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".svelte-kit/cloudflare"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "whoisclebs",
+      // Placeholder: local (`--local`, `wrangler dev`, `vite dev`) funciona com ele. Antes do primeiro
+      // deploy, rode `wrangler d1 create whoisclebs` e troque pelo UUID devolvido (não é secret).
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  // Cron desligado (passo 17, decisions.md 102): a fonte GitHub Events foi desativada e sempre voltava vazia, e
+  // a interface não mostra mais atividade. O handler `scheduled` em src/worker.ts, os casos de uso, a porta, o
+  // adaptador D1 e `GET /api/activity` continuam no código. Para religar: troque a fonte em
+  // src/lib/server/compose.ts (ver docs/redesign/portability.md) e volte com
+  //   "triggers": { "crons": ["*/30 * * * *"] },
+  "vars": {
+    "GITHUB_USERNAME": "whoisclebs",
+    // Até quanto tempo depois da última sincronização bem-sucedida a atividade conta como `fresh`.
+    "ACTIVITY_FRESH_WINDOW_MINUTES": "120"
+  },
+  "observability": { "enabled": true }
+}
