@@ -50,7 +50,7 @@ export function buildCatalogEntries(): CatalogEntry[] {
       uri: projectUri(project.slug),
       type: 'project',
       title: study?.title ?? project.name,
-      description: study?.question ?? t.openSource.projects[project.slug as keyof typeof t.openSource.projects],
+      description: study?.dek ?? t.openSource.projects[project.slug as keyof typeof t.openSource.projects],
       url: absoluteUrl(projectPath(project.slug, 'pt-BR')),
       locale: 'pt-BR',
       date: study?.checkedAt ?? project.statusCheckedAt,

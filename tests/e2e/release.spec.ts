@@ -8,8 +8,8 @@ import { blockingViolations, scrollThrough } from './helpers'
  * - `prefers-reduced-motion`: nenhuma animação nem transição de deslocamento/escala/tamanho dispara ao carregar
  *   e rolar a página inteira (opacidade e cor continuam permitidas, como em tokens.css);
  * - nenhuma `<img>` acima da dobra sem `width`/`height` (390 e 1440 px), incluindo o 404 do Worker;
- * - axe claro/escuro nas rotas-chave que ainda não tinham (as demais estão em shell, writing, cases,
- *   footer e simulator).
+ * - axe claro/escuro nas rotas-chave que ainda não tinham (as demais estão em shell, writing, cases
+ *   e footer).
  * O overflow em 390/768/1440 de todas as rotas-chave já está em `shell.spec.ts` (grupo "layout").
  */
 

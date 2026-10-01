@@ -11,6 +11,12 @@
   },
   "compatibility_date": "2026-09-01",
   "compatibility_flags": ["nodejs_als"],
+  // Domínio de produção: o Worker responde em whoisclebs.com (registro DNS criado pela Cloudflare ao fazer o deploy).
+  // O `www` redireciona para a raiz por uma Redirect Rule da zona (ver README, seção Deploy).
+  "routes": [{ "pattern": "whoisclebs.com", "custom_domain": true }],
+  // Só o domínio próprio: sem *.workers.dev nem URLs de preview.
+  "workers_dev": false,
+  "preview_urls": false,
   "assets": {
     "binding": "ASSETS",
     "directory": ".svelte-kit/cloudflare"
@@ -19,9 +25,9 @@
     {
       "binding": "DB",
       "database_name": "whoisclebs",
-      // Placeholder: local (`--local`, `wrangler dev`, `vite dev`) funciona com ele. Antes do primeiro
-      // deploy, rode `wrangler d1 create whoisclebs` e troque pelo UUID devolvido (não é secret).
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      // Banco de produção (conta VAREO, criado em 2026-10-01 com `wrangler d1 create whoisclebs`). O UUID não é
+      // secret. O desenvolvimento local (`--local`, `wrangler dev`, `vite dev`) usa um D1 simulado, não este.
+      "database_id": "7410134f-e726-4959-9654-e0f9c1f50b6c",
       "migrations_dir": "migrations"
     }
   ],

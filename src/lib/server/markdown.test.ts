@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { renderMarkdown, slugifyHeading, highlightCode, renderInline } from './markdown'
+import { renderMarkdown, slugifyHeading, highlightCode, renderCaseText, renderInline } from './markdown'
 
 describe('renderMarkdown', () => {
   it('gera ids de cabeçalho únicos e sumário', async () => {
@@ -46,5 +46,15 @@ describe('highlightCode e renderInline (cases)', () => {
 
   it('escapa HTML e transforma só crases em code', () => {
     expect(renderInline('Use `http.Header.Add` <b>já</b>')).toBe('Use <code>http.Header.Add</code> &lt;b&gt;já&lt;/b&gt;')
+  })
+
+  it('no texto do case, [texto](url) vira link e o resto continua escapado', () => {
+    const url = 'https://github.com/whoisclebs/tuxedo/blob/' + 'a'.repeat(40) + '/utils.go#L8-L12'
+    expect(renderCaseText(`Veja [\`doClose\`](${url}) & <i>`)).toBe(`Veja <a href="${url}" rel="noopener noreferrer"><code>doClose</code></a> &amp; &lt;i&gt;`)
+  })
+
+  it('no texto do case, recusa link fora do GitHub e do próprio site', () => {
+    expect(() => renderCaseText('[x](https://example.com/)')).toThrow(/fora de github/)
+    expect(() => renderCaseText('[x](javascript:alert(1))')).toThrow()
   })
 })

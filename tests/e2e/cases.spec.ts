@@ -2,12 +2,11 @@ import { expect, test } from '@playwright/test'
 import { blockingViolations } from './helpers'
 
 /**
- * estudos de caso: navegação home → case → código, fontes por seção, índice de projetos,
- * sem JS e axe claro/escuro.
+ * estudos de caso: navegação home → case → código, seções com título próprio e links no texto,
+ * índice de projetos, sem JS e axe claro/escuro.
  */
 
 const CASES = ['/projetos/tuxedo/', '/projetos/golpher/']
-const SECTION_IDS = ['contexto', 'restricoes', 'decisao', 'arquitetura', 'alternativas', 'resultado', 'mudaria', 'codigo']
 
 function isAllowedSource(href: string) {
   const url = new URL(href)
@@ -28,7 +27,7 @@ test('home → case tuxedo → código no GitHub', async ({ page }) => {
   await expect(page).toHaveURL(/\/projetos\/tuxedo\/$/)
   await expect(page.getByRole('heading', { level: 1 })).toContainText('tuxedo')
 
-  const snippetLink = page.locator('#codigo figure.snippet figcaption a').first()
+  const snippetLink = page.locator('figure.snippet figcaption a').first()
   const href = await snippetLink.getAttribute('href')
   expect(href).toMatch(/^https:\/\/github\.com\/whoisclebs\/tuxedo\/blob\/[0-9a-f]{40}\/[\w./-]+#L\d+-L\d+$/)
   await snippetLink.click()
@@ -36,24 +35,36 @@ test('home → case tuxedo → código no GitHub', async ({ page }) => {
 })
 
 for (const path of CASES) {
-  test(`${path}: oito seções na ordem, cada uma com fonte visível`, async ({ page }) => {
+  test(`${path}: seções com título e âncora próprios, índice no topo e links de código no texto`, async ({ page }) => {
     await page.goto(path)
-    const ids = await page.locator('section.case-section').evaluateAll((sections) => sections.map((section) => section.id))
-    expect(ids).toEqual(SECTION_IDS)
-    for (const id of SECTION_IDS) {
-      const sources = page.locator(`#${id} .case-section__sources a`)
-      expect(await sources.count(), id).toBeGreaterThan(0)
-      await expect(sources.first()).toBeVisible()
-    }
+    const sections = page.locator('section.case-section')
+    const ids = await sections.evaluateAll((items) => items.map((item) => item.id))
+    expect(ids.length).toBeGreaterThanOrEqual(4)
+    expect(new Set(ids).size).toBe(ids.length)
+    const toc = await page.locator('.case__toc a').evaluateAll((links) => links.map((link) => link.getAttribute('href')))
+    expect(toc).toEqual(ids.map((id) => `#${id}`))
+    for (const id of ids) await expect(page.locator(`#${id} h2`)).not.toBeEmpty()
+    expect(await page.locator('.case-section__text p a[href^="https://github.com/"]').count()).toBeGreaterThan(5)
+    // Sem o formato de laudo: nada de rótulo de análise, painel de fontes, tabela ou data de conferência.
+    for (const gone of ['.case-section__voice', '.case-section__sources', '.measurements table']) await expect(page.locator(gone)).toHaveCount(0)
+    await expect(page.locator('main')).not.toContainText(/conferid[ao]s? em|Análise minha|simulador/i)
   })
 
-  test(`${path}: toda fonte e todo trecho apontam para https no GitHub ou no próprio site`, async ({ page }) => {
+  test(`${path}: todo link do texto, do diagrama e dos trechos aponta para https no GitHub ou no próprio site`, async ({ page }) => {
     await page.goto(path)
     const hrefs = await page
-      .locator('.case-section__sources a, .arch__source, .snippet figcaption a, .case__facts a')
+      .locator('.case-section a, .case__facts a, .case__revision a')
       .evaluateAll((links) => links.map((link) => (link as HTMLAnchorElement).href))
     expect(hrefs.length).toBeGreaterThan(15)
     for (const href of hrefs) expect(isAllowedSource(href), href).toBe(true)
+  })
+
+  test(`${path}: medições em uma linha cada, com comando e ambiente`, async ({ page }) => {
+    await page.goto(path)
+    const runs = page.locator('.runs li')
+    expect(await runs.count()).toBeGreaterThan(0)
+    for (const run of await runs.all()) await expect(run).toContainText(/^Rodei go /)
+    await expect(page.locator('.runs .runs__context').last()).toContainText('Go 1.26.4')
   })
 
   test(`${path}: diagrama tem texto equivalente e trechos numerados como no arquivo`, async ({ page }) => {
@@ -71,10 +82,10 @@ for (const path of CASES) {
   })
 }
 
-test('análise do autor aparece rotulada no case', async ({ page }) => {
+test('o rodapé do case diz qual revisão do código o texto cita', async ({ page }) => {
   await page.goto('/projetos/tuxedo/')
-  await expect(page.locator('#mudaria .case-section__voice')).toContainText('Análise minha')
-  await expect(page.locator('#resultado table caption')).toContainText('não são benchmarks')
+  await expect(page.locator('.case__revision')).toContainText('Código lido na revisão 5fbf678')
+  await expect(page.locator('.case__revision a')).toHaveAttribute('href', /\/commit\/5fbf678c40f9d0c628a960ea353204c205faf9d7$/)
 })
 
 test('/projetos/ é um índice com status, linguagem, último commit datado e link do código', async ({ page }) => {
@@ -94,17 +105,18 @@ test('/projetos/ é um índice com status, linguagem, último commit datado e li
 
 test('no inglês, a página do projeto leva ao case em português com hreflang', async ({ page }) => {
   await page.goto('/en/projects/tuxedo/')
-  const link = page.getByRole('link', { name: 'Read the case study (in Portuguese)' })
+  const link = page.getByRole('link', { name: 'Read the write-up (in Portuguese)' })
   await expect(link).toHaveAttribute('href', '/projetos/tuxedo/')
   await expect(link).toHaveAttribute('hreflang', 'pt-BR')
 })
 
-test('sem JS, o case mostra título, seções, fontes e código', async ({ browser }) => {
+test('sem JS, o case mostra título, seções, links e código', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false })
   const page = await context.newPage()
   await page.goto('/projetos/golpher/')
   await expect(page.getByRole('heading', { level: 1 })).toContainText('golpher')
-  await expect(page.locator('section.case-section')).toHaveCount(8)
+  expect(await page.locator('section.case-section').count()).toBeGreaterThanOrEqual(4)
+  await expect(page.locator('.case-section__text p a').first()).toBeVisible()
   await expect(page.locator('.snippet pre').first()).toBeVisible()
   await context.close()
 })

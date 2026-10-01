@@ -110,11 +110,13 @@ try {
   rmSync(state, { recursive: true, force: true })
   start('node', ['tests/fixtures/github-fixture-server.mjs'], { GITHUB_FIXTURE_PORT: String(fixturePort) })
   await waitFor(`http://127.0.0.1:${fixturePort}/`, 10)
-  if (run('npx', ['wrangler', 'd1', 'migrations', 'apply', 'DB', '--local', '--persist-to', state]) !== 0) {
+  // Sem as rotas de produção (ver scripts/wrangler-dev-config.mjs).
+  if (run('node', ['scripts/wrangler-dev-config.mjs']) !== 0) throw new Error('não gerou wrangler.dev.jsonc')
+  if (run('npx', ['wrangler', 'd1', 'migrations', 'apply', 'DB', '--config', 'wrangler.dev.jsonc', '--local', '--persist-to', state]) !== 0) {
     throw new Error('migrações do D1 local falharam')
   }
   start('npx', [
-    'wrangler', 'dev', '--port', String(port), '--ip', '127.0.0.1', '--log-level', 'warn',
+    'wrangler', 'dev', '--config', 'wrangler.dev.jsonc', '--port', String(port), '--ip', '127.0.0.1', '--log-level', 'warn',
     '--persist-to', state, '--test-scheduled', '--var', `GITHUB_API_BASE:http://127.0.0.1:${fixturePort}`,
   ], { CI: '1' })
   await waitFor(`${base}/`, 120)

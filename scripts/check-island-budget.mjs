@@ -3,7 +3,6 @@
  *
  * Mede os chunks das ilhas carregadas por import dinâmico no build do cliente e falha acima do budget (gzip).
  * Cada ilha é achada por um texto que só existe no chunk dela:
- * - simulador do tuxedo (texto do botão): 15 KiB;
  * - ciclo do farol na 404 (codec do WebM): 4 KiB;
  * - easter eggs globais: teclado, neon, atalhos, aviso (estilo da arte no console): 4 KiB;
  * - notebook e celular da home, com terminal, boot e gaveta de apps (nome do vídeo de boot): 16 KiB;
@@ -20,7 +19,6 @@ import { gzipSync } from 'node:zlib'
 
 const KIB = 1024
 const islands = [
-  { name: 'Ilha do simulador', marker: 'Avançar um passo', budget: 15 * KIB },
   { name: 'Ilha do ciclo do farol (404)', marker: 'av01.0.05M.08', budget: 4 * KIB },
   { name: 'Ilha dos easter eggs globais', marker: 'font-family:monospace', budget: 4 * KIB },
   { name: 'Ilha do notebook e do celular (home)', marker: 'boot-v1', budget: 16 * KIB },

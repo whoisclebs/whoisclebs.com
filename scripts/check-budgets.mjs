@@ -5,7 +5,7 @@
  *
  * 1. JS de entrada da home: todo módulo que a navegação inicial de `/` carrega — `modulepreload` + `import()`
  *    do script inline de boot + a árvore de imports estáticos de cada um (imports dinâmicos dentro dos chunks,
- *    como a ilha do simulador, ficam de fora porque não carregam na entrada). Soma do gzip (nível padrão 6,
+ *    como as ilhas do notebook e dos easter eggs, ficam de fora porque não carregam na entrada). Soma do gzip (nível padrão 6,
  *    conservador em relação ao nível 9) de cada arquivo ≤ 90 KiB.
  * 2. Fontes críticas: as `<link rel="preload" as="font">` de todas as rotas-chave (união, sem repetição),
  *    em bytes do WOFF2 (já comprimido) ≤ 90 KiB. As demais faces usam `font-display: swap` com fallback

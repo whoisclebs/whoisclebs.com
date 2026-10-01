@@ -1,6 +1,7 @@
 /**
- * Estudos de caso publicados, na ordem da home. Validados no carregamento: seção sem fonte, fonte fora de
- * github.com/whoisclebs.com, trecho sem permalink fixado ou medição sem ambiente derrubam o build.
+ * Estudos de caso publicados, na ordem da home. Validados no carregamento: link fora de
+ * github.com/whoisclebs.com, trecho sem permalink fixado, diagrama ou trechos fora de uma seção, ou
+ * medição sem ambiente derrubam o build.
  */
 import { z } from 'zod'
 import { caseStudySchema, type CaseStudy } from '../case-schema.ts'

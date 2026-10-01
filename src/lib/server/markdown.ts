@@ -4,6 +4,7 @@
  */
 import { Marked, type Tokens } from 'marked'
 import { createHighlighter, type Highlighter } from 'shiki'
+import { INLINE_LINK_RE, isAllowedSourceUrl } from '$lib/content/case-schema'
 
 export type TocItem = { id: string; text: string }
 export type RenderedMarkdown = { html: string; toc: TocItem[] }
@@ -114,4 +115,21 @@ export async function highlightCode(code: string, lang: string, startLine = 1): 
 /** Texto curto de conteúdo tipado: escapa tudo e só transforma `crases` em <code>. */
 export function renderInline(text: string): string {
   return escapeHtml(text).replace(/`([^`]+)`/g, '<code>$1</code>')
+}
+
+/**
+ * Parágrafo de estudo de caso: como `renderInline`, mais links `[texto](url)`. A URL precisa passar em
+ * `isAllowedSourceUrl` (o schema já recusa outras; aqui a recusa vira erro de build, nunca um `<a>` solto).
+ */
+export function renderCaseText(text: string): string {
+  let html = ''
+  let last = 0
+  for (const match of text.matchAll(INLINE_LINK_RE)) {
+    const [whole, label, url] = match as unknown as [string, string, string]
+    if (!isAllowedSourceUrl(url)) throw new Error(`link fora de github.com/whoisclebs.com no case: ${url}`)
+    html += renderInline(text.slice(last, match.index))
+    html += `<a href="${escapeHtml(url)}" rel="noopener noreferrer">${renderInline(label)}</a>`
+    last = (match.index ?? 0) + whole.length
+  }
+  return html + renderInline(text.slice(last))
 }

@@ -1,6 +1,6 @@
 <!--
   Índice de projetos numa lista só, do commit mais recente ao mais antigo (a ordem que a introdução promete).
-  Quem tem estudo de caso ganha a pergunta que o case responde e o link; os outros levam à ficha. Cada item
+  Quem tem estudo de caso ganha o resumo do texto e o link; os outros levam à ficha. Cada item
   tem ficha com status conferido, linguagem e último commit com data e link.
 -->
 <script lang="ts">
@@ -33,9 +33,6 @@
           <a href={primary} hreflang={project.caseStudy?.hreflang}>{project.name}</a>
         </h3>
         <div class="case-entry__body">
-          {#if project.caseStudy && data.locale === 'pt-BR'}
-            <p class="case-entry__question">{project.caseStudy.question}</p>
-          {/if}
           <p class="case-entry__text">{project.caseStudy && data.locale === 'pt-BR' ? project.caseStudy.dek : project.description}</p>
           <p class="case-entry__links">
             {#if project.caseStudy}
@@ -143,14 +140,6 @@
     display: grid;
     gap: var(--space-3);
     max-width: 40em;
-  }
-
-  .case-entry__question {
-    font-family: var(--font-display);
-    font-size: var(--step-2);
-    font-weight: var(--weight-display);
-    line-height: 1.3;
-    letter-spacing: -0.01em;
   }
 
   .case-entry__text {

@@ -10,7 +10,7 @@ import { getPublishedPosts, getTranslation, type Post } from '$lib/content/posts
 import { getProject, projects } from '$lib/content/projects'
 import type { Project } from '$lib/content/schema'
 import { caseStudies } from '$lib/content/cases/index'
-import { CASE_SECTION_TITLES, type CaseStudy } from '$lib/content/case-schema'
+import type { CaseStudy } from '$lib/content/case-schema'
 import { MCP_PATH } from '$lib/publishing/checks'
 import { absoluteUrl, markdownPath, pages, projectPath, SITE_URL } from '$lib/routing/paths'
 import { RESUME_PATH } from './resume'
@@ -20,7 +20,7 @@ export const LLMS_PATH = '/llms.txt'
 export const LLMS_FULL_PATH = '/llms-full.txt'
 
 const SITE_TITLE = 'whoisclebs.com'
-const SUMMARY = `Site pessoal de ${author.name} (Clebson Augusto), ${JOB_TITLE['pt-BR'].toLocaleLowerCase('pt-BR')}. Reúne artigos, notas curtas e estudos de caso de projetos open source dele, com a fonte de cada afirmação no código público. Idioma principal: pt-BR; artigos, a página Sobre e as fichas de projeto também existem em inglês, sob /en/.`
+const SUMMARY = `Site pessoal de ${author.name} (Clebson Augusto), ${JOB_TITLE['pt-BR'].toLocaleLowerCase('pt-BR')}. Reúne artigos, notas curtas e textos dele sobre os próprios projetos de código aberto, com links para o código. Idioma principal: pt-BR; artigos, a página Sobre e as fichas de projeto também existem em inglês, sob /en/.`
 
 /** Todos os projetos foram conferidos em alguma data; a mais recente vai para a seção "Limites". */
 const LATEST_CHECK = [...projects.map((project) => project.statusCheckedAt), ...caseStudies.map((study) => study.checkedAt)].sort().at(-1)
@@ -61,7 +61,7 @@ export function llmsIndex(): string {
     '',
     '## Estudos de caso',
     '',
-    ...caseStudies.map((study) => item(study.title, absoluteUrl(projectPath(study.slug, 'pt-BR')), study.question)),
+    ...caseStudies.map((study) => item(study.title, absoluteUrl(projectPath(study.slug, 'pt-BR')), study.dek)),
     item(t.openSource.title, absoluteUrl(pages.projects['pt-BR']), t.openSource.intro),
     '',
     '## Artigos',
@@ -177,30 +177,32 @@ export function caseSection(study: CaseStudy): string {
     metaLines([
       ['Canonical', absoluteUrl(projectPath(study.slug, 'pt-BR'))],
       ['Idioma', 'pt-BR'],
-      ['Fontes conferidas em', study.checkedAt],
-      ['Revisão do código lida', `${study.revision.sha.slice(0, 7)} (${study.revision.date}) ${study.revision.url}`],
+      ['Autor', `${author.name} (Clebson Augusto), autor do projeto`],
+      ['Revisado em', study.checkedAt],
+      ['Revisão do código citada', `${study.revision.sha.slice(0, 7)} (${study.revision.date}) ${study.revision.url}`],
       ['Repositório', project?.repo],
-      ['Pergunta', study.question],
     ]),
     '',
     study.dek,
     '',
   ]
   for (const section of study.sections) {
-    lines.push(`#### ${CASE_SECTION_TITLES[section.id]}${section.voice === 'analise' ? ' (análise do autor)' : ''}`, '', ...section.body.flatMap((paragraph) => [paragraph, '']), 'Fontes:', '', sourcesList(section.sources), '')
-  }
-  lines.push('#### Arquitetura em nós', '', study.architecture.caption, '')
-  for (const node of study.architecture.nodes) lines.push(`- ${node.label}${node.state === 'gap' ? ' (ausente ou prometido)' : ''}: ${node.detail} — [${linkText(node.source.label)}](${node.source.url})`)
-  lines.push('')
-  for (const snippet of study.snippets) {
-    lines.push(`#### Trecho: ${snippet.title}`, '', `${snippet.file}, linhas ${snippet.lines[0]}–${snippet.lines[1]}: ${snippet.url}`, '', '```' + snippet.lang, snippet.code, '```', '', snippet.caption, '')
-  }
-  if (study.measurements.length > 0) {
-    lines.push('#### Medições', '')
-    for (const measurement of study.measurements) {
-      lines.push(`- ${measurement.what}: ${measurement.result} (comando \`${measurement.command}\`, ${measurement.environment}, ${measurement.date}) — [${linkText(measurement.source.label)}](${measurement.source.url})`)
+    lines.push(`#### ${section.title}`, '', ...section.body.flatMap((paragraph) => [paragraph, '']))
+    if (section.sources?.length) lines.push(sourcesList(section.sources), '')
+    for (const figure of section.figures ?? []) {
+      if (figure === 'architecture') {
+        lines.push(study.architecture.caption, '')
+        for (const node of study.architecture.nodes) lines.push(`- ${node.label}${node.state === 'gap' ? ' (ainda não existe)' : ''}: ${node.detail} — [${linkText(node.source.label)}](${node.source.url})`)
+        lines.push('')
+      } else if (figure === 'measurements') {
+        for (const measurement of study.measurements) lines.push(`- Rodei \`${measurement.command}\`: ${measurement.result} (${measurement.environment}, ${measurement.date}).`)
+        lines.push('')
+      } else {
+        for (const snippet of study.snippets) {
+          lines.push(`##### ${snippet.title}`, '', `${snippet.file}, linhas ${snippet.lines[0]}–${snippet.lines[1]}: ${snippet.url}`, '', '```' + snippet.lang, snippet.code, '```', '', snippet.caption, '')
+        }
+      }
     }
-    lines.push('')
   }
   return lines.join('\n')
 }
@@ -282,7 +284,7 @@ function limitsSection(): string {
     '',
     '- Não publica empregadores, cargos com datas, clientes nem números de negócio, e não informa instituição nem curso de formação (um artigo de 2019 só menciona a faculdade). Por isso `work` e `education` saem vazios em /resume.json.',
     `- Os status de projetos foram conferidos nas datas indicadas (a mais recente: ${LATEST_CHECK ?? 'sem data'}) e podem ter mudado desde então. O código público é a fonte; este texto é uma leitura dele.`,
-    '- A simulação do case tuxedo usa dados sintéticos e está rotulada como simulação; não é medição de produção.',
+    '- Os números dos estudos de caso (testes, cobertura) são de execuções locais do autor, com comando, ambiente e data ao lado; não são benchmarks.',
     '- Cases, notas e a página de contato existem só em português; o inglês cobre home, sobre, projetos (fichas), artigos, livros, hobbies e páginas legais.',
     '- Artigos antigos contam eventos datados (hackathons, versões anteriores do site); valem para a data em que foram publicados.',
     '- Opiniões e exemplos são educacionais, sem garantia, conforme os Termos de Uso.',

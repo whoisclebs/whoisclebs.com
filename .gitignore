@@ -39,7 +39,7 @@ bower_components
 build/Release
 
 # Dependency directories
-node_modules/
+node_modules
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
@@ -96,6 +96,7 @@ playwright-report/
 # SvelteKit / Cloudflare
 .svelte-kit/
 .wrangler/
+wrangler.dev.jsonc
 .dev.vars
 
 # Gatsby files

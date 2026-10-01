@@ -9,15 +9,13 @@ import { getNote, getPublishedNotes, toNoteSummary } from '$lib/content/notes'
 import { getPost, getPublishedPosts, getTranslation, toSummary, type Post } from '$lib/content/posts'
 import { getProject, projects } from '$lib/content/projects'
 import { caseStudies, getCaseStudy } from '$lib/content/cases/index'
-import { CASE_SECTION_TITLES, type CaseStudy } from '$lib/content/case-schema'
+import type { CaseStudy } from '$lib/content/case-schema'
 import type { TerminalCatalog } from '$lib/eggs/terminal/catalog'
 import { format, getMessages, type Locale } from '$lib/i18n'
 import { absoluteUrl, markdownPath, notePath, pagePath, pages, projectPath, topicPath, type PageKey } from '$lib/routing/paths'
 import { ogImageAlt, ogImagePath, pageTitle, SITE_NAME, type Seo } from '$lib/seo'
 import { articleNode, breadcrumbNode, caseStudyNodes, personNode, profilePageNode, softwareSourceCodeNode, webPageNode, websiteNode } from './publishing/structured-data'
-import { highlightCode, renderInline, renderMarkdown } from './markdown'
-import { describeSummary } from '$lib/sim/labels'
-import { DEFAULT_CONFIG, runToEnd, summarize } from '$lib/sim/simulator'
+import { highlightCode, renderCaseText, renderInline, renderMarkdown } from './markdown'
 
 function alternatesFor(key: PageKey) {
   return { ...pages[key] }
@@ -41,21 +39,23 @@ function projectCards(locale: Locale) {
       href: projectPath(project.slug, locale),
       // Cases existem só em pt-BR (texto novo, sem tradução revisada): no inglês o link leva hreflang.
       caseStudy: study
-        ? { question: study.question, dek: study.dek, href: projectPath(project.slug, 'pt-BR'), hreflang: locale === 'en' ? ('pt-BR' as const) : undefined }
+        ? { dek: study.dek, href: projectPath(project.slug, 'pt-BR'), hreflang: locale === 'en' ? ('pt-BR' as const) : undefined }
         : undefined,
     }
   })
 }
 
-/** Case pronto para a página: parágrafos com `code` inline escapado e trechos destacados pelo Shiki no build. */
+/** Case pronto para a página: parágrafos escapados (crases viram `code`, `[texto](url)` vira link) e trechos destacados pelo Shiki no build. */
 export async function renderCaseStudy(study: CaseStudy) {
   return {
     ...study,
     sections: study.sections.map((section) => ({
       ...section,
-      title: CASE_SECTION_TITLES[section.id],
-      html: section.body.map(renderInline),
+      sources: section.sources ?? [],
+      figures: section.figures ?? [],
+      html: section.body.map(renderCaseText),
     })),
+    measurements: study.measurements.map((measurement) => ({ ...measurement, resultHtml: renderInline(measurement.result) })),
     snippets: await Promise.all(
       study.snippets.map(async (snippet) => ({
         ...snippet,
@@ -66,15 +66,10 @@ export async function renderCaseStudy(study: CaseStudy) {
   }
 }
 
-function precomputedScenario() {
-  const result = runToEnd(DEFAULT_CONFIG)
-  return { seed: DEFAULT_CONFIG.seed, failurePercent: Math.round(DEFAULT_CONFIG.failureRate * 100), latencyMs: DEFAULT_CONFIG.latencyMs, events: result.events, summary: describeSummary(summarize(result)) }
-}
-
 function otherCaseFor(slug: string) {
   const other = caseStudies.find((study) => study.slug !== slug)
   const project = other ? getProject(other.slug) : undefined
-  return other && project ? { slug: other.slug, name: project.name, question: other.question } : undefined
+  return other && project ? { slug: other.slug, name: project.name, dek: other.dek } : undefined
 }
 
 export type RenderedCaseStudy = Awaited<ReturnType<typeof renderCaseStudy>>
@@ -252,8 +247,6 @@ export async function projectData(slug: string, locale: Locale) {
     project: { ...project, description },
     caseStudy,
     otherCase: caseStudy ? otherCaseFor(project.slug) : undefined,
-    /** o simulador vive no case tuxedo (o cliente não tem nova tentativa). Cenário padrão pré-calculado no build. */
-    simulation: caseStudy && project.slug === 'tuxedo' ? precomputedScenario() : undefined,
     /** No inglês: o case existe só em português. */
     caseHref: study && locale === 'en' ? projectPath(project.slug, 'pt-BR') : undefined,
     seo: {
