@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test'
 
 /**
- * Escrita/Notas, RSS, metadados e comentários (o manifesto virou "O que eu faço").
+ * Escrita/Notas, RSS, metadados, coluna de leitura e comentários. A ordem das seções da home está em `home.spec.ts`.
  * Tudo contra o build real (wrangler dev), com URLs tiradas do sitemap para não fixar a lista à mão.
  */
 
@@ -139,7 +139,7 @@ test.describe('Escrita', () => {
     expect((await request.get('/escrita/assunto/nao-existe/')).status()).toBe(404)
   })
 
-  test('artigo longo: sumário, datas e tempo de leitura; prosa a 18 px/1,7 com 62–68 caracteres por linha', async ({ page }) => {
+  test('artigo longo: sumário, datas e tempo de leitura; prosa a 18 px/1,75 com 68–80 caracteres por linha', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 })
     await page.goto('/escrita/github-actions-como-fazer-deploy/')
     await expect(page.getByRole('navigation', { name: 'Neste texto' }).getByRole('link')).toHaveCount(9)
@@ -154,10 +154,11 @@ test.describe('Escrita', () => {
       const average = context.measureText(paragraph).width / paragraph.length
       return { fontSize: style.fontSize, lineHeight: parseFloat(style.lineHeight) / parseFloat(style.fontSize), chars: prose.clientWidth / average }
     })
+    // Coluna de leitura do Grafite Editorial: 604 px, cerca de 75 caracteres por linha (design.md, decisão 9).
     expect(metrics.fontSize).toBe('18px')
-    expect(metrics.lineHeight).toBeCloseTo(1.7, 2)
-    expect(metrics.chars).toBeGreaterThanOrEqual(62)
-    expect(metrics.chars).toBeLessThanOrEqual(68)
+    expect(metrics.lineHeight).toBeCloseTo(1.75, 2)
+    expect(metrics.chars).toBeGreaterThanOrEqual(68)
+    expect(metrics.chars).toBeLessThanOrEqual(80)
   })
 
   test('linha de progresso é decorativa e some com reduced motion', async ({ browser }) => {
@@ -226,26 +227,6 @@ test.describe('comentários (Giscus)', () => {
     const link = page.getByRole('link', { name: 'Procurar a discussão no GitHub' })
     await expect(link).toHaveAttribute('href', /^https:\/\/github\.com\/whoisclebs\/whoisclebs\.com\/discussions\?discussions_q=/)
     await context.close()
-  })
-})
-
-test.describe('home: ritmo editorial', () => {
-  test('jornada escura: arquitetura logo abaixo do hero, depois história, projetos, agentes, agora e escrita', async ({ page }) => {
-    await page.goto('/')
-    const journey = page.locator('[data-band="aurora"]')
-    await expect(journey.locator('#arquitetura').getByRole('heading', { level: 3 })).toHaveText(['Sistemas distribuídos', 'Backend de alta performance', 'IA agêntica'])
-    await expect(page.locator('section.manifesto')).toHaveCount(0)
-    // Ordem dos capítulos: hero → arquitetura → história → projetos → agentes → agora → escrita.
-    const order = await page.locator('main h2').allTextContents()
-    expect(order).toEqual(['Arquitetura', 'Como cheguei aqui', 'Projetos', 'Agentes de IA', 'Agora', 'Escrita e notas'])
-    // Cada capítulo abre com a hora da jornada em mono (decorativa: o título continua no <h2>).
-    const marks = await journey.locator('.mark').allTextContents()
-    expect(marks.map((mark) => mark.trim().slice(0, 5))).toEqual(['04:40', '05:10', '05:30', '05:50', '06:10', '06:30'])
-    await expect(journey.locator('.mark').first()).toHaveAttribute('aria-hidden', 'true')
-    const rows = page.locator('.writing .writing-list > li')
-    await expect(rows).toHaveCount(5)
-    await expect(rows.first().locator('time')).toHaveAttribute('datetime', /^\d{4}-\d{2}-\d{2}$/)
-    await expect(page.getByRole('region', { name: 'Agora' }).locator('time')).toHaveAttribute('datetime', '2026-07-02')
   })
 })
 

@@ -23,7 +23,7 @@ describe('JSON-LD gerado do conteúdo', () => {
     const about = aboutData('pt-BR').seo.jsonLd as Record<string, unknown>
     expect(about['@type']).toBe('ProfilePage')
     expect((about.mainEntity as Record<string, unknown>)['@type']).toBe('Person')
-    expect(about.name).toBe('Quem é Clebson?')
+    expect(about.name).toBe('Quem está por aqui')
     expect(about.url).toBe('https://whoisclebs.com/sobre/')
   })
 

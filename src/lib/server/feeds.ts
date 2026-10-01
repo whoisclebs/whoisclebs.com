@@ -4,7 +4,6 @@ import { getPublishedNotes } from '$lib/content/notes'
 import { getPublishedPosts, getTranslation } from '$lib/content/posts'
 import { projects } from '$lib/content/projects'
 import { getCaseStudy } from '$lib/content/cases/index'
-import { AGENTS_CHECKED_AT } from '$lib/content/agents'
 import { absoluteUrl, articlePath, notePath, pages, projectPath, topicPath, type PageKey } from '$lib/routing/paths'
 
 export function escapeXml(value: string): string {
@@ -107,7 +106,6 @@ export function sitemapEntries(): SitemapEntry[] {
     writing: { 'pt-BR': latest(getPublishedPosts('pt-BR').map(revised)), en: latest(getPublishedPosts('en').map(revised)) },
     notes: { 'pt-BR': latest(getPublishedNotes().map(revised)) },
     projects: { 'pt-BR': latest(projects.map((project) => project.statusCheckedAt)), en: latest(projects.map((project) => project.statusCheckedAt)) },
-    agents: { 'pt-BR': AGENTS_CHECKED_AT },
   }
   for (const key of Object.keys(pages) as PageKey[]) {
     const alternates: Partial<Record<Locale, string>> = pages[key]

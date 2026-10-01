@@ -35,6 +35,8 @@ export type Seo = {
   publishedTime?: string
   modifiedTime?: string
   jsonLd?: JsonLd | JsonLd[]
+  /** Caminho da versão Markdown da página (artigos e notas), anunciado com `<link rel="alternate" type="text/markdown">`. */
+  markdown?: string
 }
 
 export function pageTitle(title: string): string {

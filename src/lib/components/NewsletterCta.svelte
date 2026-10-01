@@ -29,17 +29,17 @@
 
   label {
     flex-basis: 100%;
-    font-family: var(--font-mono);
     font-size: var(--step--1);
+    color: var(--color-text-soft);
   }
 
   input {
     flex: 1 1 16rem;
     min-width: 0;
-    min-height: 44px;
-    padding-inline: var(--space-3);
-    border: var(--border-hairline) solid var(--color-text);
-    border-radius: var(--radius-control);
+    min-height: 48px;
+    padding-inline: var(--space-5);
+    border: var(--border-hairline) solid color-mix(in oklab, var(--color-text) 35%, transparent);
+    border-radius: var(--radius-pill);
     background: var(--color-surface);
     color: var(--color-text);
     font: inherit;

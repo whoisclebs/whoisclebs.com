@@ -7,7 +7,7 @@ Site pessoal de Clebson Augusto: engenharia de software, projetos open source e 
 - **SvelteKit 2 + Svelte 5 + TypeScript estrito**, com `@sveltejs/adapter-cloudflare`.
 - Páginas editoriais prerenderizadas; conteúdo tipado com Zod em `src/lib/content/` (Markdown em `src/content/`).
 - Deploy previsto em **Cloudflare Workers**. `src/worker.ts` é a entrada do Worker e reaproveita o handler do SvelteKit.
-- Publicação para agentes gerada do mesmo conteúdo: JSON-LD, `/resume.json`, `/llms.txt`, `/llms-full.txt`, sitemap, RSS
+- Publicação para agentes gerada do mesmo conteúdo: JSON-LD, `/resume.json`, `/llms.txt`, `/llms-full.txt`, versão `.md` de cada artigo e nota, sitemap, RSS
   e um servidor MCP somente leitura em `/mcp`.
 
 ## Comandos

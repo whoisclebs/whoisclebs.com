@@ -29,6 +29,6 @@ describe('i18n', () => {
     expect(format('Página {current} de {total}', { current: 1, total: 3 })).toBe('Página 1 de 3')
     expect(formatDate('2025-09-16', 'pt-BR')).toBe('16 de set de 2025')
     expect(formatDate('2025-09-16', 'en')).toBe('Sep 16, 2025')
-    expect(getMessages('en')['nav.writing']).toBe('Writing')
+    expect(getMessages('en')['nav.writing']).toBe('Articles')
   })
 })

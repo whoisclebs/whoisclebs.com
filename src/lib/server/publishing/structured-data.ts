@@ -18,10 +18,10 @@ import type { JsonLd } from '$lib/seo'
 export const PERSON_ID = `${SITE_URL}/#person`
 export const WEBSITE_ID = `${SITE_URL}/#website`
 
-/** Nome público usado no hero ("Sou Clebson Augusto") e no título do site. */
+/** Nome público usado no título do site e na marca; o hero e o Sobre escrevem "Clebson Fonseca". */
 export const ALTERNATE_NAME = 'Clebson Augusto'
 
-/** Cargo como o hero escreve (pt-BR e en). */
+/** Cargo declarado no site (pt-BR e en). */
 export const JOB_TITLE: Record<Locale, string> = {
   'pt-BR': 'Engenheiro de software sênior',
   en: 'Senior software engineer',

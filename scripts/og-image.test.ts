@@ -8,9 +8,18 @@ import { cellText, fitCellSize, OG_HEIGHT, OG_MAX_BYTES, OG_WIDTH, ogSvg, readPr
 const colors = readPrimitives(readFileSync('src/styles/tokens.css', 'utf8'))
 
 describe('imagens Open Graph', () => {
-  it('lê as cores dos tokens primitivos', () => {
-    expect(colors.paper).toBe('#eceef1')
-    expect(colors.ink).toBe('#16181d')
+  it('lê as cores da paleta (grafite, creme, ciano) dos tokens primitivos', () => {
+    expect(colors.ink).toBe('#141518')
+    expect(colors.cream).toBe('#efe9e0')
+    expect(colors.cyan).toBe('#5fd3e6')
+  })
+
+  it('desenha no grafite: letreiro creme e acento ciano, sem as cores da noite do farol', () => {
+    const svg = ogSvg({ symbolPath: SYMBOL_PATH, colors, title: 'golpher' })
+    expect(svg).toContain(`fill="${colors.ink}"`)
+    expect(svg).toContain(`fill="${colors.cream}"`)
+    expect(svg).toContain(`fill="${colors.cyan}"`)
+    expect(svg).not.toMatch(/#f2e6a0|#0b1120|#05070d/i)
   })
 
   it('tem glifo de células para o letreiro, o lema e todo slug de case', () => {

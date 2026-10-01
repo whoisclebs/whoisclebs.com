@@ -8,20 +8,23 @@
   const notes = $derived(copy.profileNotes as Record<string, string>)
 </script>
 
-<header class="page-header contact-header">
-  <h1>{copy.title}</h1>
-  <p class="lead">{copy.intro}</p>
+<header class="page-header">
+  <div class="page contact-header">
+    <h1>{copy.title}</h1>
+    <p class="lead">{copy.intro}</p>
+  </div>
 </header>
 
+<div class="page page-body">
 <div class="contact">
   <section class="contact__email" aria-labelledby="contact-email">
-    <h2 id="contact-email" class="contact__label">{copy.emailLabel}</h2>
-    <p><a class="contact__mail" href={`mailto:${data.email}`}>{data.email}</a></p>
+    <h2 id="contact-email" class="eyebrow contact__label">{copy.emailLabel}</h2>
+    <p><a class="contact__mail link-lit" href={`mailto:${data.email}`}>{data.email}</a></p>
     <p class="contact__note">{copy.emailNote}</p>
   </section>
 
   <section aria-labelledby="contact-profiles">
-    <h2 id="contact-profiles" class="contact__label">{copy.profilesLabel}</h2>
+    <h2 id="contact-profiles" class="eyebrow contact__label">{copy.profilesLabel}</h2>
     <ul class="profiles">
       {#each data.socialLinks as link (link.href)}
         <li>
@@ -33,7 +36,7 @@
   </section>
 
   <section aria-labelledby="contact-other">
-    <h2 id="contact-other" class="contact__label">{copy.otherLabel}</h2>
+    <h2 id="contact-other" class="eyebrow contact__label">{copy.otherLabel}</h2>
     <ul class="other">
       <li><a href="/rss/blog.xml" type="application/rss+xml">RSS</a> <span>{copy.rss}</span></li>
       <li><a href="/.well-known/security.txt">security.txt</a> <span>{copy.security}</span></li>
@@ -41,10 +44,11 @@
     <p class="contact__note">{copy.noForm}</p>
   </section>
 </div>
+</div>
 
 <style>
-  .contact-header {
-    max-width: calc(var(--measure) + 2 * var(--space-6));
+  .contact-header .lead {
+    max-width: 44ch;
   }
 
   .contact {
@@ -54,17 +58,14 @@
 
   .contact__label {
     margin-block-end: var(--space-3);
-    color: var(--color-text-faint);
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    font-weight: 400;
+    font-family: var(--font-text);
   }
 
   .contact__mail {
     font-family: var(--font-display);
     font-size: var(--step-4);
     line-height: var(--leading-heading);
-    text-decoration-thickness: 2px;
+    letter-spacing: -0.02em;
     overflow-wrap: anywhere;
   }
 
@@ -86,12 +87,15 @@
   .other li {
     display: grid;
     gap: var(--space-1) var(--space-5);
-    padding-block: var(--space-3);
-    border-block-end: var(--border-hairline) solid var(--color-rule);
+    padding-block: var(--space-4);
+    border-block-end: var(--border-hairline) solid var(--color-rule-soft);
   }
 
   .profiles a {
+    font-family: var(--font-display);
     font-size: var(--step-2);
+    font-weight: var(--weight-display);
+    letter-spacing: -0.01em;
   }
 
   .profiles span,

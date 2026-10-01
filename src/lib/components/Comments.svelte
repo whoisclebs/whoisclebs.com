@@ -49,7 +49,7 @@
       'data-reactions-enabled': '1',
       'data-emit-metadata': '0',
       'data-input-position': 'bottom',
-      'data-theme': 'preferred_color_scheme',
+      'data-theme': 'transparent_dark', // o site tem uma só paleta, escura
       'data-lang': locale === 'en' ? 'en' : 'pt',
     }
     for (const [name, value] of Object.entries(attributes)) script.setAttribute(name, value)
@@ -83,6 +83,7 @@
 
   .comments__title {
     font-size: var(--step-3);
+    letter-spacing: -0.01em;
   }
 
   .comments__text {
@@ -96,15 +97,6 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-3) var(--space-5);
-  }
-
-  .comments__actions .button {
-    cursor: pointer;
-    transition: transform var(--dur-press) var(--ease-out);
-  }
-
-  .comments__actions .button:active {
-    transform: scale(var(--press-scale));
   }
 
   .comments__status {

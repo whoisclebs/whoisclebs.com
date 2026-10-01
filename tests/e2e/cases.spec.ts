@@ -1,5 +1,5 @@
-import AxeBuilder from '@axe-core/playwright'
-import { expect, test, type Page } from '@playwright/test'
+import { expect, test } from '@playwright/test'
+import { blockingViolations } from './helpers'
 
 /**
  * estudos de caso: navegação home → case → código, fontes por seção, índice de projetos,
@@ -14,21 +14,16 @@ function isAllowedSource(href: string) {
   return url.protocol === 'https:' && ['github.com', 'whoisclebs.com'].includes(url.hostname)
 }
 
-async function blockingViolations(page: Page) {
-  const results = await new AxeBuilder({ page }).analyze()
-  return results.violations
-    .filter((violation) => violation.impact === 'critical' || violation.impact === 'serious')
-    .map((violation) => `${violation.id}: ${violation.nodes.map((node) => node.target.join(' ')).join(', ')}`)
-}
-
 test('home → case tuxedo → código no GitHub', async ({ page }) => {
   // O GitHub é substituído por uma resposta local: o teste prova a navegação, não depende da rede.
   await page.route('https://github.com/**', (route) => route.fulfill({ status: 200, contentType: 'text/html', body: '<title>GitHub (fixture)</title>' }))
   await page.goto('/')
-  const cases = page.locator('[data-slot="cases"]')
-  await expect(cases.getByRole('heading', { level: 3, name: 'tuxedo' })).toBeVisible()
-  await expect(cases.getByRole('heading', { level: 3, name: 'golpher' })).toBeVisible()
-  await cases.getByRole('link', { name: /^Ler o estudo de caso\s*:\s*tuxedo$/ }).click()
+  // Na home os projetos ficam em "Ideias em construção"; o link de um projeto com case leva ao estudo.
+  const projects = page.getByRole('region', { name: 'Ideias em construção' })
+  await expect(projects.getByRole('heading', { level: 3, name: 'tuxedo' })).toBeVisible()
+  await expect(projects.getByRole('heading', { level: 3, name: 'golpher' })).toBeVisible()
+  await expect(projects.getByRole('link', { name: /^Conhecer projeto\s*:\s*golpher$/ })).toHaveAttribute('href', '/projetos/golpher/')
+  await projects.getByRole('link', { name: /^Conhecer projeto\s*:\s*tuxedo$/ }).click()
 
   await expect(page).toHaveURL(/\/projetos\/tuxedo\/$/)
   await expect(page.getByRole('heading', { level: 1 })).toContainText('tuxedo')

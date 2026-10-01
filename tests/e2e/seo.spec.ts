@@ -51,8 +51,8 @@ test('página PT continua em português num navegador en-US (sem troca por navig
   await page.goto('/sobre/')
   await page.waitForLoadState('networkidle')
   await expect(page.locator('html')).toHaveAttribute('lang', 'pt-BR')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Quem é Clebson?')
-  await expect(page.getByRole('link', { name: 'Escrita' }).first()).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Quem está por aqui')
+  await expect(page.getByRole('navigation', { name: 'Principal' }).getByRole('link', { name: 'Artigos' })).toBeVisible()
 })
 
 test('artigo renderiza código destacado no build e sem JS', async ({ browser }) => {

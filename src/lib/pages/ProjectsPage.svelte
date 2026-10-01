@@ -15,10 +15,13 @@
 </script>
 
 <header class="page-header">
-  <h1>{data.locale === 'en' ? 'Projects' : 'Projetos'}</h1>
-  <p class="lead">{t.openSource.intro}</p>
+  <div class="page">
+    <h1>{data.locale === 'en' ? 'Projects' : 'Projetos'}</h1>
+    <p class="lead">{t.openSource.intro}</p>
+  </div>
 </header>
 
+<div class="page page-body">
 <!-- Uma lista só, do commit mais recente ao mais antigo (ordem de `projectCards`); o case é um link a mais. -->
 <section class="block" aria-labelledby="h-open-source">
   <h2 id="h-open-source" class="visually-hidden">{t.openSource.title}</h2>
@@ -36,11 +39,11 @@
           <p class="case-entry__text">{project.caseStudy && data.locale === 'pt-BR' ? project.caseStudy.dek : project.description}</p>
           <p class="case-entry__links">
             {#if project.caseStudy}
-              <a href={project.caseStudy.href} hreflang={project.caseStudy.hreflang}>{t.openSource.readCase}<span class="visually-hidden">: {project.name}</span></a>
+              <a class="link-lit" href={project.caseStudy.href} hreflang={project.caseStudy.hreflang}>{t.openSource.readCase}<span class="visually-hidden">: {project.name}</span><span class="arrow" aria-hidden="true">→</span></a>
             {:else}
-              <a href={project.href}>{data.locale === 'en' ? 'Project page' : 'Ficha do projeto'}<span class="visually-hidden">: {project.name}</span></a>
+              <a class="link-lit" href={project.href}>{data.locale === 'en' ? 'Project page' : 'Ficha do projeto'}<span class="visually-hidden">: {project.name}</span><span class="arrow" aria-hidden="true">→</span></a>
             {/if}
-            <a href={project.repo} rel="noopener noreferrer">{t.openSource.code}<span class="visually-hidden">: {project.name}</span></a>
+            <a class="link-ext" href={project.repo} rel="noopener noreferrer">{t.openSource.code}<span class="visually-hidden">: {project.name}</span><span class="arrow" aria-hidden="true">↗</span></a>
           </p>
         </div>
         <dl class="ficha">
@@ -72,12 +75,13 @@
     <p>{t.portfolio.ctaText} <a href={pagePathOrDefault('about', data.locale)}>{t.portfolio.ctaLink}</a></p>
   </div>
 </section>
+</div>
 
 <style>
   .block {
     display: grid;
     gap: var(--space-6);
-    padding-block: var(--space-8);
+    padding-block: var(--space-section);
   }
 
   .block + .block {
@@ -94,28 +98,45 @@
 
   .cases {
     display: grid;
-  }
-
-  .case-entry {
-    display: grid;
-    gap: var(--space-4);
-    padding-block: var(--space-6);
+    counter-reset: project;
     border-block-start: var(--border-hairline) solid var(--color-rule);
   }
 
-  .case-entry:first-child {
-    border-block-start: 2px solid var(--color-text);
+  /* "Ideias em construção" do design: número em mono, nome em Space Grotesk, descrição e link com seta. */
+  .case-entry {
+    display: grid;
+    gap: var(--space-4);
+    padding-block: 26px var(--space-7);
+    border-block-end: var(--border-hairline) solid var(--color-rule-soft);
+    counter-increment: project;
   }
 
   .case-entry__name {
     font-size: var(--step-4);
     line-height: var(--leading-display);
+    letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
+  }
+
+  /* Número decorativo (contador CSS): fora do nome acessível do título. */
+  .case-entry::before {
+    content: counter(project, decimal-leading-zero);
+    grid-column: 1 / -1;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--color-text-faint);
   }
 
   .case-entry__name a {
     color: var(--color-text);
-    text-decoration-thickness: 2px;
-    text-underline-offset: 0.12em;
+    text-decoration: none;
+    transition: color var(--dur-ui) ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .case-entry__name a:hover {
+      color: var(--color-accent);
+    }
   }
 
   .case-entry__body {
@@ -125,8 +146,11 @@
   }
 
   .case-entry__question {
+    font-family: var(--font-display);
     font-size: var(--step-2);
-    line-height: 1.35;
+    font-weight: var(--weight-display);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
   }
 
   .case-entry__text {
@@ -136,7 +160,26 @@
   .case-entry__links {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2) var(--space-5);
+    gap: 0 var(--space-5);
+  }
+
+  .case-entry__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    font-size: var(--step--1);
+  }
+
+  .case-entry__links .arrow {
+    color: var(--color-accent);
+    transition: transform var(--dur-ui) var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .case-entry__links a:hover .arrow {
+      transform: translateX(3px);
+    }
   }
 
   .ficha {
@@ -154,27 +197,22 @@
 
   .ficha dt {
     font-family: var(--font-mono);
-    font-size: var(--step--1);
+    font-size: var(--step--2);
     color: var(--color-text-faint);
   }
 
   .ficha dd {
     margin: 0;
-    font-size: var(--step-0);
+    font-size: var(--step--1);
     overflow-wrap: anywhere;
   }
 
   .ficha dd :global(.meta) {
     font-family: var(--font-text);
-    font-size: var(--step-0);
+    font-size: var(--step--1);
     letter-spacing: 0;
     color: var(--color-text);
   }
-
-
-
-
-
 
   .areas__body {
     display: grid;
@@ -182,11 +220,12 @@
     max-width: 44em;
   }
 
-
+  /* Aviso de método: etiqueta em pílula de contorno fino. */
   .areas__note {
     justify-self: start;
     padding: var(--space-1) var(--space-3);
-    border: var(--border-hairline) dashed var(--color-text-soft);
+    border: var(--border-hairline) solid var(--color-rule);
+    border-radius: var(--radius-pill);
     font-family: var(--font-mono);
     font-size: var(--step--1);
     color: var(--color-text-soft);
@@ -194,21 +233,23 @@
 
   .areas__list {
     display: grid;
-    gap: var(--space-4);
+    border-block-start: var(--border-hairline) solid var(--color-rule);
   }
 
   .areas__list li {
     display: grid;
     gap: var(--space-1);
-    padding-block-start: var(--space-3);
-    border-block-start: var(--border-hairline) solid var(--color-rule);
+    padding-block: 20px;
+    border-block-end: var(--border-hairline) solid var(--color-rule-soft);
   }
 
   .areas__list h3 {
-    font-family: var(--font-text);
     font-size: var(--step-1);
-    font-weight: 600;
     line-height: var(--leading-ui);
+  }
+
+  .areas__list p:not(.areas__stack) {
+    color: var(--color-text-soft);
   }
 
   .areas__stack {
@@ -225,6 +266,7 @@
 
     .block__title {
       grid-column: 1 / span 3;
+      align-self: start;
     }
 
     .cases {
@@ -235,11 +277,6 @@
       grid-column: 4 / -1;
     }
 
-    .block__title {
-      align-self: start;
-      padding-block-start: var(--space-5);
-    }
-
     .case-entry {
       grid-template-columns: repeat(12, minmax(0, 1fr));
       column-gap: var(--grid-gap);
@@ -247,11 +284,11 @@
     }
 
     .case-entry__name {
-      grid-column: 1 / span 3;
+      grid-column: 1 / span 5;
     }
 
     .case-entry__body {
-      grid-column: 4 / span 6;
+      grid-column: 6 / span 4;
     }
 
     .ficha {

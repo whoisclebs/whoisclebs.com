@@ -1,6 +1,6 @@
 /*
- * Base do site. Só tokens semânticos de src/styles/tokens.css; as faixas (.band-night, .band-aurora)
- * redefinem esses tokens, então as regras daqui valem em qualquer faixa.
+ * Base do site. Só tokens semânticos de src/styles/tokens.css (paleta única, escura). O desenho vem do projeto
+ * no Claude Design: títulos em Space Grotesk 600, texto em Inter Tight, fios de 1 px e pílulas nos controles.
  */
 @layer reset, base, layout, components;
 
@@ -43,59 +43,78 @@
      (fonts.css). `font-size-adjust` foi retirado: ele reescalaria o fallback já ajustado
      pela altura-x e desfaria o casamento de largura (mesmas quebras de linha = CLS ≈ 0). */
   html {
-    background: var(--color-bg);
+    background: var(--color-page);
     color: var(--color-text);
     font-family: var(--font-text);
-    scroll-padding-top: var(--space-8);
+    /* O cabeçalho é fixo: âncoras e foco param abaixo dele. */
+    scroll-padding-top: calc(var(--header-h) + var(--space-4));
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
 
   body {
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    background: var(--color-bg);
-    font-size: var(--step-1);
+    background: var(--color-page);
+    font-size: var(--step-body);
     line-height: var(--leading-text);
     overflow-wrap: break-word;
   }
 
   h1,
-  h2 {
+  h2,
+  h3 {
     font-family: var(--font-display);
-    font-weight: 400;
+    font-weight: var(--weight-display);
     letter-spacing: var(--tracking-display);
     line-height: var(--leading-heading);
     text-wrap: balance;
   }
 
   h1 {
-    font-size: var(--step-4);
+    font-size: var(--step-5);
+    line-height: var(--leading-display);
   }
 
   h2 {
-    font-size: var(--step-3);
+    font-size: var(--step-4);
+    line-height: var(--leading-display);
   }
 
   h3 {
     font-size: var(--step-2);
-    font-weight: 600;
-    line-height: var(--leading-heading);
+    letter-spacing: -0.01em;
   }
 
   p {
     text-wrap: pretty;
   }
 
+  /* Links: creme sem sublinhado na interface; no hover, ciano. Dentro de texto corrido o sublinhado fica
+     (um fio creme a 35 %), porque ali a cor sozinha não distingue o link (WCAG 1.4.1). */
   a {
     color: var(--color-link);
-    text-underline-offset: 0.18em;
+    text-decoration: none;
+    text-underline-offset: 0.22em;
     text-decoration-thickness: 1px;
+    transition: color var(--dur-ui) ease;
+  }
+
+  :where(p, dd, figcaption, .prose li) > a {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-text) 35%, transparent);
   }
 
   @media (hover: hover) and (pointer: fine) {
     a:hover {
       color: var(--color-link-hover);
-      text-decoration-thickness: 2px;
+      text-decoration-color: currentColor;
     }
   }
 
@@ -104,122 +123,9 @@
     outline-offset: var(--focus-offset);
   }
 
-  /*
-   * Foco de "unidade selecionada" (estudo de microinterações): além do anel de 2 px, quatro cantos a 8 px do
-   * controle. Vale para todo controle em bloco (botões, navegação, idioma, marca, HUD). Links dentro de
-   * texto corrido ficam só com o anel: cantos numa linha quebrada ficariam soltos. Sem animação no foco.
-   */
-  :is(.button, .site-nav a, .contact-cta, .lang a, .brand, .hud__label, a.hud__value) {
-    position: relative;
-  }
-
-  :is(.button, .site-nav a, .contact-cta, .lang a, .brand, .hud__label, a.hud__value, .skip-link):focus-visible::after {
-    content: '';
-    position: absolute;
-    inset: -8px;
-    pointer-events: none;
-    --corner: 8px;
-    --stroke: 2px;
-    background:
-      linear-gradient(var(--color-focus) 0 0) 0 0 / var(--corner) var(--stroke),
-      linear-gradient(var(--color-focus) 0 0) 0 0 / var(--stroke) var(--corner),
-      linear-gradient(var(--color-focus) 0 0) 100% 0 / var(--corner) var(--stroke),
-      linear-gradient(var(--color-focus) 0 0) 100% 0 / var(--stroke) var(--corner),
-      linear-gradient(var(--color-focus) 0 0) 0 100% / var(--corner) var(--stroke),
-      linear-gradient(var(--color-focus) 0 0) 0 100% / var(--stroke) var(--corner),
-      linear-gradient(var(--color-focus) 0 0) 100% 100% / var(--corner) var(--stroke),
-      linear-gradient(var(--color-focus) 0 0) 100% 100% / var(--stroke) var(--corner);
-    background-repeat: no-repeat;
-  }
-
-  /*
-   * Linha-alvo: listas editoriais da home e da escrita. No hover (ponteiro fino) ou com o foco do
-   * teclado num link da linha, quatro cantos travam na linha e um fio âmbar percorre o topo, como a seleção
-   * de uma unidade no HUD. Cantos e fio são decorativos; o foco continua no anel do link.
-   */
-  .target {
-    position: relative;
-  }
-
-  .target::before,
-  .target::after {
-    content: '';
-    position: absolute;
-    pointer-events: none;
-  }
-
-  .target::before {
-    inset: 0 calc(-1 * var(--space-3));
-    --corner: 10px;
-    --stroke: 2px;
-    background:
-      linear-gradient(var(--color-sun) 0 0) 0 0 / var(--corner) var(--stroke),
-      linear-gradient(var(--color-sun) 0 0) 0 0 / var(--stroke) var(--corner),
-      linear-gradient(var(--color-sun) 0 0) 100% 0 / var(--corner) var(--stroke),
-      linear-gradient(var(--color-sun) 0 0) 100% 0 / var(--stroke) var(--corner),
-      linear-gradient(var(--color-sun) 0 0) 0 100% / var(--corner) var(--stroke),
-      linear-gradient(var(--color-sun) 0 0) 0 100% / var(--stroke) var(--corner),
-      linear-gradient(var(--color-sun) 0 0) 100% 100% / var(--corner) var(--stroke),
-      linear-gradient(var(--color-sun) 0 0) 100% 100% / var(--stroke) var(--corner);
-    background-repeat: no-repeat;
-    opacity: 0;
-    transform: scale(1.015, 1.06);
-    transition:
-      opacity var(--dur-ui) var(--ease-out),
-      transform 240ms var(--ease-out);
-  }
-
-  .target::after {
-    inset: -1px 0 auto;
-    height: 2px;
-    background: var(--color-sun);
-    transform: scaleX(0);
-    transform-origin: left center;
-    transition: transform 320ms var(--ease-out);
-  }
-
-  .target:has(:focus-visible)::before {
-    opacity: 1;
-    transform: none;
-  }
-
-  .target:has(:focus-visible)::after {
-    transform: scaleX(1);
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .target:hover::before {
-      opacity: 1;
-      transform: none;
-    }
-
-    .target:hover::after {
-      transform: scaleX(1);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .target::before,
-    .target::after {
-      transform: none;
-      transition: opacity var(--dur-ui) linear;
-    }
-
-    .target::after {
-      opacity: 0;
-    }
-
-    .target:has(:focus-visible)::after {
-      transform: none;
-      opacity: 1;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .target:hover::after {
-        transform: none;
-        opacity: 1;
-      }
-    }
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-on-accent);
   }
 
   code,
@@ -243,9 +149,14 @@
     padding-block: var(--space-7) var(--space-9);
   }
 
-  /* Home: as faixas (noite, aurora, dia) vão de borda a borda; cada uma traz o próprio `.page`. */
+  /* Toda página é `main--bleed`: cada seção traz o próprio `.page`. O cabeçalho é fixo (56 px): as páginas
+     internas começam abaixo dele; a home (`main--home`) começa no topo, com o hero por baixo do cabeçalho. */
   main.main--bleed {
-    padding-block: 0;
+    padding-block: var(--header-h) 0;
+  }
+
+  main.main--home {
+    padding-block-start: 0;
   }
 
   .stack > * + * {
@@ -256,9 +167,16 @@
     max-width: var(--measure);
   }
 
+  /* Corpo de leitura das páginas internas: o `main--bleed` não tem mais padding vertical nem gutter
+     próprios (cada página traz o que precisa), então quem substitui o `.page-header` por baixo usa
+     `.page.page-body` para recuperar os dois. */
+  .page-body {
+    padding-block: var(--space-7) var(--space-9);
+  }
+
   .grid {
     display: grid;
-    gap: var(--grid-gap);
+    gap: var(--space-5);
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
   }
 }
@@ -286,7 +204,17 @@
     white-space: nowrap;
   }
 
-  .eyebrow,
+  /* Rótulo em caixa alta, ciano: a categoria acima de um título (artigo, página, seção). */
+  .eyebrow {
+    font-size: var(--step--2);
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    line-height: var(--leading-ui);
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  /* Metadado em mono: datas, versões, contagens. */
   .meta {
     font-family: var(--font-mono);
     font-size: var(--step--1);
@@ -294,55 +222,91 @@
     color: var(--color-text-faint);
   }
 
-  .eyebrow {
-    color: var(--color-text-soft);
-    text-transform: uppercase;
+  /* Link de apoio com seta: "Ler artigo →", "Conhecer projeto ↗". A seta (um <span aria-hidden>) é ciano. */
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    font-size: var(--step--1);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .link-arrow > span {
+    color: var(--color-accent);
+    transition: transform var(--dur-ui) var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .link-arrow:hover > span {
+      transform: translateX(3px);
+    }
+  }
+
+  /* O link principal de um bloco, em ciano (antes: a "luz da lâmpada"). */
+  .link-lit {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .link-lit:hover {
+      color: var(--color-text);
+    }
   }
 
   .lead {
     font-size: var(--step-2);
-    line-height: 1.4;
+    line-height: 1.55;
     color: var(--color-text-soft);
-    max-width: var(--measure);
+    max-width: 35rem;
   }
 
+  /*
+   * Abertura das páginas internas: rótulo ciano, título grande em Space Grotesk e apoio, direto no grafite.
+   * 140 px do topo da janela no desktop (84 + os 56 do cabeçalho fixo), como no design.
+   * `.page-header > .page` centraliza o conteúdo na mesma coluna do resto.
+   */
   .page-header {
+    padding-block: clamp(48px, 7vw, 84px) clamp(32px, 4vw, 56px);
+  }
+
+  .page-header h1 {
+    font-size: var(--step-5);
+    line-height: var(--leading-display);
+    letter-spacing: -0.03em;
+  }
+
+  .page-header > .page {
     display: grid;
-    gap: var(--space-4);
-    padding-block-end: var(--space-7);
-    margin-block-end: var(--space-7);
-    border-block-end: var(--border-hairline) solid var(--color-rule);
+    gap: var(--space-5);
   }
 
-  .card {
-    display: grid;
-    align-content: start;
-    gap: var(--space-3);
-    padding: var(--space-5);
-    background: var(--color-surface);
-    border: var(--border-hairline) solid var(--color-rule);
-    min-width: 0;
-  }
-
-  .card h2,
-  .card h3 {
-    font-size: var(--step-2);
-  }
-
+  /* Botão: pílula. O principal é branco (um por tela); o secundário, só o contorno. */
   .button {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
     min-height: 48px;
-    padding: var(--space-2) var(--space-5);
-    border: var(--border-hairline) solid var(--color-text);
-    border-radius: var(--radius-control);
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
+    padding: 0 var(--space-5);
+    border: var(--border-hairline) solid color-mix(in oklab, var(--color-text) 35%, transparent);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-text);
+    font-size: var(--step-0);
     font-weight: 500;
+    line-height: 1.5;
+    white-space: nowrap;
     color: var(--color-text);
     text-decoration: none;
     background: transparent;
-    transition: transform var(--dur-press) var(--ease-out);
+    cursor: pointer;
+    transition:
+      transform var(--dur-press) var(--ease-out),
+      border-color var(--dur-ui) ease,
+      background-color var(--dur-ui) ease;
   }
 
   .button:active {
@@ -350,20 +314,55 @@
   }
 
   .button--primary {
-    background: var(--color-accent);
-    border-color: var(--color-accent);
-    color: var(--color-on-accent);
+    background: var(--color-button);
+    border-color: var(--color-button);
+    color: var(--color-on-button);
   }
 
   @media (hover: hover) and (pointer: fine) {
     .button:hover {
       color: var(--color-text);
-      background: var(--color-band);
+      border-color: var(--color-text);
     }
 
     .button--primary:hover {
-      color: var(--color-on-accent);
-      background: var(--color-link-hover);
+      color: var(--color-on-button);
+      background: var(--color-text);
+      border-color: var(--color-text);
+    }
+  }
+
+  /* Filtro em pílula (assuntos): contorno fino; o atual fica creme cheio. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    height: 36px;
+    padding: 0 var(--space-4);
+    border: var(--border-hairline) solid color-mix(in oklab, var(--color-text) 22%, transparent);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--color-text-soft);
+    font: inherit;
+    font-size: 0.8125rem;
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color var(--dur-ui) ease,
+      border-color var(--dur-ui) ease,
+      color var(--dur-ui) ease;
+  }
+
+  .chip:is([aria-pressed='true'], [aria-current]) {
+    border-color: var(--color-text);
+    background: var(--color-text);
+    color: var(--color-bg);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .chip:hover:not([aria-pressed='true'], [aria-current]) {
+      border-color: var(--color-text);
+      color: var(--color-text);
     }
   }
 
@@ -376,37 +375,60 @@
   }
 
   .tags li {
-    padding: 0 var(--space-2);
+    padding: 2px var(--space-3);
     border: var(--border-hairline) solid var(--color-rule);
+    border-radius: var(--radius-pill);
     font-family: var(--font-mono);
-    font-size: var(--step--1);
+    font-size: var(--step--2);
+    color: var(--color-text-soft);
   }
 
-  /* Texto de leitura: 18 px / 1,7 e 62–68 caracteres por linha (spec §3). `ch` mede o "0", mais largo que a
-     letra média da Newsreader: 66ch dava ~78 caracteres. `--measure-article` é calibrado em em (teste e2e). */
+  /* Texto de leitura: 18 px / 1,75 em Inter Tight, coluna de 604 px (o contêiner de 700 px do design), o que dá
+     ~75 caracteres por linha. `--measure-article` é em `em` para acompanhar o tamanho da fonte (teste e2e). */
   .prose {
     max-width: var(--measure-article);
     font-size: var(--step-1);
     line-height: var(--leading-article);
+    color: var(--color-text-body);
   }
 
   .prose > * + * {
-    margin-block-start: var(--space-5);
+    margin-block-start: 26px;
+  }
+
+  .prose :is(h2, h3, strong) {
+    color: var(--color-text);
   }
 
   .prose h2 {
     margin-block-start: var(--space-8);
-    scroll-margin-block-start: var(--space-6);
+    font-size: var(--step-3);
+    line-height: var(--leading-heading);
+    letter-spacing: -0.01em;
   }
 
   .prose h3 {
     margin-block-start: var(--space-7);
-    scroll-margin-block-start: var(--space-6);
+  }
+
+  .prose a {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-text) 35%, transparent);
+  }
+
+  /* Nota em destaque dentro do texto: fundo e borda ciano bem leves. */
+  .prose blockquote {
+    margin-inline: 0;
+    padding: 20px var(--space-5);
+    border: var(--border-hairline) solid color-mix(in oklab, var(--color-accent) 20%, transparent);
+    background: color-mix(in oklab, var(--color-accent) 6%, transparent);
+    font-size: var(--step-0);
+    line-height: 1.6;
   }
 
   .prose h2 + *,
   .prose h3 + * {
-    margin-block-start: var(--space-4);
+    margin-block-start: 20px;
   }
 
   .prose ul,
@@ -419,20 +441,27 @@
   }
 
   .prose :not(pre) > code {
-    padding: 0 0.2em;
-    background: var(--color-band);
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 0.85em;
     overflow-wrap: anywhere;
   }
 
+  /* O bloco de código fica no tom mais fundo da paleta, com cantos retos. */
   .code-block {
     max-width: 100%;
     min-width: 0;
     border: var(--border-hairline) solid var(--color-rule);
-    background: var(--color-surface);
+    background: var(--color-code);
   }
 
   .code-block figcaption {
-    padding: var(--space-1) var(--space-3);
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--space-5);
     border-block-end: var(--border-hairline) solid var(--color-rule);
     font-family: var(--font-mono);
     font-size: var(--step--2);
@@ -441,9 +470,10 @@
 
   .code-block pre {
     margin: 0;
-    padding: var(--space-4);
+    padding: 18px var(--space-5);
     overflow-x: auto;
-    line-height: 1.6;
+    font-size: var(--step--1);
+    line-height: 1.7;
     tab-size: 2;
     background: transparent !important;
   }
@@ -468,18 +498,9 @@
     user-select: none;
   }
 
+  /* Só o tema escuro do Shiki: a paleta é única e escura. */
   .shiki span {
-    color: var(--shiki-light);
-  }
-
-  :root[data-theme='dark'] .shiki span {
     color: var(--shiki-dark);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme='light']) .shiki span {
-      color: var(--shiki-dark);
-    }
   }
 }
 
@@ -498,18 +519,25 @@
   }
 
   .entry__topic {
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
+    font-size: var(--step--2);
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .entry__topic a {
+    color: var(--color-accent);
   }
 
   .entry__title {
-    font-size: var(--step-4);
+    font-size: clamp(2.5rem, 1.2rem + 5vw, 4.5rem);
+    letter-spacing: -0.015em;
   }
 
   .entry__lead {
-    max-width: 52ch;
+    max-width: 38rem;
     font-size: var(--step-2);
-    line-height: 1.45;
+    line-height: 1.55;
     color: var(--color-text-soft);
   }
 
@@ -576,8 +604,8 @@
     overflow-wrap: anywhere;
   }
 
-  /* Desktop: cabeçalho nas colunas 1–8; a prosa (28,5em ≈ 5 colunas) fica à esquerda e o sumário fixo
-     encosta nela (colunas 7–9), sem o vão que as colunas 10–12 deixavam. */
+  /* Desktop: cabeçalho nas colunas 1–8; a prosa (33,5em) fica à esquerda nas colunas 1–7 e o sumário fixo
+     encosta nela (colunas 9–11). */
   @media (min-width: 1100px) {
     .entry {
       grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -595,14 +623,14 @@
     }
 
     .entry__body {
-      grid-column: 1 / span 6;
+      grid-column: 1 / span 7;
     }
 
     .entry__toc {
-      grid-column: 7 / span 3;
+      grid-column: 9 / span 3;
       grid-row: 2;
       position: sticky;
-      top: var(--space-6);
+      top: calc(var(--header-h) + var(--space-5));
     }
   }
 
@@ -627,7 +655,7 @@
         display: block;
         position: fixed;
         inset: 0 0 auto;
-        z-index: 10;
+        z-index: 50;
         height: 2px;
         background: var(--color-accent);
         transform-origin: 0 50%;

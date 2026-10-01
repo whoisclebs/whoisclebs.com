@@ -40,7 +40,6 @@ const keyRoutes = [
   '/escrita/github-actions-como-fazer-deploy/',
   '/notas/',
   '/notas/docker-healthcheck-para-servicos/',
-  '/agentes/',
   '/sobre/',
   '/contato/',
   '/livros/',

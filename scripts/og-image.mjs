@@ -41,11 +41,11 @@ export const CELL_GLYPHS = {
   '.': ['.', '.', '.', '.', '#'],
 }
 
-/** Primitivos `--p-*` do tokens.css (ex.: `paper`, `ink`, `blue`). */
+/** Primitivos `--p-*` do tokens.css (ex.: `ink`, `cream`, `cyan`). A paleta é única e escura: grafite, creme, ciano. */
 export function readPrimitives(css) {
   const colors = {}
   for (const match of css.matchAll(/--p-([a-z-]+):\s*(#[0-9a-f]{6})/gi)) colors[match[1]] = match[2].toLowerCase()
-  for (const name of ['paper', 'ink', 'ink-soft', 'grid', 'rule', 'blue']) {
+  for (const name of ['ink', 'cream', 'cream-soft', 'ink-raised', 'ink-line', 'cyan']) {
     if (!colors[name]) throw new Error(`tokens.css sem o primitivo --p-${name}`)
   }
   return colors
@@ -86,7 +86,7 @@ function grid(colors) {
   let d = ''
   for (let x = 30; x < OG_WIDTH; x += 30) d += `M${x} 0V${OG_HEIGHT}`
   for (let y = 30; y < OG_HEIGHT; y += 30) d += `M0 ${y}H${OG_WIDTH}`
-  return `<path d="${d}" stroke="${colors.grid}" stroke-width="1" shape-rendering="crispEdges" fill="none"/>`
+  return `<path d="${d}" stroke="${colors['ink-raised']}" stroke-width="1" shape-rendering="crispEdges" fill="none"/>`
 }
 
 function symbol(symbolPath, x, y, scale, fill) {
@@ -99,27 +99,27 @@ function symbol(symbolPath, x, y, scale, fill) {
  */
 export function ogSvg({ symbolPath, colors, kicker, title }) {
   const margin = 90
-  const parts = [`<rect width="${OG_WIDTH}" height="${OG_HEIGHT}" fill="${colors.paper}"/>`, grid(colors)]
+  const parts = [`<rect width="${OG_WIDTH}" height="${OG_HEIGHT}" fill="${colors.ink}"/>`, grid(colors)]
   const footer = cellText('WHOISCLEBS.COM', margin, 540, 4)
   if (!title) {
-    parts.push(symbol(symbolPath, margin, 150, 12, colors.ink))
+    parts.push(symbol(symbolPath, margin, 150, 12, colors.cream))
     const mark = cellText('WHOISCLEBS', 330, 162, 14)
-    parts.push(`<path fill="${colors.ink}" d="${mark.d}"/>`)
+    parts.push(`<path fill="${colors.cream}" d="${mark.d}"/>`)
     const line = cellText(kicker ?? 'ENGENHARIA DE SOFTWARE SEM TEATRO', 330, 282, fitCellSize(kicker ?? 'ENGENHARIA DE SOFTWARE SEM TEATRO', OG_WIDTH - 330 - margin, 6))
-    parts.push(`<path fill="${colors['ink-soft']}" d="${line.d}"/>`)
+    parts.push(`<path fill="${colors['cream-soft']}" d="${line.d}"/>`)
   } else {
-    parts.push(symbol(symbolPath, margin, 90, 4, colors.ink))
+    parts.push(symbol(symbolPath, margin, 90, 4, colors.cream))
     const mark = cellText('WHOISCLEBS', margin + 90, 104, 7)
-    parts.push(`<path fill="${colors.ink}" d="${mark.d}"/>`)
+    parts.push(`<path fill="${colors.cream}" d="${mark.d}"/>`)
     const label = cellText(kicker ?? 'ESTUDO DE CASO', margin, 240, 6)
-    parts.push(`<path fill="${colors.blue}" d="${label.d}"/>`)
+    parts.push(`<path fill="${colors.cyan}" d="${label.d}"/>`)
     const size = fitCellSize(title, OG_WIDTH - 2 * margin, 26)
     const big = cellText(title, margin, 300, size)
-    parts.push(`<path fill="${colors.ink}" d="${big.d}"/>`)
+    parts.push(`<path fill="${colors.cream}" d="${big.d}"/>`)
     // Cursor sublinhado depois do nome, como no símbolo ("C_").
-    parts.push(`<rect x="${margin + big.width + size}" y="${300 + 4 * size}" width="${2 * size}" height="${size}" fill="${colors.blue}"/>`)
+    parts.push(`<rect x="${margin + big.width + size}" y="${300 + 4 * size}" width="${2 * size}" height="${size}" fill="${colors.cyan}"/>`)
   }
-  parts.push(`<path d="M${margin} 510H${OG_WIDTH - margin}" stroke="${colors.rule}" stroke-width="2" shape-rendering="crispEdges"/>`)
-  parts.push(`<path fill="${colors['ink-soft']}" d="${footer.d}"/>`)
+  parts.push(`<path d="M${margin} 510H${OG_WIDTH - margin}" stroke="${colors['ink-line']}" stroke-width="2" shape-rendering="crispEdges"/>`)
+  parts.push(`<path fill="${colors['cream-soft']}" d="${footer.d}"/>`)
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${OG_WIDTH}" height="${OG_HEIGHT}" viewBox="0 0 ${OG_WIDTH} ${OG_HEIGHT}">${parts.join('')}</svg>\n`
 }

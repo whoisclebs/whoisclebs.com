@@ -1,6 +1,7 @@
 <script lang="ts">
   import Comments from '$lib/components/Comments.svelte'
   import NewsletterCta from '$lib/components/NewsletterCta.svelte'
+  import EntryAside from '$lib/components/writing/EntryAside.svelte'
   import EntryMeta from '$lib/components/writing/EntryMeta.svelte'
   import { getMessages } from '$lib/i18n'
   import { pages } from '$lib/routing/paths'
@@ -16,6 +17,10 @@
 <!-- Linha de progresso: só decorativa (aria-hidden), CSS scroll-driven, some com reduced motion. -->
 <div class="reading-progress" aria-hidden="true"></div>
 
+<!-- Leitura longa sobre o grafite liso. O cabeçalho é parte da grade de 12 colunas do artigo (título +
+     sumário fixo), não um hero à parte; o link de volta fica no topo, como no design. -->
+<div class="page page-body">
+<p class="entry__back"><a class="link-arrow" href={pages.writing[data.locale]}><span aria-hidden="true">←</span> {t.writing.back}</a></p>
 <article class="entry" class:entry--with-toc={data.showToc}>
   <header class="entry__header">
     <p class="entry__topic"><a href={data.topicHref}>{post.topic.label}</a></p>
@@ -44,27 +49,36 @@
     </div>
 
     {#if post.sources.length > 0}
-      <section class="entry__aside" aria-labelledby="sources-title">
-        <h2 id="sources-title" class="entry__aside-title">{sourcesLabel}</h2>
-        <ul>
-          {#each post.sources as source (source)}<li><a href={source} rel="noopener noreferrer">{source}</a></li>{/each}
-        </ul>
-      </section>
+      <EntryAside id="sources-title" title={sourcesLabel} items={post.sources.map((source) => ({ href: source, label: source }))} mono external />
     {/if}
 
     {#if data.relatedProjects.length > 0}
-      <section class="entry__aside" aria-labelledby="related-title">
-        <h2 id="related-title" class="entry__aside-title">{t.writing.relatedProjects}</h2>
-        <ul>
-          {#each data.relatedProjects as project (project.slug)}<li><a href={project.href}>{project.name}</a></li>{/each}
-        </ul>
-      </section>
+      <EntryAside id="related-title" title={t.writing.relatedProjects} items={data.relatedProjects.map((project) => ({ href: project.href, label: project.name }))} />
     {/if}
 
     <Comments locale={data.locale} term={data.commentTerm} />
 
     <NewsletterCta locale={data.locale} />
-
-    <p class="entry__back"><a href={pages.writing[data.locale]}>{t.writing.back}</a></p>
   </div>
 </article>
+</div>
+
+<style>
+  .entry__back {
+    margin-block-end: var(--space-6);
+  }
+
+  .entry__back > a > span {
+    display: inline-block;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .entry__back > a:hover {
+      color: var(--color-link-hover);
+    }
+
+    .entry__back > a:hover > span {
+      transform: translateX(-3px);
+    }
+  }
+</style>

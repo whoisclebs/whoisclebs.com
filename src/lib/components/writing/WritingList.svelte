@@ -32,21 +32,20 @@
 </script>
 
 <!--
-  Índice editorial (não grade de cartões): uma linha por texto, com data, título, resumo, assunto e tempo
-  de leitura em colunas fixas quando há largura (container query), empilhado no celular.
+  Índice editorial (não grade de cartões): uma linha por texto, no desenho da lista do design. À esquerda a meta
+  (assunto em ciano · tempo de leitura · data) e o título; à direita o resumo em tom apagado. Empilhado no celular.
+  A ordem no DOM segue a leitura (data, título, resumo, fatos); a grade só reposiciona.
 -->
 <ol class="writing-list list-reset">
   {#each items as item (`${item.kind ?? 'article'}:${item.slug}`)}
-    <li class="row target">
+    <li class="row">
       <p class="row__date">
         <time datetime={item.date}>{dateStyle === 'day' ? formatDayMonth(item.date, locale) : formatDate(item.date, locale)}</time>
       </p>
-      <div class="row__main">
-        <svelte:element this={`h${headingLevel}`} class="row__title">
-          <a href={item.href} hreflang={item.hreflang}>{item.title}</a>
-        </svelte:element>
-        <p class="row__excerpt">{item.excerpt}</p>
-      </div>
+      <svelte:element this={`h${headingLevel}`} class="row__title">
+        <a href={item.href} hreflang={item.hreflang}>{item.title}</a>
+      </svelte:element>
+      <p class="row__excerpt">{item.excerpt}</p>
       <p class="row__facts">
         {#if showKind}
           <span class="row__kind">{item.kind === 'note' ? t.home.writing.note : t.home.writing.article}</span>
@@ -56,7 +55,7 @@
         {:else}
           <span class="row__topic">{item.topic.label}</span>
         {/if}
-        <span>{format(t.writing.minutesRead, { n: item.readingMinutes })}</span>
+        <span class="row__time">{format(t.writing.minutesRead, { n: item.readingMinutes })}</span>
       </p>
     </li>
   {/each}
@@ -65,97 +64,58 @@
 <style>
   .writing-list {
     container-type: inline-size;
-    border-block-start: var(--border-hairline) solid var(--color-text);
+    border-block-start: var(--border-hairline) solid var(--color-rule);
   }
 
   .row {
     display: grid;
     grid-template-areas:
-      'date'
-      'main'
-      'facts';
+      'facts'
+      'title'
+      'excerpt'
+      'date';
     gap: var(--space-2);
-    padding-block: var(--space-5);
-    border-block-end: var(--border-hairline) solid var(--color-rule);
+    padding-block: 26px;
+    border-block-end: var(--border-hairline) solid var(--color-rule-soft);
   }
 
   .row__date {
     grid-area: date;
     font-family: var(--font-mono);
-    font-size: var(--step--1);
+    font-size: var(--step--2);
     font-variant-numeric: tabular-nums;
     color: var(--color-text-faint);
   }
 
-  .row__main {
-    grid-area: main;
-    display: grid;
-    gap: var(--space-2);
-    min-width: 0;
-  }
-
   .row__title {
-    font-family: var(--font-text);
-    font-size: var(--step-2);
-    font-weight: 600;
-    line-height: 1.25;
-    letter-spacing: normal;
+    grid-area: title;
+    font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.625rem);
+    line-height: var(--leading-heading);
+    letter-spacing: -0.015em;
     text-wrap: balance;
   }
 
   .row__title a {
-    display: inline-block;
     color: var(--color-text);
-    text-decoration-color: var(--color-rule);
-    transition: transform 220ms var(--ease-out);
-  }
-
-  /* Linha-alvo (base.css): o título avança um passo e a data acende junto com os cantos. */
-  .row__date {
+    text-decoration: none;
     transition: color var(--dur-ui) ease;
   }
 
-  .row:has(:focus-visible) .row__title a {
-    transform: translateX(4px);
-  }
-
-  .row:has(:focus-visible) .row__date {
-    color: var(--color-text);
-  }
-
+  /* Hover da linha: só o título acende em ciano (200 ms), sem deslocamento. */
   @media (hover: hover) and (pointer: fine) {
     .row:hover .row__title a {
-      transform: translateX(4px);
-    }
-
-    .row:hover .row__date {
-      color: var(--color-text);
+      color: var(--color-accent);
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .row__title a,
-    .row:has(:focus-visible) .row__title a {
-      transform: none;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .row:hover .row__title a {
-        transform: none;
-      }
-    }
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .row__title a:hover {
-      color: var(--color-link-hover);
-      text-decoration-color: currentColor;
-    }
+  .row:has(.row__title a:focus-visible) .row__title a {
+    color: var(--color-accent);
   }
 
   .row__excerpt {
+    grid-area: excerpt;
     max-width: 60ch;
-    color: var(--color-text-soft);
+    color: var(--color-text-faint);
     font-size: var(--step-0);
     line-height: 1.55;
   }
@@ -164,9 +124,13 @@
     grid-area: facts;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-1) var(--space-4);
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
+    align-items: center;
+    gap: var(--space-1) var(--space-3);
+    font-size: var(--step--2);
+    font-weight: 500;
+    letter-spacing: var(--tracking-label);
+    line-height: var(--leading-ui);
+    text-transform: uppercase;
     color: var(--color-text-faint);
   }
 
@@ -174,18 +138,39 @@
     color: var(--color-text);
   }
 
-  /* Com largura, data | texto | fatos em colunas fixas: o olho desce pela coluna das datas. */
+  .row__facts a.row__topic {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .row__facts a.row__topic:hover {
+      text-decoration: underline;
+    }
+  }
+
+  /* O separador "·" entre assunto e tempo é decoração (cor muda, não entra no texto lido). */
+  .row__facts > * + *::before {
+    content: '·';
+    margin-inline-end: var(--space-3);
+    color: var(--color-text-mute);
+  }
+
+  /* Com largura: meta e título à esquerda, resumo à direita, data embaixo da meta. */
   @container (min-width: 640px) {
     .row {
-      grid-template-columns: 9.5rem minmax(0, 1fr) 11rem;
-      grid-template-areas: 'date main facts';
-      column-gap: var(--space-5);
-      align-items: baseline;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      grid-template-areas:
+        'facts excerpt'
+        'title excerpt'
+        'date excerpt';
+      column-gap: var(--space-7);
+      align-content: start;
     }
 
-    .row__facts {
-      flex-direction: column;
-      align-items: flex-start;
+    .row__excerpt {
+      align-self: center;
+      grid-row: 1 / -1;
     }
   }
 </style>

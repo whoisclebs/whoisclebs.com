@@ -2,7 +2,7 @@ import type { Handle, HandleServerError } from '@sveltejs/kit'
 import { localeFromPath } from '$lib/i18n'
 import { LEGACY_REDIRECT_STATUS, resolveLegacyRedirect } from '$lib/routing/redirects'
 
-/** Cabeçalhos para respostas dinâmicas do Worker; assets estáticos usam `static/_headers`. */
+/** Cabeçalhos para respostas dinâmicas do Worker; assets estáticos usam o `_headers` da raiz (o adapter-cloudflare o copia para o build). */
 const securityHeaders: Record<string, string> = {
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'DENY',

@@ -1,111 +1,107 @@
 /*
- * WHOISCLEBS — tokens do design system "Amanhecer por rolagem", com a paleta da noite do
- * farol: azuis noturnos, creme das paredes, branco-estrela e o amarelo-pálido da lâmpada como acento.
- * Framework-agnóstico: só custom properties.
- * Contraste de cada par real (dia, escuro, noite, aurora e o hero sobre o vídeo) verificado por
- * scripts/check-contrast.mjs (AA).
+ * WHOISCLEBS — tokens do design system. Paleta única, escura: grafite, creme e um acento ciano, vinda do
+ * projeto no Claude Design (whoisclebs.dc.html). Substitui a noite do farol (decisão 104).
+ * Framework-agnóstico: só custom properties. Não há tema claro nem alternância por `prefers-color-scheme`.
+ * Contraste de cada par real verificado por scripts/check-contrast.mjs (AA) e, sobre o vídeo do hero, no e2e.
  *
- * A página segue o nascer do sol visto do ponto mais oriental das Américas, em faixas que passam uma para a
- * outra por degradês:
- *   noite  → hero, topo das páginas internas e rodapé (`.band-night`; o rodapé soma `.band-sky`);
- *   aurora → a home depois do hero (`.band-aurora`): céu noturno índigo com estrelas e via láctea;
- *   dia    → leitura longa (projetos, escrita, artigos): o tema padrão, sem classe.
- * As faixas redefinem os mesmos tokens semânticos, então um componente muda de faixa sem variante própria.
+ * Superfícies:
+ *   página   → `--color-bg` (grafite #141518): todo o site;
+ *   funda    → `--color-band` (#0b0c10): o hero da home, blocos de código, telas (terminal, console de bolso);
+ *   elevada  → `--color-surface` (#1b1c21): painéis sobre a página (atalhos, cartões de formulário).
+ * O rosa (`--color-hot`) é só dos easter eggs (modo neon, comida da serpente): nunca em texto corrido.
  *
  * Camadas: primitivos (--p-*) → semânticos (--color-*, --font-*, --step-*, ...).
  */
 @layer tokens {
   :root {
-    /* ---------- Primitivos: dia (papel frio, não creme) ---------- */
-    --p-paper: #eceef1;          /* papel frio, levemente azulado */
-    --p-paper-raised: #f6f7f9;
-    --p-paper-deep: #dfe3e9;
-    --p-ink: #16181d;
-    --p-ink-soft: #454951;
-    --p-ink-faint: #585c66;
-    --p-rule: #b3bac5;           /* fio de 1 px (não é texto) */
-    --p-grid: #d5dae2;           /* linhas de apoio (não é texto) */
-    --p-blue: #2236d8;           /* tinta azul: links no papel */
-    --p-blue-deep: #18279f;
-    --p-green: #1d6b43;          /* estado "ao vivo": sempre com rótulo */
-    --p-sun-deep: #1d3d7a;       /* azul-marinho do céu do farol: foco e fios no papel */
+    /* ---------- Primitivos: grafite ---------- */
+    --p-ink: #141518;
+    --p-ink-deep: #0b0c10;
+    --p-ink-raised: #1b1c21;
+    --p-ink-line: #333334;       /* creme a 14 % sobre o grafite: fios e bordas */
+    --p-ink-line-soft: #2a2b2d;  /* creme a 10 %: fios internos de listas */
 
-    /* ---------- Primitivos: noite ---------- */
-    --p-night: #0b1120;
-    --p-night-raised: #151d33;
-    --p-night-deep: #080d19;
-    --p-on-night: #eeeee6;       /* creme das paredes do farol */
-    --p-on-night-soft: #bcc3d1;
-    --p-on-night-faint: #a6aebf;
-    --p-night-rule: #2f3a55;
-    --p-night-grid: #1b2439;
-    --p-blue-night: #a3b0ff;
-    --p-green-night: #6fd39a;
-    --p-sun: #f2e6a0;            /* amarelo-pálido da lâmpada do farol: acento (CTA, fios, foco) sobre a noite */
-
-    /* ---------- Primitivos: céu da jornada da home (noite índigo com via láctea) ---------- */
-    --p-cosmos: #0a0e20;         /* céu depois do hero: índigo quase preto */
-    --p-cosmos-raised: #121830;
-    --p-cosmos-lit: #1e2444;     /* ponto mais claro da via láctea: é o fundo de referência do contraste */
-    --p-on-aurora: #eeeee6;
-    --p-on-aurora-soft: #c9cfdd;
-    --p-aurora-rule: #2e3658;
-    --p-sun-light: #f2e6a0;      /* a mesma luz da lâmpada: links, foco e acentos no céu */
-
-    /* ---------- Primitivos: céu do farol (rodapé) ---------- */
-    --p-sky-top: #10295c;        /* topo do céu da ilustração do rodapé (amostrado da imagem) */
-    --p-sky-deep: #0c1a3a;
-    --p-on-sky-soft: #eceef3;
-    --p-on-sky-faint: #e8ebf1;
-    --p-ground: #0b1510;         /* chão noturno sob a grama, faixa do colofão */
-
+    /* ---------- Primitivos: creme ---------- */
+    --p-cream: #efe9e0;          /* títulos, links, texto forte */
+    --p-cream-body: #d9d4cb;     /* corpo de leitura longa */
+    --p-cream-soft: #b9b4ab;     /* apoio, resumos, navegação */
+    --p-cream-faint: #8e8a82;    /* metadados; menor tom que passa AA sobre a página */
+    --p-cream-mute: #6f6b64;     /* só decorativo (separadores "·"): não passa AA para texto */
     --p-white: #ffffff;
+    --p-black: #111111;
 
-    /* ---------- Semânticos de cor (dia, tema claro) ---------- */
-    color-scheme: light;
-    --color-bg: var(--p-paper);
-    --color-page: var(--p-paper);      /* fundo da página fora das faixas (transições entre faixas) */
-    --color-surface: var(--p-paper-raised);
-    --color-band: var(--p-paper-deep);
-    --color-text: var(--p-ink);
-    --color-text-soft: var(--p-ink-soft);
-    --color-text-faint: var(--p-ink-faint);
-    --color-rule: var(--p-rule);
-    --color-grid: var(--p-grid);
-    --color-link: var(--p-blue);
-    --color-link-hover: var(--p-blue-deep);
-    --color-accent: var(--p-ink);
-    --color-on-accent: var(--p-paper);
-    --color-focus: var(--p-sun-deep);
+    /* ---------- Primitivos: acentos ---------- */
+    --p-cyan: #5fd3e6;           /* acento: rótulos, setas, foco, hover de link */
+    --p-pink: #ed1aa0;           /* easter eggs */
+    --p-green: #6fd39a;          /* estado "ativo" */
+
+    /* ---------- Primitivos: objetos (fora da paleta de propósito: são papel e plástico) ---------- */
+    --p-print: #f4f1ea;          /* margem das fotos em papel */
+    --p-print-ink: #2a2a2e;      /* legenda sobre o papel */
+    --p-shell: #2b2d33;          /* carcaça do console de bolso e dos dispositivos */
+    --p-shell-key: #3a3c44;
+    --p-shell-dark: #1a1b1f;
+    --p-ember: #e8603c;          /* botão de ação do console */
+    --p-ember-deep: #8a331c;
+    --p-brass: #c9a24a;          /* contatos do cartucho */
+
+    /* ---------- Semânticos de cor ---------- */
+    color-scheme: dark;
+    --color-bg: var(--p-ink);
+    --color-page: var(--p-ink);
+    --color-surface: var(--p-ink-raised);
+    --color-band: var(--p-ink-deep);
+    --color-code: var(--p-ink-deep);
+    --color-text: var(--p-cream);
+    --color-text-body: var(--p-cream-body);
+    --color-text-soft: var(--p-cream-soft);
+    --color-text-faint: var(--p-cream-faint);
+    --color-text-mute: var(--p-cream-mute);
+    --color-rule: var(--p-ink-line);
+    --color-rule-soft: var(--p-ink-line-soft);
+    --color-grid: var(--p-ink-raised);
+    --color-link: var(--p-cream);
+    --color-link-hover: var(--p-cyan);
+    --color-accent: var(--p-cyan);
+    --color-on-accent: var(--p-ink);
+    --color-button: var(--p-white);       /* o CTA principal: pílula branca, uma por tela */
+    --color-on-button: var(--p-black);
+    --color-focus: var(--p-cyan);
     --color-status-live: var(--p-green);
-    --color-mark: var(--p-ink);          /* símbolo */
-    --color-sun: var(--p-sun-deep);      /* fio do horizonte, sol das células (decorativo) */
+    --color-mark: var(--p-cream);
+    --color-hot: var(--p-pink);
+    --color-print: var(--p-print);        /* fotos em papel: margem e legenda */
+    --color-print-ink: var(--p-print-ink);
 
     /* ---------- Tipografia ---------- */
-    /* Licença SIL OFL 1.1; WOFF2 local, subset latin. Uma família display só: Anton (condensada). */
-    --font-display: 'Anton', 'Anton Fallback', Impact, 'Arial Narrow', sans-serif;
-    --font-text: 'Newsreader', 'Newsreader Fallback', Georgia, 'Times New Roman', serif;
-    --font-mono: 'IBM Plex Mono', 'IBM Plex Mono Fallback', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    /* Licença SIL OFL 1.1; WOFF2 local variável, subset latin. */
+    --font-display: 'Space Grotesk', 'Space Grotesk Fallback', system-ui, sans-serif;
+    --font-text: 'Inter Tight', 'Inter Tight Fallback', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    --weight-display: 600;
 
-    /* Escala: texto base 18 px; razão ~1.25 no corpo, títulos fluidos. */
-    --step--2: 0.75rem;                                        /* 12 px — mínimo absoluto (mono) */
-    --step--1: 0.875rem;                                       /* 14 px — mono de dados, legendas */
-    --step-0: 1rem;                                            /* 16 px — UI, botões, nav */
-    --step-1: 1.125rem;                                        /* 18 px — corpo */
-    --step-2: clamp(1.25rem, 1.05rem + 0.8vw, 1.5rem);         /* 20–24 — deck, lead */
-    --step-3: clamp(1.625rem, 1.2rem + 1.8vw, 2.375rem);       /* 26–38 — H2 */
-    --step-4: clamp(2.25rem, 1.4rem + 3.4vw, 3.75rem);         /* 36–60 — H1 de página */
-    --step-5: clamp(2.75rem, 1.2rem + 6.2vw, 6.25rem);         /* 44–100 — H1 da home */
+    /* Escala (do design): UI 13–17 px, leitura 18 px, títulos fluidos. */
+    --step--2: 0.75rem;                                         /* 12 px — rótulos em caixa alta, mono mínimo */
+    --step--1: 0.875rem;                                        /* 14 px — navegação, links de apoio */
+    --step-0: 1rem;                                             /* 16 px — UI, botões, resumos */
+    --step-body: 1.0625rem;                                     /* 17 px — texto padrão */
+    --step-1: 1.125rem;                                         /* 18 px — corpo de leitura */
+    --step-2: clamp(1.125rem, 0.95rem + 0.75vw, 1.375rem);      /* 18–22 — lead */
+    --step-3: clamp(1.75rem, 1.2rem + 2vw, 2.375rem);           /* 28–38 — H2 de artigo */
+    --step-4: clamp(2.125rem, 1.4rem + 3vw, 3.25rem);           /* 34–52 — H2 de seção */
+    --step-5: clamp(2.5rem, 1.2rem + 5.4vw, 4.75rem);           /* 40–76 — H1 de página */
+    --step-6: clamp(2.625rem, 1rem + 6.4vw, 5.75rem);           /* 42–92 — H1 da home */
 
     --leading-display: 1;
-    --leading-heading: 1.08;
+    --leading-heading: 1.1;
     --leading-text: 1.6;
-    --leading-article: 1.7;
+    --leading-article: 1.75;
     --leading-ui: 1.35;
-    --tracking-display: -0.01em;
-    --tracking-mono: 0.01em;
+    --tracking-display: -0.02em;
+    --tracking-label: 0.08em;          /* rótulos em caixa alta */
+    --tracking-mono: 0;
     --measure: 66ch;
-    --measure-article: 28.5em;         /* ≈ 66 caracteres de Newsreader a 18 px (medido no e2e) */
+    --measure-article: 33.5em;         /* coluna de 604 px a 18 px (contêiner de 700 px do design) */
     --measure-narrow: 44ch;
 
     /* ---------- Espaço e grade (quadrícula de 8 px) ---------- */
@@ -120,25 +116,25 @@
     --space-8: 64px;
     --space-9: 96px;
     --space-10: 128px;
-    --space-chapter: clamp(64px, 5rem + 5vw, 160px);
-    --page-max: 1360px;
-    --page-gutter: clamp(16px, 4vw, 64px);
+    --space-section: 72px;             /* entre seções da home */
+    --page-max: 1440px;
+    --page-gutter: clamp(20px, 4vw, 48px);
+    --header-h: 56px;
     --grid-columns: 4;                 /* < 640 px */
-    --grid-gap: 16px;
-    --grid-pattern-size: 24px;
+    --grid-gap: clamp(20px, 3vw, 48px);
 
     /* ---------- Forma ---------- */
     --border-hairline: 1px;
-    --radius-0: 0;
+    --radius-0: 0;                     /* cartões, imagens, blocos de código */
     --radius-control: 2px;
-    --shadow-press: 0 2px 0 var(--color-text);
+    --radius-pill: 30px;               /* CTAs, filtros, etiquetas */
     --focus-width: 2px;
     --focus-offset: 3px;
 
     /* ---------- Movimento ---------- */
     --dur-press: 120ms;
     --dur-tip: 140ms;
-    --dur-ui: 180ms;
+    --dur-ui: 200ms;
     --dur-scene: 320ms;
     --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
     --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
@@ -148,118 +144,13 @@
   @media (min-width: 640px) {
     :root {
       --grid-columns: 6;
-      --grid-gap: 24px;
     }
   }
 
   @media (min-width: 960px) {
     :root {
       --grid-columns: 12;
-      --grid-gap: 24px;
     }
-  }
-
-  /* ---------- Tema escuro: o "dia" vira noite de leitura (escolha do visitante) ---------- */
-  :root[data-theme='dark'] {
-    color-scheme: dark;
-    --color-bg: var(--p-night-raised);
-    --color-page: var(--p-night-raised);
-    --color-surface: var(--p-night);
-    --color-band: var(--p-night-deep);
-    --color-text: var(--p-on-night);
-    --color-text-soft: var(--p-on-night-soft);
-    --color-text-faint: var(--p-on-night-faint);
-    --color-rule: var(--p-night-rule);
-    --color-grid: var(--p-night-grid);
-    --color-link: var(--p-blue-night);
-    --color-link-hover: var(--p-on-night);
-    --color-accent: var(--p-on-night);
-    --color-on-accent: var(--p-night);
-    --color-focus: var(--p-sun);
-    --color-status-live: var(--p-green-night);
-    --color-mark: var(--p-on-night);
-    --color-sun: var(--p-sun);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme='light']) {
-      color-scheme: dark;
-      --color-bg: var(--p-night-raised);
-      --color-page: var(--p-night-raised);
-      --color-surface: var(--p-night);
-      --color-band: var(--p-night-deep);
-      --color-text: var(--p-on-night);
-      --color-text-soft: var(--p-on-night-soft);
-      --color-text-faint: var(--p-on-night-faint);
-      --color-rule: var(--p-night-rule);
-      --color-grid: var(--p-night-grid);
-      --color-link: var(--p-blue-night);
-      --color-link-hover: var(--p-on-night);
-      --color-accent: var(--p-on-night);
-      --color-on-accent: var(--p-night);
-      --color-focus: var(--p-sun);
-      --color-status-live: var(--p-green-night);
-      --color-mark: var(--p-on-night);
-      --color-sun: var(--p-sun);
-    }
-  }
-
-  /* ---------- Faixa: noite (hero, topo das páginas, rodapé). Igual nos dois temas. ---------- */
-  .band-night {
-    color-scheme: dark;
-    --color-bg: var(--p-night);
-    --color-surface: var(--p-night-raised);
-    --color-band: var(--p-night-deep);
-    --color-text: var(--p-on-night);
-    --color-text-soft: var(--p-on-night-soft);
-    --color-text-faint: var(--p-on-night-faint);
-    --color-rule: var(--p-night-rule);
-    --color-grid: var(--p-night-grid);
-    --color-link: var(--p-on-night);
-    --color-link-hover: var(--p-sun);
-    --color-accent: var(--p-sun);
-    --color-on-accent: var(--p-night);
-    --color-focus: var(--p-sun);
-    --color-status-live: var(--p-green-night);
-    --color-mark: var(--p-on-night);
-    --color-sun: var(--p-sun);
-    background-color: var(--color-bg);
-    color: var(--color-text);
-  }
-
-  /* ---------- Faixa: aurora = céu da jornada da home (depois do hero). Texto em creme, âmbar só de acento. ---------- */
-  /* O céu (estrelas, via láctea) fica em HomePage.svelte; aqui só as cores. `--color-bg` é o ponto mais claro
-     da via láctea (`--p-cosmos-lit`): o contraste é medido contra ele. */
-  .band-aurora {
-    color-scheme: dark;
-    --color-bg: var(--p-cosmos-lit);
-    --color-surface: var(--p-cosmos-raised);
-    --color-band: var(--p-cosmos);
-    --color-text: var(--p-on-aurora);
-    --color-text-soft: var(--p-on-aurora-soft);
-    --color-text-faint: var(--p-on-aurora-soft);
-    --color-rule: var(--p-aurora-rule);
-    --color-grid: var(--p-cosmos-raised);
-    --color-link: var(--p-sun-light);
-    --color-link-hover: var(--p-on-aurora);
-    --color-accent: var(--p-sun-light);
-    --color-on-accent: var(--p-cosmos);
-    --color-focus: var(--p-sun-light);
-    --color-status-live: var(--p-green-night);
-    --color-mark: var(--p-on-aurora);
-    --color-sun: var(--p-sun-light);
-    color: var(--color-text);
-    background-color: var(--p-cosmos);
-  }
-
-  /* ---------- Rodapé: céu do farol. Texto direto no céu da ilustração; medido no e2e sobre a imagem. ---------- */
-  .band-sky {
-    --color-bg: var(--p-sky-top);
-    --color-surface: var(--p-sky-deep);
-    --color-band: var(--p-sky-deep);
-    --color-text-soft: var(--p-on-sky-soft);
-    --color-text-faint: var(--p-on-sky-faint);
-    --color-rule: #3d5486;
   }
 
   /* Movimento reduzido: sem deslocamento; opacidade e cor continuam. */

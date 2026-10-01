@@ -1,5 +1,22 @@
+import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { builtFileFor, canonicalIssue, DYNAMIC_ENDPOINTS, dynamicEndpointFor, extractJsonLd, extractPageFacts, internalLinks, jsonLdIssues, manifestHasRoute } from './checks'
+import {
+  AI_CRAWLERS,
+  builtFileFor,
+  canonicalIssue,
+  DYNAMIC_ENDPOINTS,
+  dynamicEndpointFor,
+  extractJsonLd,
+  extractPageFacts,
+  internalLinks,
+  jsonLdIssues,
+  manifestHasRoute,
+  markdownAlternate,
+  markdownAlternateIssue,
+  markdownDocumentIssues,
+  markdownUrlFor,
+  robotsIssues,
+} from './checks'
 
 const page = (jsonLd: unknown, body = '') => `<!doctype html><html lang="pt-BR"><head>
 <link rel="canonical" href="https://whoisclebs.com/escrita/x/">
@@ -81,5 +98,62 @@ describe('endpoints dinâmicos citados em /llms*.txt', () => {
     const manifest = 'routes: [{ id: "/api/activity", pattern: /x/ }, { id: "/mcp", pattern: /y/ }]'
     expect(manifestHasRoute(manifest, '/mcp')).toBe(true)
     expect(manifestHasRoute(manifest.replace('"/mcp"', '"/outra"'), '/mcp')).toBe(false)
+  })
+})
+
+describe('versão Markdown de artigos e notas', () => {
+  it('a URL da .md troca a barra final por .md, só em artigos e notas', () => {
+    expect(markdownUrlFor('https://whoisclebs.com/escrita/x/')).toBe('https://whoisclebs.com/escrita/x.md')
+    expect(markdownUrlFor('https://whoisclebs.com/en/writing/x/')).toBe('https://whoisclebs.com/en/writing/x.md')
+    expect(markdownUrlFor('https://whoisclebs.com/notas/x/')).toBe('https://whoisclebs.com/notas/x.md')
+    for (const other of ['https://whoisclebs.com/escrita/', 'https://whoisclebs.com/escrita/assunto/devops/', 'https://whoisclebs.com/en/writing/topic/devops/', 'https://whoisclebs.com/sobre/', 'https://whoisclebs.com/projetos/tuxedo/']) {
+      expect(markdownUrlFor(other), other).toBeUndefined()
+    }
+  })
+
+  it('lê o <link rel="alternate" type="text/markdown"> do head', () => {
+    const html = '<head><link rel="alternate" hreflang="en" href="https://whoisclebs.com/en/"><link rel="alternate" type="text/markdown" href="https://whoisclebs.com/escrita/x.md"></head>'
+    expect(markdownAlternate(html)).toBe('https://whoisclebs.com/escrita/x.md')
+    expect(markdownAlternate('<head></head>')).toBeUndefined()
+  })
+
+  it('artigo e nota precisam do link para a própria .md; outras páginas não', () => {
+    const link = '<link rel="alternate" type="text/markdown" href="https://whoisclebs.com/escrita/x.md">'
+    expect(markdownAlternateIssue(link, 'https://whoisclebs.com/escrita/x/')).toBeUndefined()
+    expect(markdownAlternateIssue('', 'https://whoisclebs.com/escrita/x/')).toMatch(/sem <link rel="alternate" type="text\/markdown">/)
+    expect(markdownAlternateIssue(link, 'https://whoisclebs.com/notas/y/')).toMatch(/aponta para/)
+    expect(markdownAlternateIssue('', 'https://whoisclebs.com/sobre/')).toBeUndefined()
+    expect(markdownAlternateIssue(link, 'https://whoisclebs.com/sobre/')).toMatch(/não tem versão Markdown/)
+  })
+
+  it('o documento .md abre com H1, cita a página canônica e não traz front matter', () => {
+    const canonical = 'https://whoisclebs.com/escrita/x/'
+    expect(markdownDocumentIssues(`# Título\n\n- Canonical: ${canonical}\n\nTexto.\n`, canonical)).toEqual([])
+    const issues = markdownDocumentIssues('---\ntitle: x\n---\nTexto', canonical).join('\n')
+    expect(issues).toContain('H1')
+    expect(issues).toContain('front matter')
+    expect(issues).toContain(canonical)
+  })
+})
+
+describe('robots.txt', () => {
+  const allowAll = (agents: readonly string[]) => agents.map((agent) => `User-agent: ${agent}\nAllow: /\n`).join('\n')
+  const sitemap = 'Sitemap: https://whoisclebs.com/sitemap.xml\n'
+
+  it('aceita todos os crawlers de IA liberados, o grupo * e o sitemap', () => {
+    expect(robotsIssues(`# comentário\n${allowAll(AI_CRAWLERS)}\n${allowAll(['*'])}\n${sitemap}`)).toEqual([])
+  })
+
+  it('o static/robots.txt publicado passa na conferência', () => {
+    expect(robotsIssues(readFileSync('static/robots.txt', 'utf8'))).toEqual([])
+  })
+
+  it('reprova crawler ausente, bloqueio total, falta do grupo * e do sitemap', () => {
+    const [first, ...rest] = AI_CRAWLERS
+    const issues = robotsIssues(`${allowAll(rest)}\nUser-agent: GPTBot\nDisallow: /\n`).join('\n')
+    expect(issues).toContain(`${String(first)} sem grupo próprio`)
+    expect(issues).toContain('Disallow: /')
+    expect(issues).toContain('User-agent: *')
+    expect(issues).toContain('Sitemap')
   })
 })

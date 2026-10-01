@@ -113,8 +113,24 @@ export const projectSchema = z
 export type Project = z.infer<typeof projectSchema>
 export type ProjectStatus = z.infer<typeof projectStatusSchema>
 
+/**
+ * Livro da estante. Os campos opcionais o dono preenche quando quiser; o livro aberto mostra só o que
+ * existir: `note`/`noteEn` (por que recomenda, em cada idioma), `year` (ano da edição), `pages` (também
+ * dá a espessura da lombada) e `spine` (cor da lombada, #rrggbb, tirada da capa).
+ */
 export const bookSchema = z
-  .object({ title: nonEmpty, author: nonEmpty, image: httpsUrlSchema, link: httpsUrlSchema, affiliate: z.boolean() })
+  .object({
+    title: nonEmpty,
+    author: nonEmpty,
+    image: httpsUrlSchema,
+    link: httpsUrlSchema,
+    affiliate: z.boolean(),
+    note: nonEmpty.optional(),
+    noteEn: nonEmpty.optional(),
+    year: z.number().int().min(1450).max(2100).optional(),
+    pages: z.number().int().positive().max(5000).optional(),
+    spine: z.string().regex(/^#[0-9a-f]{6}$/i, 'spine deve ser uma cor #rrggbb').optional(),
+  })
   .strict()
 
 export const boardGameSchema = z

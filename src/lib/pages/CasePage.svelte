@@ -26,10 +26,10 @@
   const shortSha = $derived(study.revision.sha.slice(0, 7))
 </script>
 
-<article class="case">
-  <header class="case__head">
+<header class="page-header">
+  <div class="page case__head">
     <div class="case__intro">
-    <p class="case__crumb"><a href={pages.projects['pt-BR']}>Projetos</a> <span aria-hidden="true">/</span> Estudo de caso</p>
+    <p class="eyebrow case__crumb"><a href={pages.projects['pt-BR']}>Projetos</a> <span aria-hidden="true">/</span> Estudo de caso</p>
     <h1 class="case__title">{study.title}</h1>
     <p class="case__dek">{study.dek}</p>
     </div>
@@ -55,10 +55,14 @@
         <dd><a href={project.repo} rel="noopener noreferrer">{project.repo.replace('https://', '')}</a></dd>
       </div>
     </dl>
-  </header>
+  </div>
+</header>
+
+<div class="page page-body">
+<article class="case">
 
   <nav class="case__toc" aria-labelledby="case-toc-title">
-    <h2 id="case-toc-title" class="case__toc-title">Neste case</h2>
+    <h2 id="case-toc-title" class="eyebrow case__toc-title">Neste case</h2>
     <ol class="list-reset">
       {#each study.sections as section (section.id)}
         <li><a href="#{section.id}">{section.title}</a></li>
@@ -80,7 +84,7 @@
       </div>
 
       <aside class="case-section__sources" aria-labelledby="{section.id}-sources">
-        <h3 id="{section.id}-sources" class="case-section__sources-title">Fontes</h3>
+        <h3 id="{section.id}-sources" class="eyebrow case-section__sources-title">Fontes</h3>
         <ul class="list-reset">
           {#each section.sources as source (source.url)}
             <li><a href={source.url} rel="noopener noreferrer">{source.label}</a></li>
@@ -156,6 +160,7 @@
     <p><a href={pages.projects['pt-BR']}>Todos os projetos</a></p>
   </footer>
 </article>
+</div>
 
 <style>
   .case {
@@ -166,8 +171,6 @@
   .case__head {
     display: grid;
     gap: var(--space-5);
-    padding-block-end: var(--space-7);
-    border-block-end: var(--border-hairline) solid var(--color-text);
   }
 
   .case__intro {
@@ -176,15 +179,15 @@
     align-content: start;
   }
 
-  .case__crumb {
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    color: var(--color-text-faint);
+  .case__crumb a {
+    color: inherit;
   }
 
   .case__title {
-    font-size: var(--step-4);
-    max-width: 18ch;
+    font-size: var(--step-5);
+    line-height: var(--leading-display);
+    letter-spacing: -0.03em;
+    max-width: 20ch;
     text-wrap: balance;
   }
 
@@ -236,11 +239,9 @@
     border-block-end: var(--border-hairline) solid var(--color-rule);
   }
 
-  .case__toc-title {
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    font-weight: 400;
-    color: var(--color-text-faint);
+  .case__toc-title,
+  .case-section__sources-title {
+    font-family: var(--font-text);
   }
 
   .case__toc ol {
@@ -293,7 +294,8 @@
   .case-section__voice {
     justify-self: start;
     padding: var(--space-1) var(--space-3);
-    border: var(--border-hairline) dashed var(--color-text-soft);
+    border: var(--border-hairline) solid var(--color-rule);
+    border-radius: var(--radius-pill);
     font-family: var(--font-mono);
     font-size: var(--step--1);
     line-height: var(--leading-ui);
@@ -305,17 +307,10 @@
     align-content: start;
     gap: var(--space-2);
     padding-block-start: var(--space-3);
-    border-block-start: var(--border-hairline) solid var(--color-text);
+    border-block-start: var(--border-hairline) solid var(--color-rule);
     font-size: var(--step-0);
     line-height: var(--leading-ui);
     min-width: 0;
-  }
-
-  .case-section__sources-title {
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    font-weight: 400;
-    color: var(--color-text-faint);
   }
 
   .case-section__sources ul {
@@ -431,6 +426,12 @@
     font-family: var(--font-mono);
     font-size: var(--step--1);
     color: var(--color-text-faint);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .case__next a:hover {
+      color: var(--color-accent);
+    }
   }
 
   .case__next a {

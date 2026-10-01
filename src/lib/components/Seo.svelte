@@ -28,6 +28,9 @@
       <link rel="alternate" hreflang="x-default" href={absoluteUrl(ptAlternate)} />
     {/if}
   {/if}
+  {#if seo.markdown}
+    <link rel="alternate" type="text/markdown" href={absoluteUrl(seo.markdown)} />
+  {/if}
   <meta property="og:site_name" content="whoisclebs.com" />
   <meta property="og:locale" content={seo.locale === 'en' ? 'en_US' : 'pt_BR'} />
   <meta property="og:title" content={seo.title} />

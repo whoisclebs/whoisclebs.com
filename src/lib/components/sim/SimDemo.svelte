@@ -79,7 +79,7 @@
 
   .sim-demo__nojs {
     padding: var(--space-3) var(--space-4);
-    border: var(--border-hairline) dashed var(--color-text);
+    border: var(--border-hairline) solid var(--color-rule);
     max-width: 62ch;
   }
 

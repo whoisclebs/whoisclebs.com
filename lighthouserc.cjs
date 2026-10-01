@@ -21,7 +21,8 @@ module.exports = {
         `${base}/`,
         `${base}/projetos/tuxedo/`,
         `${base}/escrita/github-actions-como-fazer-deploy/`,
-        `${base}/agentes/`,
+        // /agentes/ saiu (404); o Sobre herdou a oferta de Arquitetura e tem as fotos e o cartucho.
+        `${base}/sobre/`,
         `${base}/contato/`,
       ],
       numberOfRuns: 3,

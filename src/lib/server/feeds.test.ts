@@ -53,11 +53,14 @@ describe('sitemap: rotas indexáveis, lastmod e hreflang', () => {
     }
   })
 
+  it('não lista /agentes/ (página removida, responde 404)', () => {
+    expect(entries.some((entry) => entry.path === '/agentes/')).toBe(false)
+  })
+
   it('lastmod vem da data de revisão do conteúdo', () => {
     const article = entries.find((entry) => entry.path === '/escrita/github-actions-como-fazer-deploy/')
     expect(article?.lastmod).toBe('2025-09-16')
     expect(entries.find((entry) => entry.path === '/projetos/tuxedo/')?.lastmod).toBe('2026-09-27')
-    expect(entries.find((entry) => entry.path === '/agentes/')?.lastmod).toBe('2026-09-27')
     for (const entry of entries) if (entry.lastmod) expect(entry.lastmod).toMatch(/^\d{4}-\d{2}-\d{2}$/)
   })
 

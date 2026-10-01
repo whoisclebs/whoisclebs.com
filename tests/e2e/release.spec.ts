@@ -1,15 +1,15 @@
-import AxeBuilder from '@axe-core/playwright'
-import { expect, test, type Page } from '@playwright/test'
+import { expect, test } from '@playwright/test'
+import { blockingViolations, scrollThrough } from './helpers'
 
 /**
  * o que faltava do portão final nas rotas-chave:
  * - sem erro de console, sem exceção de página e sem request 4xx/5xx inesperado (página inteira percorrida,
- *   rodapé com a atividade carregada);
- * - `prefers-reduced-motion`: nenhuma animação CSS e nenhuma transição de deslocamento/tamanho dispara ao
- *   carregar e rolar a página inteira (opacidade e cor continuam permitidas, como em tokens.css);
+ *   ilhas e vídeo do hero carregados);
+ * - `prefers-reduced-motion`: nenhuma animação nem transição de deslocamento/escala/tamanho dispara ao carregar
+ *   e rolar a página inteira (opacidade e cor continuam permitidas, como em tokens.css);
  * - nenhuma `<img>` acima da dobra sem `width`/`height` (390 e 1440 px), incluindo o 404 do Worker;
  * - axe claro/escuro nas rotas-chave que ainda não tinham (as demais estão em shell, writing, cases,
- *   agents, footer e simulator).
+ *   footer e simulator).
  * O overflow em 390/768/1440 de todas as rotas-chave já está em `shell.spec.ts` (grupo "layout").
  */
 
@@ -22,7 +22,6 @@ const keyRoutes = [
   '/escrita/github-actions-como-fazer-deploy/',
   '/notas/',
   '/notas/docker-healthcheck-para-servicos/',
-  '/agentes/',
   '/sobre/',
   '/contato/',
   '/livros/',
@@ -33,17 +32,6 @@ const keyRoutes = [
 const NOT_FOUND = '/rota-inexistente/'
 
 
-/** Rola até o fim em passos de uma tela (dispara IntersectionObserver do rodapé e do horizonte) e volta ao topo. */
-async function scrollThrough(page: Page) {
-  await page.evaluate(async () => {
-    for (let y = 0; y < document.documentElement.scrollHeight; y += window.innerHeight / 2) {
-      window.scrollTo(0, y)
-      await new Promise((resolve) => setTimeout(resolve, 40))
-    }
-    window.scrollTo(0, document.documentElement.scrollHeight)
-    await new Promise((resolve) => setTimeout(resolve, 200))
-  })
-}
 
 test.describe('console e rede limpos', () => {
   for (const path of keyRoutes) {
@@ -64,9 +52,9 @@ test.describe('console e rede limpos', () => {
 
       const response = await page.goto(path, { waitUntil: 'networkidle' })
       expect(response?.status()).toBe(path === NOT_FOUND ? 404 : 200)
+      // Rolar a página inteira traz as ilhas (aparelho da home, d20, estante) e o vídeo do hero.
       await scrollThrough(page)
-      // Só o HUD da home busca a atividade (o rodapé não tem mais essa região).
-      if (path === '/' || path === '/en/') await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
+      if (path === '/' || path === '/en/') await expect(page.locator('section.hero [data-shown]')).toHaveCount(1, { timeout: 10_000 })
       await page.waitForLoadState('networkidle')
       expect(problems).toEqual([])
     })
@@ -76,22 +64,39 @@ test.describe('console e rede limpos', () => {
 test.describe('prefers-reduced-motion', () => {
   test.use({ contextOptions: { reducedMotion: 'reduce' } })
 
+  /**
+   * A regra de tokens.css: com movimento reduzido não há deslocamento, escala nem mudança de tamanho; opacidade e
+   * cor continuam (um esmaecimento curto, como o da tampa do notebook ou do d20, é permitido). Por isso cada
+   * animação CSS é julgada pelas propriedades dos seus keyframes, e cada transição pela propriedade que muda.
+   */
   for (const path of keyRoutes) {
     test(`sem animação decorativa em ${path}`, async ({ page }) => {
-      // Registra, desde o primeiro script, toda animação CSS e toda transição que começar na página.
+      // Registra, desde o primeiro script, toda animação CSS e toda transição que começar na página, com as
+      // propriedades que ela anima.
       await page.addInitScript(() => {
+        const ALLOWED = /^(opacity|color|background-color|border-color|outline-color|fill|stroke|text-decoration-color|offset|composite|easing|computed-offset)$/
+        // `getKeyframes()` devolve as propriedades em camelCase (`backgroundColor`); as folhas de estilo, com hífen.
+        const kebab = (key: string) => key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)
         const started: string[] = []
         ;(window as unknown as { __motion: string[] }).__motion = started
         const describe = (target: EventTarget | null) => {
           const el = target as Element | null
           return el ? `${el.tagName.toLowerCase()}.${(el.getAttribute('class') ?? '').split(' ')[0]}` : '?'
         }
-        document.addEventListener('animationstart', (event) => started.push(`animation ${event.animationName} em ${describe(event.target)}`), true)
+        document.addEventListener(
+          'animationstart',
+          (event) => {
+            const target = event.target as Element
+            const animation = target.getAnimations().find((item) => (item as CSSAnimation).animationName === event.animationName)
+            const moved = (animation?.effect as KeyframeEffect | null)?.getKeyframes().flatMap((frame) => Object.keys(frame)).filter((key) => !ALLOWED.test(kebab(key))) ?? ['?']
+            if (moved.length) started.push(`animation ${event.animationName} (${[...new Set(moved)].join(', ')}) em ${describe(target)}`)
+          },
+          true,
+        )
         document.addEventListener(
           'transitionstart',
           (event) => {
-            // Opacidade e cor são permitidas com movimento reduzido; deslocamento, escala e tamanho não.
-            if (/^(opacity|color|background-color|border-color|outline-color|fill|stroke|text-decoration-color)$/.test(event.propertyName)) return
+            if (ALLOWED.test(event.propertyName)) return
             started.push(`transition ${event.propertyName} em ${describe(event.target)}`)
           },
           true,
@@ -99,18 +104,54 @@ test.describe('prefers-reduced-motion', () => {
       })
       await page.goto(path, { waitUntil: 'networkidle' })
       await scrollThrough(page)
-      // Só o HUD da home busca a atividade (o rodapé não tem mais essa região).
-      if (path === '/' || path === '/en/') await expect(page.locator('[data-hud-phase="done"]')).toBeVisible()
-      const motion = await page.evaluate(() => ({
-        started: (window as unknown as { __motion: string[] }).__motion,
-        running: document
-          .getAnimations()
-          .filter((animation) => animation.playState === 'running')
-          .map((animation) => (animation as CSSAnimation).animationName ?? (animation as CSSTransition).transitionProperty ?? 'script'),
-        declared: [...document.querySelectorAll('*')]
-          .filter((el) => getComputedStyle(el).animationName !== 'none')
-          .map((el) => `${el.tagName.toLowerCase()}: ${getComputedStyle(el).animationName}`),
-      }))
+      if (path === '/' || path === '/en/') await expect(page.locator('section.hero [data-shown]')).toHaveCount(1, { timeout: 10_000 })
+      await page.waitForTimeout(500)
+      const motion = await page.evaluate(() => {
+        const ALLOWED = /^(opacity|color|background-color|border-color|outline-color|fill|stroke|text-decoration-color|offset|composite|easing|computed-offset)$/
+        // `getKeyframes()` devolve as propriedades em camelCase (`backgroundColor`); as folhas de estilo, com hífen.
+        const kebab = (key: string) => key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)
+        /** Propriedades animadas por um @keyframes declarado nas folhas de estilo (inclusive dentro de @media). */
+        const keyframeProps = (name: string): string[] => {
+          const props = new Set<string>()
+          const visit = (rules: CSSRuleList) => {
+            for (const rule of rules) {
+              if (rule instanceof CSSKeyframesRule && rule.name === name) {
+                for (const frame of rule.cssRules) for (const prop of (frame as CSSKeyframeRule).style) props.add(prop)
+              } else if ('cssRules' in rule) visit((rule as CSSGroupingRule).cssRules)
+            }
+          }
+          for (const sheet of document.styleSheets) {
+            try {
+              visit(sheet.cssRules)
+            } catch {
+              // Folha de outra origem: as regras não são legíveis (o site não usa nenhuma).
+            }
+          }
+          return [...props]
+        }
+        return {
+          started: (window as unknown as { __motion: string[] }).__motion,
+          // Animações rodando agora que mexem em algo além de opacidade e cor.
+          running: document
+            .getAnimations()
+            .filter((animation) => animation.playState === 'running')
+            .filter((animation) => (animation.effect as KeyframeEffect | null)?.getKeyframes().some((frame) => Object.keys(frame).some((key) => !ALLOWED.test(kebab(key)))))
+            .map((animation) => (animation as CSSAnimation).animationName ?? (animation as CSSTransition).transitionProperty ?? 'script'),
+          // Elementos renderizados com uma animação declarada que desloca ou redimensiona (o que está em
+          // `display: none` não se move).
+          declared: [...document.querySelectorAll('*')]
+            .filter((el) => el.checkVisibility())
+            .map((el) => ({ el, name: getComputedStyle(el).animationName }))
+            .filter(({ name }) => name !== 'none')
+            .flatMap(({ el, name }) =>
+              name
+                .split(',')
+                .map((item) => item.trim())
+                .filter((item) => keyframeProps(item).some((prop) => !ALLOWED.test(prop)))
+                .map((item) => `${el.tagName.toLowerCase()}: ${item}`),
+            ),
+        }
+      })
       expect(motion).toEqual({ started: [], running: [], declared: [] })
     })
   }
@@ -140,11 +181,7 @@ test.describe('axe-core nas rotas-chave restantes', () => {
       test(`sem violações critical/serious em ${path} (${scheme})`, async ({ page }) => {
         await page.emulateMedia({ colorScheme: scheme })
         await page.goto(path)
-        const results = await new AxeBuilder({ page }).analyze()
-        const blocking = results.violations
-          .filter((violation) => violation.impact === 'critical' || violation.impact === 'serious')
-          .map((violation) => `${violation.id}: ${violation.nodes.map((node) => node.target.join(' ')).join(', ')}`)
-        expect(blocking).toEqual([])
+        expect(await blockingViolations(page)).toEqual([])
       })
     }
   }

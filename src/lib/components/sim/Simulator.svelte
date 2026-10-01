@@ -180,7 +180,7 @@
     display: grid;
     gap: var(--space-5);
     padding: var(--space-5);
-    border: 2px solid var(--color-text);
+    border: var(--border-hairline) solid var(--color-rule);
     background: var(--color-surface);
     min-width: 0;
   }
@@ -193,9 +193,11 @@
   .sim__label {
     justify-self: start;
     padding: var(--space-1) var(--space-3);
-    border: var(--border-hairline) dashed var(--color-text);
+    border: var(--border-hairline) solid var(--color-rule);
+    border-radius: var(--radius-pill);
     font-family: var(--font-mono);
     font-size: var(--step--1);
+    color: var(--color-text-soft);
   }
 
   .sim__title {
@@ -468,7 +470,7 @@
   .sim__summary {
     max-width: 62ch;
     padding-inline-start: var(--space-3);
-    border-inline-start: 2px solid var(--color-text);
+    border-inline-start: 2px solid var(--color-text-faint);
     font-size: var(--step-0);
   }
 

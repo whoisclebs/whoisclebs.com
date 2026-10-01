@@ -1,5 +1,56 @@
+# Índice do site para modelos de linguagem: https://whoisclebs.com/llms.txt
+# Artigos e notas também existem em Markdown (a mesma URL com .md no lugar da barra final).
+# Buscadores e crawlers de IA estão liberados.
+
+# Busca e respostas com IA
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# Treino de modelos
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+# Demais robôs
 User-agent: *
 Allow: /
 
 Sitemap: https://whoisclebs.com/sitemap.xml
-

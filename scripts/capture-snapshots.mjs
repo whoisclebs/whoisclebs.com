@@ -63,8 +63,6 @@ const siteRoutes = [
   { name: 'artigo-escuro', path: '/escrita/github-actions-como-fazer-deploy/', scheme: 'dark' },
   { name: 'notas', path: '/notas/' },
   { name: 'nota', path: '/notas/docker-healthcheck-para-servicos/' },
-  { name: 'agentes', path: '/agentes/' },
-  { name: 'agentes-escuro', path: '/agentes/', scheme: 'dark' },
   { name: 'sobre', path: '/sobre/' },
   { name: 'contato', path: '/contato/' },
   { name: 'livros', path: '/livros/' },

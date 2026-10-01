@@ -11,7 +11,6 @@ const pageTable = {
   notes: { 'pt-BR': '/notas/' },
   about: { 'pt-BR': '/sobre/', en: '/en/about/' },
   contact: { 'pt-BR': '/contato/' },
-  agents: { 'pt-BR': '/agentes/' },
   books: { 'pt-BR': '/livros/', en: '/en/books/' },
   hobbies: { 'pt-BR': '/hobbies/', en: '/en/hobbies/' },
   privacy: { 'pt-BR': '/privacy-policy/', en: '/en/privacy-policy/' },
@@ -50,6 +49,11 @@ export function projectPath(slug: string, locale: Locale): string {
 
 export function notePath(slug: string): string {
   return `/notas/${slug}/`
+}
+
+/** Versão Markdown de um artigo ou nota: a mesma URL com `.md` no lugar da barra final (`/notas/x/` → `/notas/x.md`). */
+export function markdownPath(path: string): string {
+  return `${path.replace(/\/$/, '')}.md`
 }
 
 export function absoluteUrl(path: string): string {

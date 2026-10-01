@@ -2,12 +2,11 @@
  * scripts/check-contrast.mjs
  *
  * Calcula o contraste WCAG 2.x dos pares texto/fundo declarados abaixo, lendo os
- * valores de src/styles/tokens.css (tema claro e escuro), e sai com código 1 se
- * algum par ficar abaixo do mínimo (AA: 4,5:1 texto normal; 3:1 texto grande,
- * foco e componentes de interface).
+ * valores de src/styles/tokens.css, e sai com código 1 se algum par ficar abaixo
+ * do mínimo (AA: 4,5:1 texto normal; 3:1 texto grande, foco e componentes de interface).
  *
- * Também confere que o bloco `prefers-color-scheme: dark` declara exatamente os
- * mesmos valores que `:root[data-theme='dark']`.
+ * A paleta é única e escura (grafite, creme, acento ciano): não há tema claro nem `prefers-color-scheme`.
+ * Também falha se um bloco de tema claro/escuro voltar a aparecer em tokens.css.
  *
  * Uso: node scripts/check-contrast.mjs [caminho/para/tokens.css]
  */
@@ -33,24 +32,15 @@ function block(selectorRe) {
   return vars
 }
 
-const light = block(/(^|\n)\s*:root\s*\{/)
-const darkAttr = block(/:root\[data-theme='dark'\]\s*\{/)
-const darkMedia = block(/:root:not\(\[data-theme='light'\]\)\s*\{/)
-const night = block(/\.band-night\s*\{/)
-const aurora = block(/\.band-aurora\s*\{/)
-const sky = block(/\.band-sky\s*\{/)
+const root = block(/(^|\n)\s*:root\s*\{/)
 /**
- * Faixas do amanhecer (passos 15 e 17). A aurora é o céu índigo da home: mede-se contra o ponto mais claro da
- * via láctea (`--p-cosmos-lit`, o `--color-bg` declarado) e contra o céu sem ela (`--p-cosmos`). O céu do rodapé é medido aqui contra o topo da ilustração (`--p-sky-top`) e, no e2e, contra os
- * pixels reais da imagem atrás de cada texto.
+ * Superfícies reais do site. O hero da home põe texto sobre o vídeo: ali o contraste é medido no e2e, contra os
+ * pixels atrás de cada texto; aqui entra o fundo sólido por baixo do vídeo (`--color-band`).
  */
 const themes = {
-  'dia (claro)': light,
-  'dia (escuro)': { ...light, ...darkAttr },
-  noite: { ...light, ...night },
-  aurora: { ...light, ...aurora },
-  'aurora (céu sem via láctea)': { ...light, ...aurora, '--color-bg': 'var(--p-cosmos)' },
-  'céu do rodapé': { ...light, ...night, ...sky },
+  página: root,
+  'superfície elevada (painéis)': { ...root, '--color-bg': 'var(--color-surface)' },
+  'superfície funda (hero, código, telas)': { ...root, '--color-bg': 'var(--color-band)' },
 }
 
 function resolve(vars, name, seen = new Set()) {
@@ -80,29 +70,22 @@ const LARGE = 3 // texto ≥ 24 px, ou ≥ 18,66 px em negrito; foco; bordas de 
 
 /** [primeiro plano, fundo, mínimo, uso] */
 const pairs = [
-  ['--color-text', '--color-bg', TEXT, 'corpo'],
-  ['--color-text', '--color-surface', TEXT, 'corpo em folha/campo'],
-  ['--color-text', '--color-band', TEXT, 'corpo em faixa de capítulo'],
-  ['--color-text-soft', '--color-bg', TEXT, 'texto secundário'],
-  ['--color-text-soft', '--color-surface', TEXT, 'texto secundário em folha'],
-  ['--color-text-soft', '--color-band', TEXT, 'texto secundário em faixa'],
-  ['--color-text-faint', '--color-bg', TEXT, 'metadados mono 12–14 px'],
-  ['--color-text-faint', '--color-surface', TEXT, 'metadados mono em folha'],
-  ['--color-text-faint', '--color-band', TEXT, 'metadados mono em faixa'],
+  ['--color-text', '--color-bg', TEXT, 'títulos e texto forte'],
+  ['--color-text-body', '--color-bg', TEXT, 'corpo de leitura'],
+  ['--color-text-soft', '--color-bg', TEXT, 'texto de apoio'],
+  ['--color-text-faint', '--color-bg', TEXT, 'metadados 12–14 px'],
   ['--color-link', '--color-bg', TEXT, 'link'],
-  ['--color-link', '--color-surface', TEXT, 'link em folha'],
-  ['--color-link', '--color-band', TEXT, 'link em faixa'],
   ['--color-link-hover', '--color-bg', TEXT, 'link hover'],
-  ['--color-on-accent', '--color-accent', TEXT, 'botão primário'],
-  ['--color-accent', '--color-bg', LARGE, 'borda do botão primário'],
+  ['--color-accent', '--color-bg', TEXT, 'rótulo em caixa alta (ciano)'],
+  ['--color-on-button', '--color-button', TEXT, 'botão principal (pílula branca)'],
+  ['--color-bg', '--color-text', TEXT, 'filtro ativo (pílula creme)'],
+  ['--color-button', '--color-bg', LARGE, 'contorno do botão principal'],
   ['--color-status-live', '--color-bg', TEXT, 'rótulo de estado'],
-  ['--color-status-live', '--color-surface', TEXT, 'rótulo de estado em folha'],
-  ['--color-focus', '--color-bg', LARGE, 'anel de foco e cantos'],
-  ['--color-focus', '--color-surface', LARGE, 'anel de foco em folha'],
-  ['--color-focus', '--color-band', LARGE, 'anel de foco em faixa'],
+  ['--color-focus', '--color-bg', LARGE, 'anel de foco'],
   ['--color-mark', '--color-bg', LARGE, 'símbolo (componente gráfico)'],
-  ['--color-sun', '--color-bg', LARGE, 'fio do horizonte e segmentos cheios do HUD (componente gráfico)'],
+  ['--color-print-ink', '--color-print', TEXT, 'legenda das fotos em papel'],
   ['--color-rule', '--color-bg', 1, 'fio decorativo (informativo)'],
+  ['--color-text-mute', '--color-bg', 1, 'separador decorativo (informativo; não usar em texto)'],
 ]
 
 let failures = 0
@@ -121,10 +104,9 @@ for (const [theme, vars] of Object.entries(themes)) {
   }
 }
 
-const mismatched = Object.keys({ ...darkAttr, ...darkMedia }).filter((k) => darkAttr[k] !== darkMedia[k])
-if (mismatched.length) {
+if (/data-theme|prefers-color-scheme/.test(css)) {
   failures++
-  console.log(`\nFALHA tema escuro divergente entre data-theme e prefers-color-scheme: ${mismatched.join(', ')}`)
+  console.log('\nFALHA tokens.css voltou a declarar tema claro/escuro (data-theme ou prefers-color-scheme)')
 }
 
 console.log(failures ? `\n${failures} falha(s) de contraste.` : `\nTodos os ${pairs.length * Object.keys(themes).length} pares passam em AA.`)

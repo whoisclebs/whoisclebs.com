@@ -11,23 +11,26 @@
   const feedHref = $derived(data.locale === 'en' ? '/rss/blog-en.xml' : '/rss/blog.xml')
 </script>
 
-<header class="writing-header">
-  <h1>{data.heading}</h1>
-  <p class="lead">{data.lead}</p>
+<header class="page-header">
+  <div class="page writing-header">
+    <h1>{data.heading}</h1>
+    <p class="lead">{data.lead}</p>
+  </div>
 </header>
 
+<div class="page page-body">
 <!-- Filtro por assunto = links para páginas prerenderizadas; funciona sem JS e cada filtro tem URL própria. -->
 <nav class="topics" aria-labelledby="topics-title">
-  <h2 id="topics-title" class="topics__title">{t.writing.topicsLabel}</h2>
+  <h2 id="topics-title" class="eyebrow topics__title">{t.writing.topicsLabel}</h2>
   <ul class="topics__list list-reset">
     <li>
-      <a href={pages.writing[data.locale]} aria-current={data.currentTopic ? undefined : 'page'}>
+      <a class="chip" href={pages.writing[data.locale]} aria-current={data.currentTopic ? undefined : 'page'}>
         {t.writing.allTopics} <span class="topics__count">{total}</span>
       </a>
     </li>
     {#each data.topics as topic (topic.slug)}
       <li>
-        <a href={topic.href} aria-current={data.currentTopic === topic.slug ? 'page' : undefined}>
+        <a class="chip" href={topic.href} aria-current={data.currentTopic === topic.slug ? 'page' : undefined}>
           {topic.label} <span class="topics__count">{topic.count}</span>
         </a>
       </li>
@@ -51,14 +54,15 @@
   {/if}
   <a href={feedHref} type="application/rss+xml">{t.writing.rss}</a>
 </p>
+</div>
 
 <style>
   .writing-header {
     display: grid;
     gap: var(--space-4);
-    padding-block-end: var(--space-7);
   }
 
+  /* Filtro por assunto: rótulo ciano e pílulas (`.chip`, global); fio fino em cima e embaixo. */
   .topics {
     display: grid;
     gap: var(--space-3);
@@ -68,11 +72,7 @@
   }
 
   .topics__title {
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    font-weight: 400;
-    letter-spacing: var(--tracking-mono);
-    color: var(--color-text-faint);
+    font-family: var(--font-text);
   }
 
   .topics__list {
@@ -81,36 +81,19 @@
     gap: var(--space-2);
   }
 
-  .topics__list a {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    min-height: 44px;
-    padding-inline: var(--space-4);
-    border: var(--border-hairline) solid var(--color-rule);
-    border-radius: var(--radius-control);
-    color: var(--color-text);
-    font-size: var(--step-0);
-    text-decoration: none;
-  }
-
-  .topics__list a[aria-current='page'] {
-    border-color: var(--color-text);
-    background: var(--color-text);
-    color: var(--color-bg);
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .topics__list a:not([aria-current='page']):hover {
-      border-color: var(--color-text);
-      color: var(--color-text);
+  /* No toque, o alvo chega a 44 px. */
+  @media (pointer: coarse) {
+    .topics__list :global(.chip) {
+      min-height: 44px;
     }
   }
 
   .topics__count {
+    margin-inline-start: var(--space-2);
     font-family: var(--font-mono);
-    font-size: var(--step--1);
+    font-size: var(--step--2);
     font-variant-numeric: tabular-nums;
+    opacity: 0.7;
   }
 
   /* Ano como marco à margem no desktop (colunas 1–2), lista nas colunas 3–12. */
@@ -123,6 +106,7 @@
   .year__label {
     font-size: var(--step-3);
     line-height: 1;
+    color: var(--color-text-faint);
   }
 
   @media (min-width: 960px) {
@@ -135,7 +119,7 @@
     .year__label {
       grid-column: 1 / span 2;
       position: sticky;
-      top: var(--space-6);
+      top: calc(var(--header-h) + var(--space-5));
       padding-block-start: var(--space-5);
     }
 
@@ -148,6 +132,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2) var(--space-5);
+    font-size: var(--step-0);
     color: var(--color-text-soft);
   }
 </style>

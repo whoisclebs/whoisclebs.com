@@ -8,11 +8,14 @@
   const t = $derived(getMessages(data.locale))
 </script>
 
-<header class="notes-header">
-  <h1>{t.notes.title}</h1>
-  <p class="lead">{t.notes.lead}</p>
+<header class="page-header">
+  <div class="page notes-header">
+    <h1>{t.notes.title}</h1>
+    <p class="lead">{t.notes.lead}</p>
+  </div>
 </header>
 
+<div class="page page-body">
 {#each data.years as group (group.year)}
   <section class="year" aria-labelledby={`ano-${group.year}`}>
     <h2 id={`ano-${group.year}`} class="year__label">
@@ -23,13 +26,18 @@
   </section>
 {/each}
 
-<p><a href="/rss/til.xml" type="application/rss+xml">{t.notes.rss}</a></p>
+<p class="notes-footer"><a href="/rss/til.xml" type="application/rss+xml">{t.notes.rss}</a></p>
+</div>
 
 <style>
   .notes-header {
     display: grid;
     gap: var(--space-4);
-    padding-block-end: var(--space-8);
+  }
+
+  .notes-footer {
+    font-size: var(--step-0);
+    color: var(--color-text-soft);
   }
 
   .year {
@@ -41,6 +49,7 @@
   .year__label {
     font-size: var(--step-3);
     line-height: 1;
+    color: var(--color-text-faint);
   }
 
   @media (min-width: 960px) {

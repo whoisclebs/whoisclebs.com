@@ -4,8 +4,9 @@
     o pôster.
   - Com movimento permitido, a ilha `notfound/cycle.ts` (import dinâmico) cria o <video> mudo em loop e marca a
     hora do céu (`data-sky`, informativo).
-  - Leitura sem véu nem halo em qualquer hora do vídeo: título creme com contorno preto e sombra dura (cartela
-    de animação), parágrafo numa etiqueta sólida no desenho das dicas do HUD e botões sólidos.
+  - Leitura em qualquer hora do vídeo: o texto fica numa coluna sobre um painel grafite opaco-translúcido
+    (`--color-bg`), nunca direto sobre a imagem; botões do site (o principal branco, o secundário com fundo).
+  - O conteúdo começa abaixo do cabeçalho fixo: o `main` já reserva `--header-h` e a seção desconta isso da altura.
   - O status HTTP continua 404 (o SvelteKit renderiza este componente com o status do erro).
   Outros erros (500 etc.) usam a mesma página sem o vídeo.
 -->
@@ -51,7 +52,7 @@
 </svelte:head>
 
 {#if notFound}
-  <section class="nf band-night" bind:this={root} data-sky="night" aria-labelledby="nf-title">
+  <section class="nf" bind:this={root} data-sky="night" aria-labelledby="nf-title">
     <div class="nf__media" aria-hidden="true">
       <picture>
         <source type="image/avif" srcset={POSTER.avif} />
@@ -83,9 +84,9 @@
     position: relative;
     isolation: isolate;
     display: grid;
-    min-height: max(560px, calc(100svh - 60px));
+    min-height: max(560px, calc(100svh - var(--header-h)));
     overflow: hidden;
-    background: #0c1a3a;
+    background: var(--color-band);
   }
 
   .nf__media {
@@ -123,57 +124,42 @@
     padding-block: clamp(32px, 7vh, 96px) var(--space-8);
   }
 
+  /* A coluna de texto é um painel grafite (92 % opaco): a leitura não depende da hora do vídeo. */
   .nf__copy {
     display: grid;
     justify-items: start;
     gap: var(--space-5);
     max-width: 34rem;
+    padding: var(--space-6);
+    background: color-mix(in oklab, var(--color-bg) 92%, transparent);
+    border: var(--border-hairline) solid var(--color-rule);
   }
 
-  /*
-   * Título creme com contorno fino por fora (`paint-order: stroke fill`, o contorno não come a letra) e uma
-   * sombra dura curta, sem desfoque: legível sobre o céu branco do dia e sobre a noite, sem véu nem halo.
-   * 2 px no "404" (1,5 px no celular), 1 px no subtítulo.
-   */
   .nf__title {
     display: grid;
     gap: var(--space-2);
-    font-weight: 400;
-    color: var(--p-on-night);
-    paint-order: stroke fill;
-    -webkit-text-stroke-color: #080d19;
+    color: var(--color-text);
   }
 
   .nf__code {
     display: block;
-    font-family: var(--font-display);
-    font-size: clamp(7rem, 4rem + 16vw, 15rem);
-    line-height: 0.85;
-    letter-spacing: 0.01em;
-    -webkit-text-stroke-width: 2px;
-    text-shadow: 3px 3px 0 #080d19;
+    font-size: clamp(5rem, 3rem + 12vw, 9rem);
+    line-height: var(--leading-display);
+    letter-spacing: -0.04em;
+    color: var(--color-accent);
   }
 
   .nf__name {
-    font-family: var(--font-display);
     font-size: var(--step-3);
     line-height: var(--leading-heading);
-    letter-spacing: 0.01em;
-    -webkit-text-stroke-width: 1px;
-    text-shadow: 2px 2px 0 #080d19;
+    letter-spacing: -0.02em;
   }
 
-  /* O parágrafo num painel sólido, como os outros do site (dicas do HUD): noite opaca e fio de 1 px da lâmpada. */
   .nf__text {
     max-width: 38ch;
-    padding: var(--space-3) var(--space-4);
-    border: var(--border-hairline) solid var(--p-sun);
-    border-radius: var(--radius-control);
-    background: var(--p-night-raised);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06);
-    color: var(--p-on-night);
     font-size: var(--step-1);
     line-height: 1.55;
+    color: var(--color-text-body);
   }
 
   .nf__links {
@@ -182,9 +168,9 @@
     gap: var(--space-3);
   }
 
-  /* O mesmo botão do site; o secundário ganha o fundo da noite para não depender do céu atrás. */
+  /* O botão secundário ganha o fundo do painel para não depender da imagem atrás. */
   .nf__links :global(.button:not(.button--primary)) {
-    background: var(--p-night-raised);
+    background: var(--color-bg);
   }
 
   @media (max-width: 639px) {
@@ -194,18 +180,17 @@
     }
 
     .nf__copy {
-      max-width: min(20rem, 80vw);
+      padding: var(--space-5);
     }
 
     .nf__code {
-      font-size: 6.5rem;
-      -webkit-text-stroke-width: 1.5px;
-      text-shadow: 2px 2px 0 #080d19;
+      font-size: 5rem;
     }
 
     .nf__links {
       flex-direction: column;
-      align-items: flex-start;
+      align-items: stretch;
+      align-self: stretch;
     }
   }
 </style>

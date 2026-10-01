@@ -5,7 +5,10 @@
  * - /resume.json valida no schema oficial do JSON Resume (`@jsonresume/schema`);
  * - /llms.txt no formato llmstxt.org; todo link interno de /llms.txt e /llms-full.txt resolve para um
  *   arquivo prerenderizado ou, se for um endpoint dinâmico declarado (`/mcp`), para uma rota do build;
- * - /sitemap.xml só lista URLs com página prerenderizada (nada de redirect ou 404) e /robots.txt aponta para ele.
+ * - cada artigo e nota tem a versão .md prerenderizada (H1, página canônica, sem front matter) e a anuncia com
+ *   <link rel="alternate" type="text/markdown">; nenhuma outra página anuncia uma .md;
+ * - /sitemap.xml só lista URLs com página prerenderizada (nada de redirect ou 404) e nenhuma .md;
+ * - /robots.txt libera tudo, declara cada crawler de IA de `AI_CRAWLERS` e aponta para o sitemap.
  * Uso: node scripts/verify-publishing.mjs [diretório-do-build]   (Node ≥ 22.18, type stripping)
  */
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
@@ -21,6 +24,10 @@ import {
   jsonLdIssues,
   llmsIndexIssues,
   manifestHasRoute,
+  markdownAlternateIssue,
+  markdownDocumentIssues,
+  markdownUrlFor,
+  robotsIssues,
   SITE_ORIGIN,
   sitemapLocs,
 } from '../src/lib/publishing/checks.ts'
@@ -64,6 +71,14 @@ for (const file of pages) {
   else if (statSync(join(dir, builtFileFor(ogImage))).size > OG_MAX_BYTES) fail(where, `og:image acima de 100 KiB: ${ogImage}`)
   for (const tag of ['og:title', 'og:description', 'og:url']) if (!html.includes(`<meta property="${tag}"`)) fail(where, `sem ${tag}`)
   for (const tag of ['twitter:card', 'twitter:title', 'twitter:image']) if (!html.includes(`<meta name="${tag}"`)) fail(where, `sem ${tag}`)
+  // Versão Markdown: o link do head e o arquivo .md prerenderizado.
+  const markdownProblem = markdownAlternateIssue(html, facts.canonical)
+  if (markdownProblem) fail(where, markdownProblem)
+  const markdownUrl = markdownUrlFor(facts.canonical)
+  if (markdownUrl) {
+    if (!exists(markdownUrl)) fail(where, `versão Markdown ausente no build: ${markdownUrl}`)
+    else for (const issue of markdownDocumentIssues(read(builtFileFor(markdownUrl)), facts.canonical)) fail(builtFileFor(markdownUrl), issue)
+  }
   try {
     for (const issue of jsonLdIssues(extractJsonLd(html), facts)) fail(where, issue)
   } catch (error) {
@@ -92,15 +107,26 @@ if (!read('llms-full.txt').includes('\n## Limites\n')) fail('llms-full.txt', 'se
 const locs = sitemapLocs(read('sitemap.xml'))
 if (locs.length === 0) fail('sitemap.xml', 'sem URLs')
 if (new Set(locs).size !== locs.length) fail('sitemap.xml', 'URL repetida')
-for (const loc of locs) if (!exists(loc) || !loc.endsWith('/')) fail('sitemap.xml', `URL sem página prerenderizada (redirect ou 404?): ${loc}`)
+for (const loc of locs) {
+  if (loc.endsWith('.md')) fail('sitemap.xml', `versão Markdown no sitemap (só páginas HTML canônicas): ${loc}`)
+  else if (!exists(loc) || !loc.endsWith('/')) fail('sitemap.xml', `URL sem página prerenderizada (redirect ou 404?): ${loc}`)
+}
 for (const file of pages) {
   const canonical = `${SITE_ORIGIN}/${relative(dir, file).replace(/index\.html$/, '')}`
   if (!locs.includes(canonical)) fail('sitemap.xml', `página indexável fora do sitemap: ${canonical}`)
 }
-if (!read('robots.txt').includes(`Sitemap: ${SITE_ORIGIN}/sitemap.xml`)) fail('robots.txt', 'não aponta para o sitemap')
+for (const issue of robotsIssues(read('robots.txt'))) fail('robots.txt', issue)
+
+// Cabeçalhos das .md (o Worker serve o arquivo prerenderizado como asset; o tipo e o noindex vêm de _headers).
+const headersFile = read('_headers')
+for (const prefix of ['/escrita/', '/en/writing/', '/notas/']) {
+  const rule = new RegExp(`^${prefix.replaceAll('/', '\\/')}\\*\\.md\\n(?:[ \\t]+.+\\n?)*`, 'm').exec(headersFile)?.[0] ?? ''
+  if (!/Content-Type: text\/markdown; charset=utf-8/.test(rule) || !/X-Robots-Tag: noindex/.test(rule)) fail('_headers', `sem Content-Type text/markdown e X-Robots-Tag noindex para ${prefix}*.md`)
+}
 
 if (problems.length > 0) {
   console.error(`Camada para agentes inconsistente (${problems.length}):\n${problems.map((problem) => `  - ${problem}`).join('\n')}`)
   process.exit(1)
 }
-console.log(`Camada para agentes ok: ${pages.length} páginas com JSON-LD/OG/canonical, resume.json no schema JSON Resume, llms.txt + llms-full.txt, ${locs.length} URLs no sitemap.`)
+const markdownCount = pages.filter((file) => markdownUrlFor(extractPageFacts(readFileSync(file, 'utf8')).canonical)).length
+console.log(`Camada para agentes ok: ${pages.length} páginas com JSON-LD/OG/canonical, ${markdownCount} versões .md, robots.txt com os crawlers de IA, resume.json no schema JSON Resume, llms.txt + llms-full.txt, ${locs.length} URLs no sitemap.`)

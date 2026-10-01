@@ -18,6 +18,8 @@ export const socialLinks = z.array(socialLinkSchema).parse([
   { label: 'YouTube', href: 'https://www.youtube.com/@whoisclebs' },
 ])
 
+// Estante da página Livros. `spine` é a cor da lombada tirada da capa; `note`, `noteEn`, `year` e
+// `pages` são opcionais (ver `bookSchema`) e aparecem no livro aberto quando preenchidos.
 export const books = z.array(bookSchema).parse([
   {
     title: 'Código Limpo: Habilidades Práticas do Agile Software',
@@ -25,6 +27,7 @@ export const books = z.array(bookSchema).parse([
     image: 'https://m.media-amazon.com/images/I/71dH97FwGbL._SY385_.jpg',
     link: 'https://amzn.to/43x7SAj',
     affiliate: true,
+    spine: '#f2f0eb',
   },
   {
     title: 'Roube como um artista: 10 dicas sobre criatividade',
@@ -32,6 +35,7 @@ export const books = z.array(bookSchema).parse([
     image: 'https://m.media-amazon.com/images/I/51lI9is-gnL._SY342_.jpg',
     link: 'https://amzn.to/3R1eQ9f',
     affiliate: true,
+    spine: '#141414',
   },
 ])
 

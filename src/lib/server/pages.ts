@@ -9,12 +9,12 @@ import { getNote, getPublishedNotes, toNoteSummary } from '$lib/content/notes'
 import { getPost, getPublishedPosts, getTranslation, toSummary, type Post } from '$lib/content/posts'
 import { getProject, projects } from '$lib/content/projects'
 import { caseStudies, getCaseStudy } from '$lib/content/cases/index'
-import { AGENT_STATUS, AGENTS_CHECKED_AT, agentProjects, EVALUATION_CRITERIA, loopSteps, techTopics } from '$lib/content/agents'
 import { CASE_SECTION_TITLES, type CaseStudy } from '$lib/content/case-schema'
+import type { TerminalCatalog } from '$lib/eggs/terminal/catalog'
 import { format, getMessages, type Locale } from '$lib/i18n'
-import { absoluteUrl, notePath, pagePath, pages, projectPath, topicPath, type PageKey } from '$lib/routing/paths'
+import { absoluteUrl, markdownPath, notePath, pagePath, pages, projectPath, topicPath, type PageKey } from '$lib/routing/paths'
 import { ogImageAlt, ogImagePath, pageTitle, SITE_NAME, type Seo } from '$lib/seo'
-import { articleNode, breadcrumbNode, caseStudyNodes, personNode, personRef, profilePageNode, softwareSourceCodeNode, webPageNode, websiteNode } from './publishing/structured-data'
+import { articleNode, breadcrumbNode, caseStudyNodes, personNode, profilePageNode, softwareSourceCodeNode, webPageNode, websiteNode } from './publishing/structured-data'
 import { highlightCode, renderInline, renderMarkdown } from './markdown'
 import { describeSummary } from '$lib/sim/labels'
 import { DEFAULT_CONFIG, runToEnd, summarize } from '$lib/sim/simulator'
@@ -96,8 +96,68 @@ export function homeData(locale: Locale) {
   return {
     locale,
     seo,
-    recent: recentWriting(locale, 5),
+    // Seis: o destaque e cinco linhas, como no design; o filtro por assunto trabalha só sobre estes.
+    recent: recentWriting(locale, 6),
     projects: projectCards(locale),
+    terminal: terminalCatalog(locale),
+  }
+}
+
+/** Dados que o terminal da home lista (`ls`, `cat`, `open`): tudo já publicado em alguma página do site. */
+export function terminalCatalog(locale: Locale): TerminalCatalog {
+  const t = getMessages(locale)
+  const pageLabels: [PageKey, string][] = [
+    ['home', t['nav.home']],
+    ['writing', t['nav.writing']],
+    ['notes', t['nav.notes']],
+    ['projects', t['nav.projects']],
+    ['about', t['nav.about']],
+    ['contact', t['nav.contact']],
+    ['books', t['nav.books']],
+    ['hobbies', t['nav.hobbies']],
+  ]
+  const machineNotes =
+    locale === 'en'
+      ? { mcp: 'MCP server for agents', llms: 'site index for language models', llmsFull: 'full content in one file', resume: 'résumé in JSON Resume format', rss: 'articles feed', sitemap: 'every published page', markdown: 'Markdown version of every article: swap the trailing slash for .md' }
+      : { mcp: 'servidor MCP para agentes', llms: 'índice do site para modelos de linguagem', llmsFull: 'conteúdo completo num arquivo só', resume: 'currículo no formato JSON Resume', rss: 'feed dos artigos', sitemap: 'todas as páginas publicadas', markdown: 'versão Markdown de cada artigo e nota: troque a barra final por .md' }
+  // Exemplo real da versão `.md`: o artigo mais recente no idioma.
+  const latestPost = getPublishedPosts(locale)[0]
+  return {
+    locale,
+    pages: pageLabels.flatMap(([key, label]) => {
+      const href = pagePath(key, locale)
+      return href ? [{ key, label, href }] : []
+    }),
+    articles: getPublishedPosts(locale).map((post) => ({ slug: post.slug, title: post.title, href: post.path, date: post.date, topic: post.topic.label })),
+    notes: locale === 'pt-BR' ? getPublishedNotes().map((note) => ({ slug: note.slug, title: note.title, href: note.path, date: note.date })) : [],
+    projects: projectCards(locale).map((project) => ({
+      slug: project.slug,
+      name: project.name,
+      description: project.description,
+      status: project.status,
+      language: project.technologies.join(', '),
+      href: project.href,
+      repo: project.repo,
+      lastCommit: project.lastCommit.date,
+    })),
+    boardGames: boardGames.map((game) => ({ title: game.title, players: game.players })),
+    books: books.map((book) => ({ title: book.title, author: book.author })),
+    social: socialLinks.map((link) => ({ label: link.label, href: link.href })),
+    email: contactEmail,
+    about: [t.about.lead, t.about.intro],
+    now: {
+      items: t.about.now.items.map((text, index) => ({ label: t.about.now.labels[index] ?? '', text })),
+      updatedAt: t.about.now.updatedAt,
+    },
+    machine: [
+      { path: '/mcp', note: machineNotes.mcp },
+      { path: '/llms.txt', note: machineNotes.llms },
+      { path: '/llms-full.txt', note: machineNotes.llmsFull },
+      ...(latestPost ? [{ path: markdownPath(latestPost.path), note: machineNotes.markdown }] : []),
+      { path: '/resume.json', note: machineNotes.resume },
+      { path: locale === 'en' ? '/rss/blog-en.xml' : '/rss/blog.xml', note: machineNotes.rss },
+      { path: '/sitemap.xml', note: machineNotes.sitemap },
+    ],
   }
 }
 
@@ -307,6 +367,7 @@ export async function articleData(slug: string, locale: Locale) {
       type: 'article',
       publishedTime: post.date,
       modifiedTime: post.updated,
+      markdown: markdownPath(post.path),
       jsonLd: [
         articleNode({
           type: 'BlogPosting',
@@ -357,6 +418,7 @@ export async function noteData(slug: string) {
       type: 'article',
       publishedTime: note.date,
       modifiedTime: note.updated,
+      markdown: markdownPath(note.path),
       jsonLd: [
         articleNode({
           type: 'TechArticle',
@@ -376,11 +438,27 @@ export async function noteData(slug: string) {
   }
 }
 
+/** Evidência pública de cada frente da oferta: o estudo de caso ou o repositório, nunca uma promessa. */
+function aboutEvidence(locale: Locale): Record<'distributed' | 'backend' | 'agents', { href: string; hreflang?: 'pt-BR' | 'en' }> {
+  const cards = projectCards(locale)
+  const study = (slug: string) => cards.find((project) => project.slug === slug)?.caseStudy
+  // Agentes não tem mais página própria: a evidência é o código público do YandeCode.
+  const agents = { href: 'https://github.com/yandelabs/yandecode' }
+  const pick = (slug: string) => {
+    const found = study(slug)
+    return found ? { href: found.href, hreflang: found.hreflang } : agents
+  }
+  return { distributed: pick('tuxedo'), backend: pick('golpher'), agents }
+}
+
 export function aboutData(locale: Locale) {
   const t = getMessages(locale)
   return {
     locale,
     badges,
+    socialLinks,
+    contactEmail,
+    evidence: aboutEvidence(locale),
     seo: staticSeo('about', locale, locale === 'en' ? 'About' : 'Sobre', t.about.intro, {
       jsonLd: profilePageNode(locale, pages.about[locale], t.about.title),
     }),
@@ -395,23 +473,6 @@ export function contactData() {
     socialLinks,
     seo: staticSeo('contact', 'pt-BR', t.contact.title, t.contact.description, {
       jsonLd: { '@type': 'ContactPage', name: t.contact.title, url: absoluteUrl(pages.contact['pt-BR']), inLanguage: 'pt-BR', mainEntity: personNode('pt-BR') },
-    }),
-  }
-}
-
-/** Capítulo de IA agêntica (só pt-BR). Texto com crases vira `code` escapado no build. */
-export function agentsData() {
-  const t = getMessages('pt-BR')
-  return {
-    locale: 'pt-BR' as const,
-    checkedAt: AGENTS_CHECKED_AT,
-    statuses: AGENT_STATUS,
-    projects: agentProjects.map((project) => ({ ...project, statusLabel: AGENT_STATUS[project.status].label, hasCode: Boolean(project.code) })),
-    steps: loopSteps,
-    criteria: EVALUATION_CRITERIA,
-    topics: techTopics.map((topic) => ({ ...topic, approachHtml: topic.approach.map(renderInline), inCodeHtml: topic.inCode.map(renderInline) })),
-    seo: staticSeo('agents', 'pt-BR', t.agents.title, t.agents.description, {
-      jsonLd: { '@type': 'WebPage', name: t.agents.title, url: absoluteUrl(pages.agents['pt-BR']), inLanguage: 'pt-BR', dateModified: AGENTS_CHECKED_AT, author: personRef() },
     }),
   }
 }

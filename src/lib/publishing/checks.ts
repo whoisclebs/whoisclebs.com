@@ -259,3 +259,92 @@ export function builtFileFor(url: string): string | undefined {
 export function sitemapLocs(xml: string): string[] {
   return [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => decodeEntities(match[1] as string))
 }
+
+/** Artigos (pt-BR e en) e notas: as páginas que têm versão Markdown servida ao lado da HTML. */
+const MARKDOWN_ENTRY_PATH = /^\/(escrita|en\/writing|notas)\/(?!assunto\/|topic\/)[^/]+\/$/
+
+/** URL da versão Markdown de uma página (`/escrita/x/` → `/escrita/x.md`), ou `undefined` se ela não tiver. */
+export function markdownUrlFor(canonical: string): string | undefined {
+  if (!canonical.startsWith(`${SITE_ORIGIN}/`)) return undefined
+  const path = canonical.slice(SITE_ORIGIN.length)
+  return MARKDOWN_ENTRY_PATH.test(path) ? `${SITE_ORIGIN}${path.slice(0, -1)}.md` : undefined
+}
+
+/** `href` do `<link rel="alternate" type="text/markdown">` do HTML, se houver. */
+export function markdownAlternate(html: string): string | undefined {
+  for (const match of html.matchAll(/<link\b[^>]*>/g)) {
+    const tag = match[0]
+    if (/\srel="alternate"/.test(tag) && /\stype="text\/markdown"/.test(tag)) return /\shref="([^"]+)"/.exec(tag)?.[1]
+  }
+  return undefined
+}
+
+/** Artigo e nota apontam para a própria `.md`; as demais páginas não anunciam versão Markdown. */
+export function markdownAlternateIssue(html: string, canonical: string): string | undefined {
+  const expected = markdownUrlFor(canonical)
+  const found = markdownAlternate(html)
+  if (!expected) return found ? `${canonical} não tem versão Markdown, mas anuncia ${found}` : undefined
+  if (!found) return `sem <link rel="alternate" type="text/markdown"> (esperado ${expected})`
+  return found === expected ? undefined : `<link rel="alternate" type="text/markdown"> aponta para ${found}, esperado ${expected}`
+}
+
+/** A `.md` abre com o título em H1, cita a página canônica e não repassa o front matter do arquivo-fonte. */
+export function markdownDocumentIssues(markdown: string, canonical: string): string[] {
+  const issues: string[] = []
+  if (markdown.startsWith('---')) issues.push('front matter bruto no início do arquivo')
+  if (!/^# \S/.test(markdown)) issues.push('a primeira linha precisa ser o título em H1')
+  if (!markdown.includes(canonical)) issues.push(`não cita a página canônica ${canonical}`)
+  return issues
+}
+
+/**
+ * Crawlers de IA liberados por nome em `/robots.txt` (cada um com `Allow: /`). Nomes conferidos na
+ * documentação de cada operador em 2026-10-01. Busca e resposta primeiro, treino depois.
+ */
+export const AI_CRAWLERS: readonly string[] = [
+  'OAI-SearchBot',
+  'ChatGPT-User',
+  'PerplexityBot',
+  'Perplexity-User',
+  'Claude-SearchBot',
+  'Claude-User',
+  'DuckAssistBot',
+  'Applebot',
+  'GPTBot',
+  'ClaudeBot',
+  'Google-Extended',
+  'Applebot-Extended',
+  'CCBot',
+  'Meta-ExternalAgent',
+  'Amazonbot',
+]
+
+/** Grupos do robots.txt: agentes (minúsculos) e as regras do grupo, na ordem do arquivo. */
+function robotsGroups(robots: string): Array<{ agents: string[]; rules: string[] }> {
+  const groups: Array<{ agents: string[]; rules: string[] }> = []
+  let current: { agents: string[]; rules: string[] } | undefined
+  for (const raw of robots.split('\n')) {
+    const line = raw.replace(/#.*$/, '').trim()
+    const field = /^([A-Za-z-]+)\s*:\s*(.*)$/.exec(line)
+    if (!field) continue
+    const name = (field[1] as string).toLowerCase()
+    const value = (field[2] as string).trim()
+    if (name === 'user-agent') {
+      if (!current || current.rules.length > 0) groups.push((current = { agents: [], rules: [] }))
+      current.agents.push(value.toLowerCase())
+    } else if (current && (name === 'allow' || name === 'disallow')) current.rules.push(`${name === 'allow' ? 'Allow' : 'Disallow'}: ${value}`)
+  }
+  return groups
+}
+
+/** O site libera tudo: grupo `*`, um grupo por crawler de IA, nenhum `Disallow: /` e o sitemap declarado. */
+export function robotsIssues(robots: string): string[] {
+  const issues: string[] = []
+  const groups = robotsGroups(robots)
+  const allows = (agent: string) => groups.some((group) => group.agents.includes(agent.toLowerCase()) && group.rules.includes('Allow: /'))
+  if (!allows('*')) issues.push('sem o grupo "User-agent: *" com "Allow: /"')
+  for (const crawler of AI_CRAWLERS) if (!allows(crawler)) issues.push(`${crawler} sem grupo próprio com "Allow: /"`)
+  for (const group of groups) if (group.rules.includes('Disallow: /')) issues.push(`"Disallow: /" para ${group.agents.join(', ')}`)
+  if (!robots.includes(`Sitemap: ${SITE_ORIGIN}/sitemap.xml`)) issues.push('Sitemap não declarado')
+  return issues
+}

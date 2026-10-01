@@ -33,12 +33,12 @@
     margin: 0;
     padding: var(--space-5);
     border: var(--border-hairline) solid var(--color-rule);
-    background-color: var(--color-surface);
-    /* Quadrícula do caderno, a mesma do Mapa de Decisões (linhas de 1 px a cada 24 px). */
+    background-color: var(--color-band);
+    /* Quadrícula de 1 px a cada 24 px, no tom elevado sobre o fundo; os nós voltam ao `--color-surface`. */
     background-image:
       linear-gradient(to right, var(--color-grid) 1px, transparent 1px),
       linear-gradient(to bottom, var(--color-grid) 1px, transparent 1px);
-    background-size: var(--grid-pattern-size) var(--grid-pattern-size);
+    background-size: 24px 24px;
   }
 
   .arch__flow {
