@@ -59,7 +59,7 @@ export function loadPosts(sources: Record<string, string>): Post[] {
     }
     const path = articlePath(meta.slug, meta.locale)
     const projects = meta.projects ?? []
-    let minutes = 0
+    let minutes: number
     try {
       projectsForEntry({ slug: meta.slug, projects })
       minutes = readingMinutes(meta.readingTime)

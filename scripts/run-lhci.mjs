@@ -104,7 +104,7 @@ function summarize() {
   }
 }
 
-let status = 1
+let status
 try {
   rmSync('.lighthouseci', { recursive: true, force: true })
   rmSync(state, { recursive: true, force: true })
