@@ -90,7 +90,7 @@ describe('createKeyTracker', () => {
     let last: KeyAction | null = null
     for (const key of chars('sud')) last = tracker.push(key, (at += 100))
     expect(last).toBeNull()
-    expect(tracker.push('o', (at += 100))).toEqual({ type: 'word', word: 'sudo' })
+    expect(tracker.push('o', at + 100)).toEqual({ type: 'word', word: 'sudo' })
   })
 
   it('ignora teclas de controle no buffer de palavras', () => {
