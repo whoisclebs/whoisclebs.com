@@ -33,7 +33,7 @@ jobs:
       - run: npm run check:contrast
       - run: npm run check:island
       - run: npm run check:budgets
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: playwright-traces
