@@ -35,7 +35,7 @@
     "@lhci/cli": "^0.15.1",
     "@modelcontextprotocol/sdk": "1.30.1",
     "@playwright/test": "^1.59.1",
-    "@sveltejs/adapter-cloudflare": "^7.2.9",
+    "@sveltejs/adapter-cloudflare": "^8.0.0",
     "@sveltejs/kit": "^2.70.3",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@types/node": "^25.6.0",
